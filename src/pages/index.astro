@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+import DirectoryCard from '../components/DirectoryCard.astro';
+import { mockDirectoryEdges } from '../utils/mockData';
+
+const directoryData = {
+  edges: mockDirectoryEdges
+};
+
+// Categorias inspiradas no FindUp
+const categories = [
+  { name: 'Gastronomia', icon: 'M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z' },
+  { name: 'Saúde', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' },
+  { name: 'Beleza', icon: 'M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { name: 'Serviços', icon: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+  { name: 'Eventos', icon: 'M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { name: 'Imóveis', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+];
+---
+
+<Layout title="HUBMETROPOLITANO - Diretório Inteligente da Barra da Tijuca">
+  <Header />
+  
+  <main>
+    <Hero />
+    
+    <!-- Findout Categories Section (Inspirado no FindUp Ref) -->
+    <section class="py-24 bg-white relative overflow-hidden">
+      <!-- Watermark Background Text -->
+      <div class="absolute top-10 left-0 w-full flex items-center justify-center pointer-events-none z-0">
+        <span class="font-display text-[12rem] font-bold text-hub-gelo select-none opacity-70 whitespace-nowrap leading-none tracking-tighter">Categories</span>
+      </div>
+
+      <div class="container mx-auto px-4 lg:px-8 relative z-10 lg:max-w-6xl">
+        <!-- Titles -->
+        <div class="text-center mb-16">
+          <span class="font-head text-hub-cobre uppercase tracking-widest font-bold mb-2 block text-sm">Principais Categorias</span>
+          <h2 class="font-display text-4xl md:text-5xl text-hub-chumbo font-bold mb-3">Descubra Pelo Diretório</h2>
+        </div>
+        
+        <!-- Grid with continuous borders -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-l border-t border-hub-chumbo/5">
+          {categories.map((cat, index) => (
+            <a href="#" class="group relative flex flex-col items-center justify-center px-6 py-12 bg-white border-r border-b border-hub-chumbo/5 hover:z-20 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-all duration-300">
+              
+              <!-- Hover Ribbon (Top Right Lightning) -->
+              <div class="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <div class="w-12 h-12 bg-hub-cobre" style="clip-path: polygon(100% 0, 0 0, 100% 100%);"></div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="absolute top-1.5 right-1.5 w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              
+              <!-- Icon Circle -->
+              <div class="w-24 h-24 rounded-full border border-hub-cobre/30 text-hub-cobre flex items-center justify-center mb-6 group-hover:bg-hub-cobre group-hover:text-white transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2" d={cat.icon} />
+                </svg>
+              </div>
+              
+              <!-- Text -->
+              <h3 class="font-body font-bold text-xl text-hub-chumbo mb-1">{cat.name}</h3>
+              <span class="font-body text-sm text-hub-chumbo/50">{10 * (index + 1) + 25} Tópicos</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Directory Section (Popular Places) -->
+    <section class="py-24 lg:py-32 bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8">
+        <!-- Section Heading -->
+        <div class="mb-16 md:flex justify-between items-end border-b border-hub-pavao/10 pb-6">
+          <div class="max-w-2xl">
+            <span class="font-head text-hub-cobre uppercase tracking-widest font-semibold mb-2 block">Top Avaliados na Barra</span>
+            <h2 class="font-display text-4xl md:text-5xl text-hub-pavao font-bold">
+              Locais Populares
+            </h2>
+          </div>
+          <div class="mt-6 md:mt-0">
+            <a href="/diretorio" class="inline-flex items-center text-hub-chumbo font-body font-bold hover:text-hub-cobre transition-colors px-6 py-3 bg-white rounded-xl shadow-sm hover:shadow-md border border-hub-gelo">
+              Explorar todos locais
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 ml-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {directoryData.edges.map(({ node }) => (
+            <DirectoryCard node={node} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="bg-hub-chumbo text-hub-gelo py-24 relative overflow-hidden">
+      <!-- Decorativa SVG Backgrond -->
+      <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-1/4 translate-y-1/4">
+        <svg width="400" height="400" viewBox="0 0 100 100" class="text-hub-cobre fill-current">
+          <circle cx="50" cy="50" r="50" />
+        </svg>
+      </div>
+      
+      <div class="container mx-auto px-4 lg:px-8 relative z-10 text-center">
+        <h2 class="font-display text-4xl md:text-5xl font-bold mb-6">Impulsione o seu negócio no Hub</h2>
+        <p class="font-body text-lg opacity-80 mb-10 max-w-xl mx-auto font-light">
+          Junte-se ao diretório mais exclusivo da Barra da Tijuca e conecte-se com um público exigente e altamente qualificado.
+        </p>
+        <a href="/anuncie" class="inline-flex items-center justify-center bg-hub-cobre text-hub-gelo font-body font-bold py-4 px-10 rounded-xl text-lg hover:bg-white hover:text-hub-chumbo transition-all shadow-2xl hover:-translate-y-1 transform duration-300">
+          Seja um Parceiro Oficial
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

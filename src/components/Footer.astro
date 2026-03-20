@@ -1,0 +1,51 @@
+---
+// Footer Component
+import Logo from './Logo.astro';
+---
+
+<footer class="bg-hub-pavao text-hub-gelo pt-16 pb-8 border-t-4 border-hub-cobre">
+  <div class="container mx-auto px-4 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
+      <!-- Brand -->
+      <div>
+        <div class="mb-6">
+          <Logo size="lg" variant="inverse" />
+        </div>
+        <p class="font-body opacity-80 font-light mb-6 max-w-sm">
+          O principal diretório inteligente para residentes e visitantes exigentes da Barra da Tijuca e região.
+        </p>
+      </div>
+
+      <!-- Links -->
+      <div>
+        <h3 class="font-head uppercase tracking-widest text-hub-cobre font-semibold mb-6">Explorar</h3>
+        <ul class="font-body space-y-3 opacity-90">
+          <li><a href="#" class="hover:text-hub-cobre transition-colors">Gastronomia</a></li>
+          <li><a href="#" class="hover:text-hub-cobre transition-colors">Saúde & Bem Estar</a></li>
+          <li><a href="#" class="hover:text-hub-cobre transition-colors">Moda & Luxo</a></li>
+          <li><a href="#" class="hover:text-hub-cobre transition-colors">Serviços Premium</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h3 class="font-head uppercase tracking-widest text-hub-cobre font-semibold mb-6">Contato</h3>
+        <ul class="font-body space-y-3 opacity-90">
+          <li>contato@hubmetropolitano.com.br</li>
+          <li>+55 (21) 99999-9999</li>
+          <li class="pt-4">
+            <a href="#" class="text-hub-cobre font-semibold hover:underline">Anuncie com a gente</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-hub-gelo/20 pt-8 flex flex-col md:flex-row justify-between items-center text-sm font-body opacity-60">
+      <p>&copy; {new Date().getFullYear()} HubMetropolitano. Todos os direitos reservados.</p>
+      <div class="mt-4 md:mt-0 space-x-4">
+        <a href="#" class="hover:text-hub-cobre">Termos de Uso</a>
+        <a href="#" class="hover:text-hub-cobre">Política de Privacidade</a>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,41 @@
+---
+interface Props {
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'default' | 'inverse';
+  class?: string;
+}
+
+const { size = 'md', variant = 'default', class: className = '' } = Astro.props;
+
+// Map de tamanhos 
+const sizes = {
+  sm: { icon: 'w-5 h-5', text: 'text-xl' },
+  md: { icon: 'w-6 h-6', text: 'text-2xl lg:text-3xl' },
+  lg: { icon: 'w-8 h-8', text: 'text-4xl' },
+  xl: { icon: 'w-10 h-10', text: 'text-5xl md:text-6xl' },
+};
+
+const currentSize = sizes[size];
+
+// Se o logo estiver em fundo escuro (como o header/footer Verde Pavão), usamos o texto em gelo.
+// Do contrário, usamos a cor original de assinatura (hub-pavao)
+const metropolitanoColor = variant === 'inverse' ? 'text-hub-gelo' : 'text-hub-pavao';
+---
+
+<div class={`inline-flex items-center gap-1.5 ${className}`}>
+  <!-- Map Pin SVG na cor hub-cobre -->
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    class={`text-hub-cobre ${currentSize.icon} shrink-0`}
+  >
+    <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+  </svg>
+
+  <!-- Typography: HUB em Barlow Condensed Bold + METROPOLITANO em Barlow Regular -->
+  <span class={`flex items-baseline ${currentSize.text} tracking-wider`}>
+    <span class="font-head font-bold text-hub-cobre">HUB</span>
+    <span class={`font-body font-normal ${metropolitanoColor} -ml-0.5`}>METROPOLITANO</span>
+  </span>
+</div>

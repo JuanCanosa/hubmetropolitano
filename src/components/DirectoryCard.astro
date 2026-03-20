@@ -1,0 +1,81 @@
+---
+interface Props {
+  node: {
+    id: string;
+    title: string;
+    slug: string;
+    featuredImage?: {
+      node: {
+        sourceUrl: string;
+      }
+    };
+    directoryCategory?: {
+      edges: Array<{
+        node: {
+          name: string;
+        }
+      }>
+    };
+    address: string;
+    rating: number;
+    excerpt: string;
+  }
+}
+
+const { node } = Astro.props;
+const category = node.directoryCategory?.edges[0]?.node?.name || 'Diretório';
+const image = node.featuredImage?.node?.sourceUrl || 'https://images.unsplash.com/photo-1577412647305-991150c7d163?q=80&w=800&auto=format&fit=crop';
+---
+
+<article class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-hub-gelo/50 flex flex-col h-full transform hover:-translate-y-2">
+  <!-- Image Container -->
+  <div class="relative h-48 overflow-hidden">
+    <img 
+      src={image} 
+      alt={`Imagem de ${node.title}`} 
+      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+      loading="lazy"
+    />
+    <div class="absolute top-4 left-4">
+      <span class="bg-hub-pavao text-hub-gelo font-head uppercase tracking-wider text-xs px-3 py-1 rounded shadow-sm">
+        {category}
+      </span>
+    </div>
+    
+    <!-- Rating Badge -->
+    <div class="absolute bottom-4 right-4 bg-white/90 backdrop-blur text-hub-pavao font-body font-bold px-2 py-1 rounded-lg text-sm flex items-center gap-1 shadow-sm">
+      <span>★</span>
+      {node.rating.toFixed(1)}
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="p-6 flex flex-col flex-grow">
+    <h3 class="font-display text-2xl font-bold text-hub-pavao mb-2 group-hover:text-hub-cobre transition-colors">
+      <a href={`/diretorio/${node.slug}`} class="focus:outline-none">
+        <span class="absolute inset-0" aria-hidden="true"></span>
+        {node.title}
+      </a>
+    </h3>
+    
+    <div class="flex items-start gap-2 text-hub-pavao/70 font-body text-sm mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0 text-hub-cobre mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <span class="leading-relaxed">{node.address}</span>
+    </div>
+
+    <p class="font-body text-hub-pavao/80 font-light text-sm line-clamp-3 mb-6 flex-grow">
+      {node.excerpt}
+    </p>
+
+    <!-- Footer Action -->
+    <div class="mt-auto pt-4 border-t border-hub-gelo flex items-center text-hub-cobre font-body font-semibold text-sm group-hover:text-hub-pavao transition-colors">
+      Ver detalhes
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+      </svg>
+    </div>
+  </div>
+</article>

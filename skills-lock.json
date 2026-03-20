@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "astro": {
+      "source": "astrolicious/agent-skills",
+      "sourceType": "github",
+      "computedHash": "ab44e2f297b232ff433e219664ee7df199bd8dd1dff4b8ee42408b880e8d7359"
+    },
+    "browser": {
+      "source": "iamzhihuix/happy-claude-skills",
+      "sourceType": "github",
+      "computedHash": "f3ba13c9c99ba5651e6b428edc99540e9dfb061bedd1abe9dd1381f3a1256fed"
+    },
+    "seo": {
+      "source": "addyosmani/web-quality-skills",
+      "sourceType": "github",
+      "computedHash": "680cc12a17e9308b4592a2751db51615c618993f75362cb8e64207f6355a8c63"
+    },
+    "tailwindcss-advanced-layouts": {
+      "source": "josiahsiegel/claude-plugin-marketplace",
+      "sourceType": "github",
+      "computedHash": "bf3eb96bcdcceb54cf2c0ba01daa18275c169627f37f5a861490c78e8055a5ce"
+    },
+    "wordpress-pro": {
+      "source": "jeffallan/claude-skills",
+      "sourceType": "github",
+      "computedHash": "ffe9fc142b4af6d7b8afe27c12c5e7c94599e0a0e6819c1d0e75a1bb22fc3b0f"
+    },
+    "zod": {
+      "source": "pproenca/dot-skills",
+      "sourceType": "github",
+      "computedHash": "3307ca1bef37ac4f32264c971c2b54ca3191f4f248a820b2c1255fc045ceb125"
+    }
+  }
+}

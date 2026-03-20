@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hub-pavao: #004445;
+  --color-hub-pavao-soft: #E6F0F0;
+  --color-hub-cobre: #B87333;
+  --color-hub-gelo: #F8FAFA;
+  --color-hub-chumbo: #1A1A1A;
+  
+  --font-display: "Cormorant Garamond", serif;
+  --font-head: "Barlow Condensed", sans-serif;
+  --font-body: "Barlow", sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-hub-gelo);
+    color: var(--color-hub-chumbo);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Force Light Mode / Solar */
+    color-scheme: light;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+}

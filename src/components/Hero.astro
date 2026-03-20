@@ -1,0 +1,156 @@
+---
+// Hero Component
+---
+
+<section class="relative bg-hub-chumbo overflow-hidden">
+  <!-- Dynamic Background Image or Gradient -->
+  <div class="absolute inset-0 z-0 opacity-80 bg-[url('/images/hero_bg.png')] bg-cover bg-center"></div>
+  <!-- Overlay mais transparente -->
+  <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao/70 to-hub-pavao/10 z-0"></div>
+
+  <div class="container mx-auto px-4 lg:px-8 py-20 lg:py-28 relative z-10 text-center">
+    <div class="max-w-4xl mx-auto">
+      <span class="font-head text-hub-cobre uppercase tracking-widest font-semibold mb-4 block drop-shadow-md">Navegue pelas melhores opções</span>
+      <h2 class="font-display text-5xl md:text-6xl text-hub-gelo font-bold mb-10 leading-tight drop-shadow-lg">
+        Explore a Essência da Barra da Tijuca
+      </h2>
+      
+      <!-- Search Tabs -->
+      <div class="flex gap-1 mb-0 justify-center">
+        <button id="tab-locais" class="bg-hub-gelo text-hub-pavao font-head uppercase tracking-wider px-8 py-3 rounded-t-xl font-bold transition-colors">
+          Locais
+        </button>
+        <button id="tab-eventos" class="bg-hub-chumbo/40 hover:bg-hub-chumbo/60 text-hub-gelo font-head uppercase tracking-wider px-8 py-3 rounded-t-xl transition-colors backdrop-blur-md">
+          Eventos
+        </button>
+      </div>
+
+      <!-- Search Box Container -->
+      <div class="bg-hub-pavao/10 backdrop-blur-xl border border-hub-gelo/20 rounded-3xl p-4 shadow-2xl transition-all duration-500 overflow-hidden">
+        
+        <!-- ================= FORMS LOCAIS ================= -->
+        <div id="form-locais" class="flex flex-col md:flex-row gap-3">
+          <!-- Input 1 -->
+          <div class="flex-1 relative flex items-center bg-white rounded-2xl px-5 h-16 shadow-inner focus-within:ring-2 focus-within:ring-hub-cobre transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-hub-cobre flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="O que você procura?" 
+              class="w-full h-full bg-transparent text-hub-chumbo font-body text-lg px-4 focus:outline-none placeholder-hub-pavao/40"
+            />
+          </div>
+          
+          <!-- Input 2 -->
+          <div class="flex-1 relative hidden md:flex items-center bg-white rounded-2xl px-5 h-16 shadow-inner focus-within:ring-2 focus-within:ring-hub-cobre transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-hub-cobre flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Todas as Categorias" 
+              class="w-full h-full bg-transparent text-hub-chumbo font-body text-lg px-4 focus:outline-none placeholder-hub-pavao/40"
+            />
+          </div>
+
+          <!-- Botão Locais -->
+          <button class="bg-hub-cobre text-hub-gelo font-body font-bold text-lg h-16 px-10 rounded-2xl flex items-center justify-center gap-2 hover:bg-[#a6652b] transition-all shadow-lg flex-shrink-0 group">
+            Procurar
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- ================= FORMS EVENTOS (Inicialmente Oculto) ================= -->
+        <div id="form-eventos" class="hidden flex-col md:flex-row gap-3">
+          <!-- Input Evento 1 -->
+          <div class="flex-1 relative flex items-center bg-white rounded-2xl px-5 h-16 shadow-inner focus-within:ring-2 focus-within:ring-hub-cobre transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-hub-cobre flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder="Nome do Evento (Ex: Show, Feira)" 
+              class="w-full h-full bg-transparent text-hub-chumbo font-body text-lg px-4 focus:outline-none placeholder-hub-pavao/40"
+            />
+          </div>
+          
+          <!-- Input Data -->
+          <div class="flex-[0.6] relative hidden md:flex items-center bg-white rounded-2xl px-5 h-16 shadow-inner focus-within:ring-2 focus-within:ring-hub-cobre transition-all">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-hub-cobre flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <input 
+              type="date" 
+              class="w-full h-full bg-transparent text-hub-chumbo font-body text-lg px-4 focus:outline-none placeholder-hub-pavao/40"
+            />
+          </div>
+
+          <!-- Botão Eventos -->
+          <button class="bg-hub-pavao text-hub-gelo font-body font-bold text-lg h-16 px-10 rounded-2xl flex items-center justify-center gap-2 hover:bg-[#003333] transition-all shadow-lg flex-shrink-0 group">
+            Ver Eventos
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Trending / Popular Links -->
+      <div class="mt-8 flex flex-wrap gap-2 text-sm font-body text-hub-gelo items-center justify-center">
+        <span class="opacity-80">Populares:</span>
+        <a href="#" class="opacity-100 hover:text-hub-cobre font-semibold transition-colors underline decoration-hub-gelo/30">Gastronomia</a>,
+        <a href="#" class="opacity-100 hover:text-hub-cobre font-semibold transition-colors underline decoration-hub-gelo/30">Saúde & Bem Estar</a>,
+        <a href="#" class="opacity-100 hover:text-hub-cobre font-semibold transition-colors underline decoration-hub-gelo/30">Imóveis</a>,
+        <a href="#" class="opacity-100 hover:text-hub-cobre font-semibold transition-colors underline decoration-hub-gelo/30">Eventos Hoje</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // Script para alternar as abas de busca no front-end
+  document.addEventListener("DOMContentLoaded", () => {
+    const tabLocais = document.getElementById('tab-locais');
+    const tabEventos = document.getElementById('tab-eventos');
+    const formLocais = document.getElementById('form-locais');
+    const formEventos = document.getElementById('form-eventos');
+
+    if (!tabLocais || !tabEventos || !formLocais || !formEventos) return;
+
+    // Classes de estílo da Aba ATIVA
+    const activeClasses = ['bg-hub-gelo', 'text-hub-pavao'];
+    
+    // Classes de estílo da Aba INATIVA
+    const inactiveClasses = ['bg-hub-chumbo/40', 'hover:bg-hub-chumbo/60', 'text-hub-gelo', 'backdrop-blur-md'];
+
+    function setTabActive(tabToActivate, tabToDeactivate, formToShow, formToHide) {
+      // Show/Hide forms
+      formToShow.classList.remove('hidden');
+      formToShow.classList.add('flex');
+      
+      formToHide.classList.remove('flex');
+      formToHide.classList.add('hidden');
+
+      // Update Active Tab
+      tabToActivate.classList.remove(...inactiveClasses);
+      tabToActivate.classList.add(...activeClasses);
+
+      // Update Inactive Tab
+      tabToDeactivate.classList.remove(...activeClasses);
+      tabToDeactivate.classList.add(...inactiveClasses);
+    }
+
+    tabLocais.addEventListener('click', () => {
+      setTabActive(tabLocais, tabEventos, formLocais, formEventos);
+    });
+
+    tabEventos.addEventListener('click', () => {
+      setTabActive(tabEventos, tabLocais, formEventos, formLocais);
+    });
+  });
+</script>
