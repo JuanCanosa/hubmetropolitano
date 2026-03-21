@@ -77,12 +77,10 @@ const POST_FULL_FIELDS = /* GraphQL */ `
 
 export async function getPosts(params: {
   perPage?: number;
-  page?: number;
   categoryId?: number;
   tagId?: number;
 } = {}): Promise<WPPost[]> {
-  const { perPage = 12, page = 1, categoryId, tagId } = params;
-  const offset = (page - 1) * perPage;
+  const { perPage = 12, categoryId, tagId } = params;
 
   const where: string[] = [];
   if (categoryId) where.push(`categoryId: ${categoryId}`);
@@ -91,7 +89,7 @@ export async function getPosts(params: {
   const whereStr = where.length ? `, where: { ${where.join(', ')} }` : '';
 
   const data = await gql<{ posts: { nodes: WPPost[] } }>(`{
-    posts(first: ${perPage}, offset: ${offset}${whereStr}) {
+    posts(first: ${perPage}${whereStr}) {
       nodes { ${POST_CARD_FIELDS} }
     }
   }`);
