@@ -1,0 +1,48 @@
+---
+import type { WPPost } from '../lib/wordpress';
+import { formatDate, stripHtml } from '../lib/wordpress';
+
+interface Props {
+  post: WPPost;
+}
+
+const { post } = Astro.props;
+const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+const category = post._embedded?.['wp:term']?.[0]?.find(t => t.taxonomy === 'category');
+const excerpt = stripHtml(post.excerpt.rendered).slice(0, 140) + '…';
+---
+
+<article class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-hub-gelo/50 flex flex-col h-full transform hover:-translate-y-1">
+  <a href={`/blog/${post.slug}`} class="block relative h-52 overflow-hidden bg-hub-pavao-soft">
+    {image ? (
+      <img src={image} alt={post.title.rendered} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+    ) : (
+      <div class="w-full h-full flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-hub-pavao/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+      </div>
+    )}
+    {category && (
+      <span class="absolute top-4 left-4 bg-hub-pavao text-hub-gelo font-head uppercase tracking-wider text-xs px-3 py-1 rounded shadow-sm">
+        {category.name}
+      </span>
+    )}
+  </a>
+
+  <div class="p-6 flex flex-col flex-grow">
+    <time class="font-body text-xs text-hub-cobre uppercase tracking-widest mb-3 block">
+      {formatDate(post.date)}
+    </time>
+    <h3 class="font-display text-xl font-bold text-hub-pavao mb-3 group-hover:text-hub-cobre transition-colors line-clamp-2">
+      <a href={`/blog/${post.slug}`} set:html={post.title.rendered} />
+    </h3>
+    <p class="font-body text-hub-chumbo/70 text-sm line-clamp-3 mb-6 flex-grow">{excerpt}</p>
+    <a href={`/blog/${post.slug}`} class="mt-auto inline-flex items-center text-hub-cobre font-body font-semibold text-sm hover:text-hub-pavao transition-colors">
+      Ler artigo
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+      </svg>
+    </a>
+  </div>
+</article>

@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getPosts, getPost, formatDate } from '../../lib/wordpress';
+
+export async function getStaticPaths() {
+  const posts = await getPosts({ per_page: 100 });
+  return posts.map(post => ({ params: { slug: post.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getPost(slug!);
+if (!post) return Astro.redirect('/blog');
+
+const categories = post._embedded?.['wp:term']?.[0]?.filter(t => t.taxonomy === 'category') ?? [];
+const tags = post._embedded?.['wp:term']?.[1]?.filter(t => t.taxonomy === 'post_tag') ?? [];
+const author = post._embedded?.author?.[0]?.name;
+const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+
+const related = categories[0]
+  ? (await getPosts({ per_page: 3, categories: categories[0].id })).filter(p => p.slug !== slug)
+  : [];
+---
+
+<Layout title={`${post.title.rendered} — Blog HUBMETROPOLITANO`}>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <div class="relative h-[55vh] min-h-80 bg-hub-pavao overflow-hidden">
+      {image && (
+        <img src={image} alt={post.title.rendered} class="w-full h-full object-cover opacity-30" />
+      )}
+      <div class="absolute inset-0 bg-gradient-to-t from-hub-chumbo/90 via-hub-chumbo/40 to-transparent" />
+      <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-4xl pb-12">
+        {categories.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-4">
+            {categories.map(cat => (
+              <a href={`/blog/categoria/${cat.slug}`} class="bg-hub-cobre text-white font-head uppercase tracking-wider text-xs px-3 py-1 rounded hover:bg-white hover:text-hub-chumbo transition-colors">
+                {cat.name}
+              </a>
+            ))}
+          </div>
+        )}
+        <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" set:html={post.title.rendered} />
+        <div class="flex items-center gap-4 font-body text-white/60 text-sm">
+          {author && <span>Por <strong class="text-white/80">{author}</strong></span>}
+          <time>{formatDate(post.date)}</time>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 lg:px-8 lg:max-w-3xl py-16">
+      <div class="wp-content" set:html={post.content.rendered} />
+
+      <!-- Tags -->
+      {tags.length > 0 && (
+        <div class="mt-12 pt-8 border-t border-hub-gelo flex flex-wrap items-center gap-2">
+          <span class="font-head uppercase tracking-widest text-xs font-bold text-hub-chumbo/40 mr-1">Tags:</span>
+          {tags.map(tag => (
+            <a href={`/blog/tag/${tag.slug}`} class="font-body text-xs px-3 py-1.5 rounded-full bg-hub-gelo text-hub-chumbo/70 hover:bg-hub-cobre hover:text-white transition-colors">
+              #{tag.name}
+            </a>
+          ))}
+        </div>
+      )}
+
+      <!-- Back -->
+      <div class="mt-10">
+        <a href="/blog" class="inline-flex items-center font-body text-sm text-hub-chumbo/50 hover:text-hub-cobre transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Voltar para o Blog
+        </a>
+      </div>
+    </div>
+
+    <!-- Related posts -->
+    {related.length > 0 && (
+      <section class="bg-hub-gelo py-16">
+        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+          <h2 class="font-display text-3xl font-bold text-hub-pavao mb-10">Posts Relacionados</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {related.map(p => <BlogCard post={p} />)}
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <Footer />
+</Layout>

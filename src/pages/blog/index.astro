@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getPosts, getCategories, getTags } from '../../lib/wordpress';
+
+const [posts, categories, tags] = await Promise.all([
+  getPosts({ per_page: 9 }),
+  getCategories(),
+  getTags(),
+]);
+---
+
+<Layout title="Blog — HUBMETROPOLITANO" description="Dicas, tendências e novidades da Barra da Tijuca.">
+  <Header />
+
+  <main>
+    <!-- Page Header -->
+    <section class="bg-hub-pavao text-hub-gelo py-20 relative overflow-hidden">
+      <div class="absolute top-0 right-0 font-display text-[16rem] font-bold leading-none text-white/5 pointer-events-none select-none">Blog</div>
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl relative z-10">
+        <span class="font-head text-hub-cobre uppercase tracking-widest font-bold text-sm mb-3 block">Conteúdo & Novidades</span>
+        <h1 class="font-display text-5xl md:text-6xl font-bold mb-4">Blog</h1>
+        <p class="font-body text-hub-gelo/70 text-lg max-w-xl">Dicas, tendências e novidades da Barra da Tijuca.</p>
+      </div>
+    </section>
+
+    <!-- Search bar -->
+    <div class="bg-white border-b border-hub-gelo shadow-sm sticky top-[72px] z-40">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-4">
+        <form action="/blog/busca" method="get" class="flex gap-3 max-w-xl">
+          <div class="relative flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-hub-chumbo/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input type="text" name="q" placeholder="Buscar no blog..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-hub-gelo bg-hub-gelo font-body text-sm text-hub-chumbo focus:outline-none focus:ring-2 focus:ring-hub-cobre/40" />
+          </div>
+          <button type="submit" class="bg-hub-cobre text-white font-body font-bold px-6 py-2.5 rounded-lg text-sm hover:bg-hub-pavao transition-colors">
+            Buscar
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
+      <div class="flex gap-12">
+
+        <!-- Posts grid -->
+        <div class="flex-1 min-w-0">
+          {posts.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {posts.map(post => <BlogCard post={post} />)}
+            </div>
+          ) : (
+            <div class="text-center py-32">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-hub-chumbo/20 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+              <p class="font-body text-hub-chumbo/40 text-lg">Nenhum post publicado ainda.</p>
+            </div>
+          )}
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="w-72 hidden lg:block shrink-0 space-y-8">
+          {categories.length > 0 && (
+            <div class="bg-white rounded-xl p-6 border border-hub-gelo shadow-sm">
+              <h3 class="font-head uppercase tracking-widest text-sm font-bold text-hub-chumbo mb-5 pb-3 border-b border-hub-gelo">Categorias</h3>
+              <ul class="space-y-1">
+                {categories.map(cat => (
+                  <li>
+                    <a href={`/blog/categoria/${cat.slug}`} class="flex items-center justify-between font-body text-sm text-hub-chumbo/80 hover:text-hub-cobre transition-colors py-1.5 group">
+                      <span class="group-hover:translate-x-1 transition-transform">{cat.name}</span>
+                      <span class="bg-hub-gelo text-hub-chumbo/40 text-xs px-2 py-0.5 rounded-full">{cat.count}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {tags.length > 0 && (
+            <div class="bg-white rounded-xl p-6 border border-hub-gelo shadow-sm">
+              <h3 class="font-head uppercase tracking-widest text-sm font-bold text-hub-chumbo mb-5 pb-3 border-b border-hub-gelo">Tags</h3>
+              <div class="flex flex-wrap gap-2">
+                {tags.map(tag => (
+                  <a href={`/blog/tag/${tag.slug}`} class="font-body text-xs px-3 py-1.5 rounded-full bg-hub-gelo text-hub-chumbo/70 hover:bg-hub-cobre hover:text-white transition-colors">
+                    {tag.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

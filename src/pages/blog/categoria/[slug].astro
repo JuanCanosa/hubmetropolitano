@@ -1,0 +1,51 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import BlogCard from '../../../components/BlogCard.astro';
+import { getCategories, getPosts } from '../../../lib/wordpress';
+
+export async function getStaticPaths() {
+  const categories = await getCategories();
+  return Promise.all(
+    categories.map(async cat => ({
+      params: { slug: cat.slug },
+      props: { category: cat, posts: await getPosts({ per_page: 12, categories: cat.id }) },
+    }))
+  );
+}
+
+const { category, posts } = Astro.props;
+---
+
+<Layout title={`${category.name} — Blog HUBMETROPOLITANO`}>
+  <Header />
+
+  <main>
+    <section class="bg-hub-pavao text-hub-gelo py-20">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <a href="/blog" class="inline-flex items-center font-body text-hub-gelo/50 text-sm mb-6 hover:text-hub-cobre transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Blog
+        </a>
+        <span class="font-head text-hub-cobre uppercase tracking-widest font-bold text-sm mb-3 block">Categoria</span>
+        <h1 class="font-display text-5xl font-bold">{category.name}</h1>
+        <p class="font-body text-hub-gelo/50 mt-2">{category.count} {category.count === 1 ? 'post' : 'posts'}</p>
+      </div>
+    </section>
+
+    <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
+      {posts.length > 0 ? (
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {posts.map(post => <BlogCard post={post} />)}
+        </div>
+      ) : (
+        <p class="text-center font-body text-hub-chumbo/40 py-32 text-lg">Nenhum post nesta categoria ainda.</p>
+      )}
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
