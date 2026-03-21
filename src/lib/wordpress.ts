@@ -78,13 +78,13 @@ const POST_FULL_FIELDS = /* GraphQL */ `
 export async function getPosts(params: {
   perPage?: number;
   categoryId?: number;
-  tagId?: number;
+  tagSlug?: string;
 } = {}): Promise<WPPost[]> {
-  const { perPage = 12, categoryId, tagId } = params;
+  const { perPage = 12, categoryId, tagSlug } = params;
 
   const where: string[] = [];
   if (categoryId) where.push(`categoryId: ${categoryId}`);
-  if (tagId) where.push(`tagId: ${tagId}`);
+  if (tagSlug) where.push(`tag: "${tagSlug}"`);
 
   const whereStr = where.length ? `, where: { ${where.join(', ')} }` : '';
 

@@ -9,7 +9,7 @@ const { slug } = Astro.params;
 const tag = await getTag(slug!);
 if (!tag) return Astro.redirect('/blog');
 
-const posts = await getPosts({ perPage: 12, tagId: tag.id });
+const posts = await getPosts({ perPage: 12, tagSlug: tag.slug });
 ---
 
 <Layout title={`#${tag.name} — Blog HUBMETROPOLITANO`}>
