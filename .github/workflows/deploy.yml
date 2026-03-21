@@ -37,17 +37,24 @@ jobs:
       - name: Install rsync
         run: sudo apt-get install -y rsync
 
-      - name: Deploy to VPS
+      - name: Deploy dist to VPS
         run: |
           rsync -az --delete \
             -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
-            dist/ \
+            dist/ package.json package-lock.json \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/hubmetropolitano/frontend/
 
-      - name: Restart Astro container
+      - name: Install production deps and restart Astro
         run: |
           ssh -i ~/.ssh/deploy_key \
             -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            "cd /opt/hubmetropolitano && docker compose up -d astro"
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
+          docker run --rm \
+            -v /opt/hubmetropolitano/frontend:/app \
+            -w /app \
+            node:22-alpine \
+            npm ci --omit=dev
+          cd /opt/hubmetropolitano
+          docker compose restart astro
+          ENDSSH
