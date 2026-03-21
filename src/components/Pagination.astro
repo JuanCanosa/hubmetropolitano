@@ -1,0 +1,83 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string; // e.g. "/blog" or "/blog/categoria/negocios"
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+function pageUrl(page: number) {
+  return page === 1 ? baseUrl : `${baseUrl}?pagina=${page}`;
+}
+
+// Build visible page numbers with ellipsis
+function getPages(current: number, total: number): (number | '...')[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | '...')[] = [1];
+  if (current > 3) pages.push('...');
+  for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+    pages.push(i);
+  }
+  if (current < total - 2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+const pages = getPages(currentPage, totalPages);
+---
+
+{totalPages > 1 && (
+  <nav aria-label="Paginação" class="flex items-center justify-center gap-1 mt-12">
+
+    <!-- Anterior -->
+    {currentPage > 1 ? (
+      <a href={pageUrl(currentPage - 1)} class="flex items-center gap-1 px-4 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-pavao hover:text-hub-gelo transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Anterior
+      </a>
+    ) : (
+      <span class="flex items-center gap-1 px-4 py-2 rounded-lg font-body text-sm text-hub-chumbo/20 cursor-not-allowed">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Anterior
+      </span>
+    )}
+
+    <!-- Números -->
+    {pages.map(p =>
+      p === '...' ? (
+        <span class="px-2 py-2 font-body text-sm text-hub-chumbo/30">…</span>
+      ) : p === currentPage ? (
+        <span class="w-9 h-9 flex items-center justify-center rounded-lg bg-hub-pavao text-hub-gelo font-body font-bold text-sm">
+          {p}
+        </span>
+      ) : (
+        <a href={pageUrl(p as number)} class="w-9 h-9 flex items-center justify-center rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-pavao-soft hover:text-hub-pavao transition-colors">
+          {p}
+        </a>
+      )
+    )}
+
+    <!-- Próxima -->
+    {currentPage < totalPages ? (
+      <a href={pageUrl(currentPage + 1)} class="flex items-center gap-1 px-4 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-pavao hover:text-hub-gelo transition-colors">
+        Próxima
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </a>
+    ) : (
+      <span class="flex items-center gap-1 px-4 py-2 rounded-lg font-body text-sm text-hub-chumbo/20 cursor-not-allowed">
+        Próxima
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        </svg>
+      </span>
+    )}
+
+  </nav>
+)}

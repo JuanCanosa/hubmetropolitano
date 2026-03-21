@@ -3,13 +3,23 @@ import Layout from '../../../layouts/Layout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
 import BlogCard from '../../../components/BlogCard.astro';
-import { getTag, getPosts } from '../../../lib/wordpress';
+import Pagination from '../../../components/Pagination.astro';
+import { getTag, getPosts, getPostsCount } from '../../../lib/wordpress';
 
 const { slug } = Astro.params;
 const tag = await getTag(slug!);
 if (!tag) return Astro.redirect('/blog');
 
-const posts = await getPosts({ perPage: 12, tagSlug: tag.slug });
+const currentPage = Math.max(1, parseInt(Astro.url.searchParams.get('pagina') ?? '1'));
+const perPage = 9;
+
+const [posts, totalCount] = await Promise.all([
+  getPosts({ perPage, page: currentPage, tagSlug: tag.slug }),
+  getPostsCount({ tagSlug: tag.slug }),
+]);
+
+const totalPages = Math.ceil(totalCount / perPage);
+const baseUrl = `/blog/tag/${slug}`;
 ---
 
 <Layout title={`#${tag.name} — Blog HUBMETROPOLITANO`}>
@@ -32,9 +42,12 @@ const posts = await getPosts({ perPage: 12, tagSlug: tag.slug });
 
     <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
       {posts.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map(post => <BlogCard post={post} />)}
-        </div>
+        <>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {posts.map(post => <BlogCard post={post} />)}
+          </div>
+          <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={baseUrl} />
+        </>
       ) : (
         <p class="text-center font-body text-hub-chumbo/40 py-32 text-lg">Nenhum post com esta tag ainda.</p>
       )}

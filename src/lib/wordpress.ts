@@ -77,23 +77,36 @@ const POST_FULL_FIELDS = /* GraphQL */ `
 
 export async function getPosts(params: {
   perPage?: number;
+  page?: number;
   categoryId?: number;
   tagSlug?: string;
 } = {}): Promise<WPPost[]> {
-  const { perPage = 12, categoryId, tagSlug } = params;
+  const { perPage = 9, page = 1, categoryId, tagSlug } = params;
+  const offset = (page - 1) * perPage;
 
-  const where: string[] = [];
+  const where: string[] = [`offset: ${offset}`];
   if (categoryId) where.push(`categoryId: ${categoryId}`);
   if (tagSlug) where.push(`tag: "${tagSlug}"`);
 
-  const whereStr = where.length ? `, where: { ${where.join(', ')} }` : '';
-
   const data = await gql<{ posts: { nodes: WPPost[] } }>(`{
-    posts(first: ${perPage}${whereStr}) {
+    posts(first: ${perPage}, where: { ${where.join(', ')} }) {
       nodes { ${POST_CARD_FIELDS} }
     }
   }`);
   return data?.posts?.nodes ?? [];
+}
+
+export async function getPostsCount(params: {
+  categoryId?: number;
+  tagSlug?: string;
+} = {}): Promise<number> {
+  const args: string[] = [];
+  if (params.categoryId) args.push(`categoryId: ${params.categoryId}`);
+  if (params.tagSlug) args.push(`tag: "${params.tagSlug}"`);
+
+  const argsStr = args.length ? `(${args.join(', ')})` : '';
+  const data = await gql<{ postsCount: number }>(`{ postsCount${argsStr} }`);
+  return data?.postsCount ?? 0;
 }
 
 export async function getPost(slug: string): Promise<WPPost | null> {
