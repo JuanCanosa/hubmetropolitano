@@ -33,7 +33,6 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Install rsync
         run: sudo apt-get install -y rsync
@@ -41,6 +40,6 @@ jobs:
       - name: Deploy to VPS
         run: |
           rsync -az --delete \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
             dist/ \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/hubmetropolitano/frontend/
