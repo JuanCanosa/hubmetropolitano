@@ -105,15 +105,6 @@ export async function getPost(slug: string): Promise<WPPost | null> {
   return data?.post ?? null;
 }
 
-export async function getAllPostSlugs(): Promise<string[]> {
-  const data = await gql<{ posts: { nodes: { slug: string }[] } }>(`{
-    posts(first: 1000) {
-      nodes { slug }
-    }
-  }`);
-  return data?.posts?.nodes?.map(p => p.slug) ?? [];
-}
-
 export async function getCategories(): Promise<WPCategory[]> {
   const data = await gql<{ categories: { nodes: WPCategory[] } }>(`{
     categories(first: 100, where: { hideEmpty: true }) {

@@ -3,19 +3,13 @@ import Layout from '../../../layouts/Layout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
 import BlogCard from '../../../components/BlogCard.astro';
-import { getTags, getPosts } from '../../../lib/wordpress';
+import { getTag, getPosts } from '../../../lib/wordpress';
 
-export async function getStaticPaths() {
-  const tags = await getTags();
-  return Promise.all(
-    tags.map(async tag => ({
-      params: { slug: tag.slug },
-      props: { tag, posts: await getPosts({ perPage: 12, tagId: tag.id }) },
-    }))
-  );
-}
+const { slug } = Astro.params;
+const tag = await getTag(slug!);
+if (!tag) return Astro.redirect('/blog');
 
-const { tag, posts } = Astro.props;
+const posts = await getPosts({ perPage: 12, tagId: tag.id });
 ---
 
 <Layout title={`#${tag.name} — Blog HUBMETROPOLITANO`}>

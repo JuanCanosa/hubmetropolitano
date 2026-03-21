@@ -3,12 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import { getAllPostSlugs, getPost, getPosts, formatDate } from '../../lib/wordpress';
-
-export async function getStaticPaths() {
-  const slugs = await getAllPostSlugs();
-  return slugs.map(slug => ({ params: { slug } }));
-}
+import { getPost, getPosts, formatDate } from '../../lib/wordpress';
 
 const { slug } = Astro.params;
 const post = await getPost(slug!);
