@@ -9,6 +9,9 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  image: {
+    remotePatterns: [{ protocol: 'https', hostname: 'cms.hubcentrometropolitano.com.br' }],
+  },
   vite: {
     plugins: [tailwindcss()],
   },
