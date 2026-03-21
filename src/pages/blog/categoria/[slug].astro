@@ -3,10 +3,13 @@ import Layout from '../../../layouts/Layout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
 import BlogCard from '../../../components/BlogCard.astro';
-import { getCategory, getPosts } from '../../../lib/wordpress';
+import { getCategory, getCategories, getPosts } from '../../../lib/wordpress';
 
 const { slug } = Astro.params;
-const category = await getCategory(slug!);
+const [category, allCategories] = await Promise.all([
+  getCategory(slug!),
+  getCategories(),
+]);
 if (!category) return Astro.redirect('/blog');
 
 const posts = await getPosts({ perPage: 12, categoryId: category.id });
@@ -31,13 +34,52 @@ const posts = await getPosts({ perPage: 12, categoryId: category.id });
     </section>
 
     <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
-      {posts.length > 0 ? (
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.map(post => <BlogCard post={post} />)}
+      <div class="flex gap-12">
+
+        <!-- Posts -->
+        <div class="flex-1 min-w-0">
+          {posts.length > 0 ? (
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              {posts.map(post => <BlogCard post={post} />)}
+            </div>
+          ) : (
+            <p class="text-center font-body text-hub-chumbo/40 py-32 text-lg">Nenhum post nesta categoria ainda.</p>
+          )}
         </div>
-      ) : (
-        <p class="text-center font-body text-hub-chumbo/40 py-32 text-lg">Nenhum post nesta categoria ainda.</p>
-      )}
+
+        <!-- Sidebar: todas as categorias -->
+        <aside class="w-72 hidden lg:block shrink-0">
+          <div class="bg-white rounded-xl p-6 border border-hub-gelo shadow-sm">
+            <h3 class="font-head uppercase tracking-widest text-sm font-bold text-hub-chumbo mb-5 pb-3 border-b border-hub-gelo">
+              Categorias
+            </h3>
+            <ul class="space-y-2">
+              {allCategories.map(cat => {
+                const isActive = cat.slug === slug;
+                return (
+                  <li>
+                    {isActive ? (
+                      <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-hub-pavao text-hub-gelo cursor-default">
+                        <span class="font-body text-sm font-semibold">{cat.name}</span>
+                        <span class="text-hub-gelo/60 text-xs">{cat.count}</span>
+                      </div>
+                    ) : (
+                      <a
+                        href={`/blog/categoria/${cat.slug}`}
+                        class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-hub-pavao-soft transition-colors group"
+                      >
+                        <span class="font-body text-sm text-hub-chumbo/80 group-hover:text-hub-pavao group-hover:translate-x-1 transition-all">{cat.name}</span>
+                        <span class="bg-hub-gelo text-hub-chumbo/40 text-xs px-2 py-0.5 rounded-full">{cat.count}</span>
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </aside>
+
+      </div>
     </div>
   </main>
 

@@ -29,7 +29,7 @@ const related = categories[0]
         <img src={image} alt={post.featuredImage?.node?.altText ?? post.title} class="w-full h-full object-cover opacity-30" />
       )}
       <div class="absolute inset-0 bg-gradient-to-t from-hub-chumbo/90 via-hub-chumbo/40 to-transparent" />
-      <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-4xl pb-12">
+      <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-6xl pb-12">
         {categories.length > 0 && (
           <div class="flex flex-wrap gap-2 mb-4">
             {categories.map(cat => (
@@ -47,30 +47,70 @@ const related = categories[0]
       </div>
     </div>
 
-    <!-- Content -->
-    <div class="container mx-auto px-4 lg:px-8 lg:max-w-3xl py-16">
-      <div class="wp-content" set:html={post.content} />
+    <!-- Content + Sidebar -->
+    <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
+      <div class="flex gap-12">
 
-      <!-- Tags -->
-      {tags.length > 0 && (
-        <div class="mt-12 pt-8 border-t border-hub-gelo flex flex-wrap items-center gap-2">
-          <span class="font-head uppercase tracking-widest text-xs font-bold text-hub-chumbo/40 mr-1">Tags:</span>
-          {tags.map(tag => (
-            <a href={`/blog/tag/${tag.slug}`} class="font-body text-xs px-3 py-1.5 rounded-full bg-hub-gelo text-hub-chumbo/70 hover:bg-hub-cobre hover:text-white transition-colors">
-              #{tag.name}
+        <!-- Article content -->
+        <article class="flex-1 min-w-0">
+          <div class="wp-content" set:html={post.content} />
+
+          <!-- Back -->
+          <div class="mt-12 pt-8 border-t border-hub-gelo">
+            <a href="/blog" class="inline-flex items-center font-body text-sm text-hub-chumbo/50 hover:text-hub-cobre transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+              </svg>
+              Voltar para o Blog
             </a>
-          ))}
-        </div>
-      )}
+          </div>
+        </article>
 
-      <!-- Back -->
-      <div class="mt-10">
-        <a href="/blog" class="inline-flex items-center font-body text-sm text-hub-chumbo/50 hover:text-hub-cobre transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-          Voltar para o Blog
-        </a>
+        <!-- Sidebar -->
+        <aside class="w-72 hidden lg:block shrink-0 space-y-6">
+
+          <!-- Categorias -->
+          {categories.length > 0 && (
+            <div class="bg-white rounded-xl p-6 border border-hub-gelo shadow-sm">
+              <h3 class="font-head uppercase tracking-widest text-sm font-bold text-hub-chumbo mb-4 pb-3 border-b border-hub-gelo">
+                Categorias
+              </h3>
+              <ul class="space-y-1">
+                {categories.map(cat => (
+                  <li>
+                    <a
+                      href={`/blog/categoria/${cat.slug}`}
+                      class="flex items-center gap-2 font-body text-sm text-hub-chumbo/80 hover:text-hub-cobre transition-colors py-1.5 group"
+                    >
+                      <span class="w-1.5 h-1.5 rounded-full bg-hub-cobre shrink-0 group-hover:scale-125 transition-transform"></span>
+                      <span class="group-hover:translate-x-1 transition-transform">{cat.name}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <!-- Tags -->
+          {tags.length > 0 && (
+            <div class="bg-white rounded-xl p-6 border border-hub-gelo shadow-sm">
+              <h3 class="font-head uppercase tracking-widest text-sm font-bold text-hub-chumbo mb-4 pb-3 border-b border-hub-gelo">
+                Tags
+              </h3>
+              <div class="flex flex-wrap gap-2">
+                {tags.map(tag => (
+                  <a
+                    href={`/blog/tag/${tag.slug}`}
+                    class="font-body text-xs px-3 py-1.5 rounded-full bg-hub-gelo text-hub-chumbo/70 hover:bg-hub-cobre hover:text-white transition-colors"
+                  >
+                    #{tag.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </aside>
       </div>
     </div>
 
