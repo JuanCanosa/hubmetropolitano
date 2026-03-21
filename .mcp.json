@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "e:/trabalho/HUBMETROPOLITANO/APLICACAO-WEBSITE-FRONT-END"
+      ]
+    },
+    "ssh-mcp": {
+      "command": "node",
+      "args": ["e:/trabalho/HUBMETROPOLITANO/APLICACAO-WEBSITE-FRONT-END/ssh-mcp/build/index.js"]
+    },
+    "wordpress-mcp": {
+      "command": "node",
+      "args": ["e:/trabalho/HUBMETROPOLITANO/APLICACAO-WEBSITE-FRONT-END/wordpress-mcp/build/index.js"]
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": ["-y", "chrome-devtools-mcp@latest"]
+    }
+  }
+}

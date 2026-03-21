@@ -10,7 +10,7 @@ export async function getStaticPaths() {
   return Promise.all(
     tags.map(async tag => ({
       params: { slug: tag.slug },
-      props: { tag, posts: await getPosts({ per_page: 12, tags: tag.id }) },
+      props: { tag, posts: await getPosts({ perPage: 12, tagId: tag.id }) },
     }))
   );
 }

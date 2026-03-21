@@ -3,35 +3,35 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import BlogCard from '../../components/BlogCard.astro';
-import { getPosts, getPost, formatDate } from '../../lib/wordpress';
+import { getAllPostSlugs, getPost, getPosts, formatDate } from '../../lib/wordpress';
 
 export async function getStaticPaths() {
-  const posts = await getPosts({ per_page: 100 });
-  return posts.map(post => ({ params: { slug: post.slug } }));
+  const slugs = await getAllPostSlugs();
+  return slugs.map(slug => ({ params: { slug } }));
 }
 
 const { slug } = Astro.params;
 const post = await getPost(slug!);
 if (!post) return Astro.redirect('/blog');
 
-const categories = post._embedded?.['wp:term']?.[0]?.filter(t => t.taxonomy === 'category') ?? [];
-const tags = post._embedded?.['wp:term']?.[1]?.filter(t => t.taxonomy === 'post_tag') ?? [];
-const author = post._embedded?.author?.[0]?.name;
-const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+const categories = post.categories?.nodes ?? [];
+const tags = post.tags?.nodes ?? [];
+const author = post.author?.node?.name;
+const image = post.featuredImage?.node?.sourceUrl;
 
 const related = categories[0]
-  ? (await getPosts({ per_page: 3, categories: categories[0].id })).filter(p => p.slug !== slug)
+  ? (await getPosts({ perPage: 3, categoryId: categories[0].id })).filter(p => p.slug !== slug)
   : [];
 ---
 
-<Layout title={`${post.title.rendered} — Blog HUBMETROPOLITANO`}>
+<Layout title={`${post.title} — Blog HUBMETROPOLITANO`}>
   <Header />
 
   <main>
     <!-- Hero -->
     <div class="relative h-[55vh] min-h-80 bg-hub-pavao overflow-hidden">
       {image && (
-        <img src={image} alt={post.title.rendered} class="w-full h-full object-cover opacity-30" />
+        <img src={image} alt={post.featuredImage?.node?.altText ?? post.title} class="w-full h-full object-cover opacity-30" />
       )}
       <div class="absolute inset-0 bg-gradient-to-t from-hub-chumbo/90 via-hub-chumbo/40 to-transparent" />
       <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-4xl pb-12">
@@ -44,7 +44,7 @@ const related = categories[0]
             ))}
           </div>
         )}
-        <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" set:html={post.title.rendered} />
+        <h1 class="font-display text-3xl md:text-5xl font-bold text-white mb-5 leading-tight" set:html={post.title} />
         <div class="flex items-center gap-4 font-body text-white/60 text-sm">
           {author && <span>Por <strong class="text-white/80">{author}</strong></span>}
           <time>{formatDate(post.date)}</time>
@@ -54,7 +54,7 @@ const related = categories[0]
 
     <!-- Content -->
     <div class="container mx-auto px-4 lg:px-8 lg:max-w-3xl py-16">
-      <div class="wp-content" set:html={post.content.rendered} />
+      <div class="wp-content" set:html={post.content} />
 
       <!-- Tags -->
       {tags.length > 0 && (

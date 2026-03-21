@@ -10,7 +10,7 @@ export async function getStaticPaths() {
   return Promise.all(
     categories.map(async cat => ({
       params: { slug: cat.slug },
-      props: { category: cat, posts: await getPosts({ per_page: 12, categories: cat.id }) },
+      props: { category: cat, posts: await getPosts({ perPage: 12, categoryId: cat.id }) },
     }))
   );
 }

@@ -7,15 +7,16 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const image = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-const category = post._embedded?.['wp:term']?.[0]?.find(t => t.taxonomy === 'category');
-const excerpt = stripHtml(post.excerpt.rendered).slice(0, 140) + '…';
+const image = post.featuredImage?.node?.sourceUrl;
+const imageAlt = post.featuredImage?.node?.altText ?? post.title;
+const category = post.categories?.nodes?.[0];
+const excerpt = stripHtml(post.excerpt).slice(0, 140) + '…';
 ---
 
 <article class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-hub-gelo/50 flex flex-col h-full transform hover:-translate-y-1">
   <a href={`/blog/${post.slug}`} class="block relative h-52 overflow-hidden bg-hub-pavao-soft">
     {image ? (
-      <img src={image} alt={post.title.rendered} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+      <img src={image} alt={imageAlt} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
     ) : (
       <div class="w-full h-full flex items-center justify-center">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-14 h-14 text-hub-pavao/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -35,7 +36,7 @@ const excerpt = stripHtml(post.excerpt.rendered).slice(0, 140) + '…';
       {formatDate(post.date)}
     </time>
     <h3 class="font-display text-xl font-bold text-hub-pavao mb-3 group-hover:text-hub-cobre transition-colors line-clamp-2">
-      <a href={`/blog/${post.slug}`} set:html={post.title.rendered} />
+      <a href={`/blog/${post.slug}`} set:html={post.title} />
     </h3>
     <p class="font-body text-hub-chumbo/70 text-sm line-clamp-3 mb-6 flex-grow">{excerpt}</p>
     <a href={`/blog/${post.slug}`} class="mt-auto inline-flex items-center text-hub-cobre font-body font-semibold text-sm hover:text-hub-pavao transition-colors">

@@ -6,7 +6,7 @@ import BlogCard from '../../components/BlogCard.astro';
 import { getPosts, getCategories, getTags } from '../../lib/wordpress';
 
 const [posts, categories, tags] = await Promise.all([
-  getPosts({ per_page: 9 }),
+  getPosts({ perPage: 9 }),
   getCategories(),
   getTags(),
 ]);
