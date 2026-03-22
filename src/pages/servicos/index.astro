@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro, mockBusinessesSaude } from '../../utils/mockBusinesses';
+import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro, mockBusinessesSaude, mockBusinessesEsporte } from '../../utils/mockBusinesses';
 
 const allBusinesses = [
   ...mockBusinesses.filter(b => b.type === 'digital'),
@@ -10,6 +10,7 @@ const allBusinesses = [
   ...mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos'),
   ...mockBusinessesGastro.filter(b => b.type === 'gastronomia'),
   ...mockBusinessesSaude.filter(b => b.type === 'saude'),
+  ...mockBusinessesEsporte.filter(b => b.type === 'esporte'),
 ];
 
 const typeTabs = [
@@ -19,6 +20,7 @@ const typeTabs = [
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
   { id: 'gastronomia',            label: 'Gastronomia',        count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
   { id: 'saude',                  label: 'Saúde & Bem-Estar',  count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
+  { id: 'esporte',                label: 'Esporte & Lazer',    count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length },
 ];
 
 const ltCategories = [
@@ -27,6 +29,7 @@ const ltCategories = [
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   icon: '🔧', count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,      cover: mockBusinessesTec[0].cover },
   { id: 'gastronomia',            label: 'Gastronomia',        icon: '🍽️', count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length,         cover: mockBusinessesGastro[0].cover },
   { id: 'saude',                  label: 'Saúde & Bem-Estar',  icon: '🏥', count: mockBusinessesSaude.filter(b => b.type === 'saude').length,                cover: mockBusinessesSaude[0].cover },
+  { id: 'esporte',                label: 'Esporte & Lazer',    icon: '🏋️', count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length,            cover: mockBusinessesEsporte[0].cover },
 ];
 
 const subcatGroups = [
@@ -86,6 +89,18 @@ const subcatGroups = [
       { name: 'Clínica Geral', icon: '🩺' },
     ],
   },
+  {
+    typeId: 'esporte',
+    cover: mockBusinessesEsporte[0].cover,
+    subs: [
+      { name: 'Musculação / Academias',        icon: '🏋️' },
+      { name: 'Beach Tennis / Areia',          icon: '🎾' },
+      { name: 'Crossfit / Funcional',          icon: '⚡' },
+      { name: 'Yoga & Pilates',                icon: '🧘' },
+      { name: 'Artes Marciais',                icon: '🥋' },
+      { name: 'Natação',                       icon: '🏊' },
+    ],
+  },
 ];
 
 const urgenciaConfig: Record<string, { label: string; color: string }> = {
@@ -98,6 +113,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
   if (b.type === 'servicos-tecnicos')      return `/servicos-tecnicos/${b.slug}`;
   if (b.type === 'gastronomia')            return `/gastronomia/${b.slug}`;
   if (b.type === 'saude')                  return `/saude/${b.slug}`;
+  if (b.type === 'esporte')               return `/esporte/${b.slug}`;
   return `/digital/${b.slug}`;
 }
 
@@ -163,6 +179,27 @@ function getSubcatKey(b: (typeof allBusinesses)[0]): string {
   if (cat.includes('fisio'))                                                        return 'Fisioterapia';
   if (cat.includes('nutri'))                                                        return 'Nutrição';
   if (cat.includes('clínica geral') || cat.includes('clinica') || cat.includes('família')) return 'Clínica Geral';
+  // Esporte & Lazer
+  if (cat.includes('academia') || cat.includes('musculação') || cat.includes('musculacao')) return 'Musculação / Academias';
+  if (cat.includes('beach tennis') || cat.includes('areia'))                       return 'Beach Tennis / Areia';
+  if (cat.includes('crossfit') || cat.includes('funcional'))                       return 'Crossfit / Funcional';
+  if (cat.includes('yoga') || cat.includes('pilates'))                             return 'Yoga & Pilates';
+  if (cat.includes('artes marciais') || cat.includes('luta') || cat.includes('jiu'))       return 'Artes Marciais';
+  if (cat.includes('natação') || cat.includes('natacao'))                          return 'Natação';
+  return '';
+}
+
+// Deriva a modalidade esportiva a partir da categoria, para o filtro condicional
+// TODO: WP — virá de acf.modalidade (checkbox/select field no CPT listing)
+function getModalidadeKey(b: (typeof allBusinesses)[0]): string {
+  if (b.type !== 'esporte') return '';
+  const cat = b.category.toLowerCase();
+  if (cat.includes('academia') || cat.includes('musculação') || cat.includes('musculacao')) return 'musculacao';
+  if (cat.includes('beach tennis') || cat.includes('areia'))  return 'beach-tennis';
+  if (cat.includes('crossfit') || cat.includes('funcional'))  return 'crossfit';
+  if (cat.includes('yoga') || cat.includes('pilates'))        return 'yoga-pilates';
+  if (cat.includes('artes marciais') || cat.includes('luta')) return 'artes-marciais';
+  if (cat.includes('natação') || cat.includes('natacao'))     return 'natacao';
   return '';
 }
 
@@ -231,6 +268,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
           { id: 'servicos-tecnicos',      icon: '🔧', label: 'Técnicos & Casa',     count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
           { id: 'gastronomia',            icon: '🍽️', label: 'Gastronomia',          count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
           { id: 'saude',                  icon: '🏥', label: 'Saúde & Bem-Estar',    count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
+          { id: 'esporte',                icon: '🏋️', label: 'Esporte & Lazer',      count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length },
         ].map((t, i) => (
           <button
             data-type-icon={t.id}
@@ -336,8 +374,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
               </div>
             </div>
 
-            <hr class="border-hub-gelo" />
-
             <!-- Avaliação -->
             <div>
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Avaliação</p>
@@ -439,6 +475,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                 data-empreendimento={empreendimento}
                 data-cozinha={getCozinhaKey(b)}
                 data-especialidade={getEspecialidadeKey(b)}
+                data-modalidade={getModalidadeKey(b)}
                 data-subcat={getSubcatKey(b)}
                 class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
               >
@@ -484,9 +521,12 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                     <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-base uppercase tracking-wide leading-tight">
                       {b.title}
                     </h3>
-                    {/* Ícone médico para categoria Saúde */}
+                    {/* Ícone de categoria especial */}
                     {b.type === 'saude' && (
                       <span class="text-base leading-none shrink-0" title="Saúde & Bem-Estar">🩺</span>
+                    )}
+                    {b.type === 'esporte' && (
+                      <span class="text-base leading-none shrink-0" title="Esporte & Lazer">🏋️</span>
                     )}
                     {/* Verified checkmark */}
                     <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
@@ -494,13 +534,20 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                     </svg>
                   </div>
                   <p class="font-body text-sm text-hub-chumbo/60 mt-1 leading-snug line-clamp-2">{b.tagline}</p>
-                  {/* Badge de empreendimento/polo — destaque extra para Saúde — TODO: WP: taxonomy term 'empreendimento' */}
+                  {/* Badge de localização — cor varia por tipo — TODO: WP: taxonomy term 'empreendimento' */}
                   {b.type === 'saude' ? (
                     <span class="inline-flex items-center gap-1 mt-2 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
                         <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
                       </svg>
                       {empreendimento}
+                    </span>
+                  ) : b.type === 'esporte' ? (
+                    <span class="inline-flex items-center gap-1 mt-2 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
+                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                      </svg>
+                      {b.location ?? empreendimento}
                     </span>
                   ) : (
                     <span class="inline-block mt-2 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
@@ -569,6 +616,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       'servicos-tecnicos':      ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
       gastronomia:              ['Restaurantes', 'Cafeterias', 'Delivery', 'Eventos & Buffet', 'Bares & Drinks'],
       saude:                    ['Odontologia', 'Dermatologia', 'Psicologia', 'Fisioterapia', 'Nutrição', 'Clínica Geral'],
+      esporte:                  ['Musculação / Academias', 'Beach Tennis / Areia', 'Crossfit / Funcional', 'Yoga & Pilates', 'Artes Marciais', 'Natação'],
     };
     var typeColors = {
       digital:                '#B87333',
@@ -585,9 +633,9 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     var viewGridBtn     = document.getElementById('view-grid');
     var viewListBtn     = document.getElementById('view-list');
     var cards           = document.querySelectorAll('.biz-card');
-    var subcatList        = document.getElementById('subcat-list');
-    var urgenciaSection   = document.getElementById('urgencia-section');
-    var cozinhaSection    = document.getElementById('cozinha-section');
+    var subcatList      = document.getElementById('subcat-list');
+    var urgenciaSection = document.getElementById('urgencia-section');
+    var cozinhaSection  = document.getElementById('cozinha-section');
 
     /* ── filtros ────────────────────────────────────────────────── */
     function applyFilters() {
@@ -607,12 +655,12 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         var crat = parseFloat(card.dataset.rating || '0');
         var curg = card.dataset.urgencia       || '';
         var cemp = card.dataset.empreendimento || '';
-        var ccoz = card.dataset.cozinha        || '';
+        var ccoz  = card.dataset.cozinha || '';
         var show = (t === 'all' || ct === t) &&
-                   (!sub           || csub === sub) &&
-                   (!q             || ctit.includes(q) || ccat.includes(q)) &&
-                   (!minRating     || crat >= minRating) &&
-                   (!urg           || curg === urg) &&
+                   (!sub        || csub === sub) &&
+                   (!q          || ctit.includes(q) || ccat.includes(q)) &&
+                   (!minRating  || crat >= minRating) &&
+                   (!urg        || curg === urg) &&
                    (!state.cozinha || ccoz === state.cozinha) &&
                    (empFilter.length === 0 || empFilter.indexOf(cemp) !== -1);
 

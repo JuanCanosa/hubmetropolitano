@@ -9,7 +9,7 @@ export interface ServiceItem {
 
 export interface Business {
   slug: string;
-  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia' | 'saude';
+  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia' | 'saude' | 'esporte';
   title: string;
   tagline: string;
   description: string;
@@ -708,8 +708,70 @@ export const mockBusinessesSaude: Business[] = [
   },
 ];
 
+// ─── Mock Data — LT6: Esporte & Lazer ────────────────────────────────────────
+
+export const mockBusinessesEsporte: Business[] = [
+  {
+    slug: 'metrofit-academia',
+    type: 'esporte',
+    title: 'MetroFit Academia',
+    tagline: 'A maior academia de musculação e fitness do Centro Metropolitano',
+    description:
+      'Academia de grande porte com mais de 3.000m² de área útil, equipamentos Life Fitness de última geração e equipe de personal trainers certificados. Musculação, aeróbico, aulas coletivas, crossfit e área de recuperação com sauna seca e banho de contraste. O espaço fitness definitivo da Barra da Tijuca.',
+    cover: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop',
+    location: 'Shopping Metropolitano · Barra da Tijuca',
+    lat: -22.999, lng: -43.363, rating: 4.8,
+    category: 'Academia & Musculação',
+    services: [
+      { icon: '🏋️', name: 'Musculação',         description: 'Área com mais de 200 equipamentos Life Fitness e Technogym para todos os níveis.', price: 'A partir de R$120/mês' },
+      { icon: '🏃', name: 'Aulas Coletivas',    description: 'Mais de 40 modalidades semanais: spinning, body pump, zumba, pilates e mais.', price: 'Incluso no plano' },
+      { icon: '⚡', name: 'Crossfit',           description: 'Box de crossfit com programação WOD diária e coaches experientes.', price: 'A partir de R$180/mês' },
+      { icon: '👤', name: 'Personal Trainer',   description: 'Sessões individuais com personal trainer certificado e planilha personalizada.', price: 'A partir de R$120/sessão' },
+      { icon: '🧖', name: 'Área de Recuperação', description: 'Sauna seca, banho de contraste e sala de alongamento com orientação.', price: 'Incluso no plano' },
+    ],
+  },
+  {
+    slug: 'arena-abelardo-beach-tennis',
+    type: 'esporte',
+    title: 'Arena Abelardo Beach',
+    tagline: 'A melhor arena de Beach Tennis da Barra — quadras de areia premium',
+    description:
+      'Arena de Beach Tennis com 8 quadras de areia premium, iluminação para jogo noturno e infraestrutura completa. Aulas para iniciantes e avançados, torneios mensais, aluguel avulso e pacotes de mensalidade. Equipamentos disponíveis para locação e loja especializada no local. O ponto de encontro do BT na Barra da Tijuca.',
+    cover: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?q=80&w=1600&auto=format&fit=crop',
+    location: 'Av. Abelardo Bueno · Barra da Tijuca',
+    lat: -22.997, lng: -43.357, rating: 4.9,
+    category: 'Beach Tennis & Areia',
+    services: [
+      { icon: '🎾', name: 'Aulas de Beach Tennis', description: 'Aulas coletivas e individuais para todos os níveis, com professores federados.', price: 'A partir de R$90/aula' },
+      { icon: '🏟️', name: 'Aluguel de Quadra',    description: '8 quadras com areia grossa importada e iluminação LED noturna.', price: 'R$80/hora' },
+      { icon: '🏆', name: 'Torneios Mensais',     description: 'Torneios internos e abertos com ranking atualizado e premiações.', price: 'A partir de R$60/inscrição' },
+      { icon: '🛍️', name: 'Loja Especializada',   description: 'Raquetes, bolas, roupas e acessórios das melhores marcas do Beach Tennis.', price: 'Preços variados' },
+      { icon: '📦', name: 'Planos Mensais',       description: 'Aulas ilimitadas ou pacotes com número fixo de sessões semanais.', price: 'A partir de R$280/mês' },
+    ],
+  },
+  {
+    slug: 'studio-viva-pilates',
+    type: 'esporte',
+    title: 'Studio Viva Pilates',
+    tagline: 'Pilates clínico e funcional para o seu corpo e mente — Cidade Jardim',
+    description:
+      'Estúdio boutique de Pilates com aparelhos Balanced Body e instrutores com formação em Pilates clínico. Turmas reduzidas de no máximo 4 alunos para atenção individualizada. Especialistas em reabilitação, prevenção de lesões, gestantes e atletas. Também oferecemos Yoga, meditação e TRX em ambiente sereno e acolhedor.',
+    cover: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1600&auto=format&fit=crop',
+    location: 'Cidade Jardim · Barra da Tijuca',
+    lat: -23.002, lng: -43.370, rating: 4.7,
+    category: 'Yoga & Pilates',
+    services: [
+      { icon: '🤸', name: 'Pilates no Aparelho',  description: 'Aulas semi-privadas em grupos de até 4 alunos com Reformer Balanced Body.', price: 'A partir de R$130/aula' },
+      { icon: '🧘', name: 'Yoga',                description: 'Hatha, Vinyasa e Yin Yoga com instrutoras certificadas pela Yoga Alliance.', price: 'A partir de R$70/aula' },
+      { icon: '🏥', name: 'Pilates Clínico',     description: 'Protocolo terapêutico para reabilitação, dor lombar, escoliose e pós-cirúrgico.', price: 'A partir de R$160/sessão' },
+      { icon: '🤰', name: 'Pilates Gestante',    description: 'Programa especial para gestantes com acompanhamento e adaptação de exercícios.', price: 'A partir de R$140/aula' },
+      { icon: '🧠', name: 'Meditação & TRX',     description: 'Meditação guiada e treinamento funcional em suspensão para complementar sua rotina.', price: 'A partir de R$80/sessão' },
+    ],
+  },
+];
+
 export function getBusiness(slug: string): Business | undefined {
-  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro, ...mockBusinessesSaude].find((b) => b.slug === slug);
+  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro, ...mockBusinessesSaude, ...mockBusinessesEsporte].find((b) => b.slug === slug);
 }
 
 // ─── BusinessCardProps — Template Interface para o Componente Astro de Card ───
