@@ -9,7 +9,7 @@ export interface ServiceItem {
 
 export interface Business {
   slug: string;
-  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos';
+  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia';
   title: string;
   tagline: string;
   description: string;
@@ -500,6 +500,146 @@ export const mockBusinessesTec: Business[] = [
   },
 ];
 
+// ─── Mock Data — LT4: Gastronomia ────────────────────────────────────────────
+
+export const mockBusinessesGastro: Business[] = [
+  {
+    slug: 'barra-grill',
+    type: 'gastronomia',
+    title: 'Barra Grill',
+    tagline: 'Cortes premium e churrasco artesanal no coração da Barra da Tijuca',
+    description:
+      'Restaurante especializado em carnes nobres e churrasco artesanal, com mais de 8 anos servindo a região da Barra da Tijuca. Trabalhamos com cortes importados e nacionais de primeira linha, preparo na brasa e um ambiente sofisticado para almoços de negócios ou jantares especiais. Reservas para grupos e eventos corporativos.',
+    cover:
+      'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.000, lng: -43.363, rating: 4.8,
+    category: 'Restaurantes & Grills',
+    services: [
+      {
+        icon: '🥩',
+        name: 'Almoço & Jantar',
+        description: 'Cardápio completo com entradas, cortes nobres na brasa e sobremesas artesanais.',
+        price: 'Ticket médio R$120/pessoa',
+      },
+      {
+        icon: '🍷',
+        name: 'Carta de Vinhos',
+        description: 'Seleção de rótulos nacionais e importados com sommelier disponível.',
+        price: 'A partir de R$95/garrafa',
+      },
+      {
+        icon: '👥',
+        name: 'Eventos Corporativos',
+        description: 'Aluguel do espaço VIP para confraternizações, reuniões e celebrações.',
+        price: 'Sob consulta',
+      },
+      {
+        icon: '📦',
+        name: 'Delivery Premium',
+        description: 'Cortes preparados e embalados a vácuo para consumo em casa.',
+        price: 'A partir de R$85',
+      },
+      {
+        icon: '🎂',
+        name: 'Menu Degustação',
+        description: 'Experiência de 5 tempos com harmonização guiada pelo chef.',
+        price: 'R$220/pessoa',
+      },
+    ],
+  },
+  {
+    slug: 'cafe-metropolitan',
+    type: 'gastronomia',
+    title: 'Café Metropolitan',
+    tagline: 'Cafeteria artesanal e brunch premium para o seu dia começar bem',
+    description:
+      'Cafeteria especializada em café de origem única, pães artesanais e brunch sofisticado. Ambiente aconchegante e moderno para trabalho, reuniões informais ou simplesmente um momento de qualidade. Grãos selecionados de torrefação própria e cardápio sazonal com produtos locais.',
+    cover:
+      'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -22.997, lng: -43.361, rating: 4.9,
+    category: 'Cafeterias & Padarias',
+    services: [
+      {
+        icon: '☕',
+        name: 'Cafés Especiais',
+        description: 'Espresso, filtrado, cold brew e drinks de café com grãos de origem única.',
+        price: 'A partir de R$12',
+      },
+      {
+        icon: '🥐',
+        name: 'Brunch & Café da Manhã',
+        description: 'Pães artesanais, ovos, frios selecionados e acompanhamentos sazonais.',
+        price: 'A partir de R$55/pessoa',
+      },
+      {
+        icon: '🎂',
+        name: 'Confeitaria Artesanal',
+        description: 'Bolos, tortas e doces produzidos diariamente com ingredientes frescos.',
+        price: 'A partir de R$18/fatia',
+      },
+      {
+        icon: '📦',
+        name: 'Assinatura de Café',
+        description: 'Receba em casa grãos selecionados toda semana com curadoria do barista.',
+        price: 'R$89/mês',
+      },
+      {
+        icon: '🎁',
+        name: 'Cestas & Presentes',
+        description: 'Kits gourmet personalizados para presentear com produtos da casa.',
+        price: 'A partir de R$120',
+      },
+    ],
+  },
+  {
+    slug: 'sabor-da-vila',
+    type: 'gastronomia',
+    title: 'Sabor da Vila',
+    tagline: 'Culinária brasileira contemporânea com ingredientes locais e muita personalidade',
+    description:
+      'Restaurante de culinária brasileira contemporânea com foco em ingredientes regionais e receitas reinventadas. O chef Marcos Leal traz uma visão moderna da gastronomia carioca, valorizando produtores locais e criando pratos que contam histórias. Ambiente intimista e cardápio que muda sazonalmente.',
+    cover:
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.003, lng: -43.367, rating: 4.6,
+    category: 'Culinária Brasileira',
+    services: [
+      {
+        icon: '🍽️',
+        name: 'Jantar à La Carte',
+        description: 'Cardápio sazonal com pratos inspirados na gastronomia brasileira contemporânea.',
+        price: 'Ticket médio R$95/pessoa',
+      },
+      {
+        icon: '🥗',
+        name: 'Almoço Executivo',
+        description: 'Menu simplificado e ágil para o dia a dia com entrada, prato e sobremesa.',
+        price: 'R$55/pessoa',
+      },
+      {
+        icon: '🎉',
+        name: 'Eventos & Buffet',
+        description: 'Buffet personalizado para aniversários, casamentos e eventos corporativos.',
+        price: 'Sob consulta',
+      },
+      {
+        icon: '👨‍🍳',
+        name: 'Chef em Casa',
+        description: 'O chef vai até você preparar um jantar exclusivo para até 12 pessoas.',
+        price: 'A partir de R$1.800',
+      },
+      {
+        icon: '🍱',
+        name: 'Marmitas Premium',
+        description: 'Marmitas saudáveis e saborosas entregues semanalmente com cardápio rotativo.',
+        price: 'A partir de R$32/unidade',
+      },
+    ],
+  },
+];
+
 export function getBusiness(slug: string): Business | undefined {
-  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec].find((b) => b.slug === slug);
+  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro].find((b) => b.slug === slug);
 }

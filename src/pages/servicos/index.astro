@@ -2,12 +2,13 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec } from '../../utils/mockBusinesses';
+import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro } from '../../utils/mockBusinesses';
 
 const allBusinesses = [
   ...mockBusinesses.filter(b => b.type === 'digital'),
   ...mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais'),
   ...mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos'),
+  ...mockBusinessesGastro.filter(b => b.type === 'gastronomia'),
 ];
 
 const typeTabs = [
@@ -15,12 +16,14 @@ const typeTabs = [
   { id: 'digital',                label: 'Agências Digitais', count: mockBusinesses.filter(b => b.type === 'digital').length },
   { id: 'servicos-profissionais', label: 'Profissionais B2B', count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
+  { id: 'gastronomia',            label: 'Gastronomia',        count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
 ];
 
 const ltCategories = [
   { id: 'digital',                label: 'Agências Digitais', icon: '💻', count: mockBusinesses.filter(b => b.type === 'digital').length,                cover: mockBusinesses[0].cover },
   { id: 'servicos-profissionais', label: 'Profissionais B2B', icon: '🏛️', count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length, cover: mockBusinessesB2B[0].cover },
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   icon: '🔧', count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,      cover: mockBusinessesTec[0].cover },
+  { id: 'gastronomia',            label: 'Gastronomia',        icon: '🍽️', count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length,         cover: mockBusinessesGastro[0].cover },
 ];
 
 const subcatGroups = [
@@ -57,6 +60,17 @@ const subcatGroups = [
       { name: 'Transporte',           icon: '🚚' },
     ],
   },
+  {
+    typeId: 'gastronomia',
+    cover: mockBusinessesGastro[0].cover,
+    subs: [
+      { name: 'Restaurantes',     icon: '🍽️' },
+      { name: 'Cafeterias',       icon: '☕' },
+      { name: 'Delivery',         icon: '🛵' },
+      { name: 'Eventos & Buffet', icon: '🎉' },
+      { name: 'Bares & Drinks',   icon: '🍹' },
+    ],
+  },
 ];
 
 const urgenciaConfig: Record<string, { label: string; color: string }> = {
@@ -67,16 +81,29 @@ const urgenciaConfig: Record<string, { label: string; color: string }> = {
 function getBusinessUrl(b: (typeof allBusinesses)[0]) {
   if (b.type === 'servicos-profissionais') return `/servicos-profissionais/${b.slug}`;
   if (b.type === 'servicos-tecnicos')      return `/servicos-tecnicos/${b.slug}`;
+  if (b.type === 'gastronomia')            return `/gastronomia/${b.slug}`;
   return `/digital/${b.slug}`;
 }
+
+// TODO: WP — este array virá de uma Custom Taxonomy 'empreendimento' do WordPress
+// Substituir por: await fetch(`${WP_API}/wp-json/wp/v2/empreendimento`)
+const empreendimentos = [
+  'Cidade Jardim', 'Rio2', 'Ilha Pura', 'Union Square',
+  'Worldwide Offices', 'CEO', 'Metropolitan',
+];
+
+// TODO: WP — o campo 'empreendimento' virá do meta field (ACF) no CPT 'listing'
+// Substituir por: post.acf.empreendimento || post.meta._empreendimento
+// Por enquanto, atribuição estática cíclica para validação de layout
+const bizEmpreendimento: Record<string, string> = Object.fromEntries(
+  allBusinesses.map((b, i) => [b.slug, empreendimentos[i % empreendimentos.length]])
+);
 ---
 
 <Layout
   title="Serviços — HUBMETROPOLITANO"
   description="Agências digitais, profissionais B2B e técnicos especializados verificados na Barra da Tijuca."
 >
-  <link slot="head" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <Header />
 
   <main>
@@ -109,6 +136,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
           { id: 'digital',                icon: '💻', label: 'Agências Digitais',   count: mockBusinesses.filter(b => b.type === 'digital').length },
           { id: 'servicos-profissionais', icon: '🏛️', label: 'Profissionais B2B',   count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
           { id: 'servicos-tecnicos',      icon: '🔧', label: 'Técnicos & Casa',     count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
+          { id: 'gastronomia',            icon: '🍽️', label: 'Gastronomia',          count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
         ].map((t, i) => (
           <button
             data-type-icon={t.id}
@@ -126,16 +154,40 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       </div>
     </div>
 
-    <!-- 3-column layout -->
-    <div class="flex items-start relative">
+    <!-- Layout: sidebar + grid de resultados -->
+    <div class="flex items-start pt-[30px]">
 
-      <!-- ── Coluna 1: Sidebar Filtros / Categorias ────────────────── -->
-      <div id="sidebar" class="hidden lg:flex w-[20%] shrink-0 flex-col bg-white border-r border-hub-gelo">
+      <!-- ── Sidebar de Filtros ─────────────────────────────────────── -->
+      <aside id="sidebar" class="hidden lg:flex w-[280px] shrink-0 flex-col bg-white border-r border-hub-gelo">
 
         <!-- Filtros -->
         <div id="panel-filtros" class="flex-1 overflow-y-auto flex flex-col min-h-0">
 
           <div class="flex-1 p-4 flex flex-col gap-5">
+
+            <!--
+              Localização / Empreendimento
+              TODO: WP — os itens desta lista virão de uma Custom Taxonomy 'empreendimento'
+              Fetch: GET /wp-json/wp/v2/empreendimento?per_page=100
+              Renderizar dinamicamente substituindo a lista estática abaixo
+            -->
+            <div>
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Localização</p>
+              <div class="flex flex-col gap-2">
+                {empreendimentos.map(emp => (
+                  <label class="flex items-center gap-2.5 cursor-pointer group">
+                    <input
+                      type="checkbox"
+                      data-empreendimento-filter={emp}
+                      class="empreendimento-cb w-4 h-4 rounded border-hub-gelo text-hub-pavao accent-hub-pavao cursor-pointer shrink-0"
+                    />
+                    <span class="font-body text-sm text-hub-chumbo/70 group-hover:text-hub-pavao transition-colors">{emp}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <hr class="border-hub-gelo" />
 
             <!-- O que você procura? -->
             <div>
@@ -169,7 +221,6 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
                 <button data-urgencia="sim-24h"      class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors">⚡ Urgência 24h</button>
                 <button data-urgencia="sim-comercial" class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors">✓ Horário comercial</button>
               </div>
-              <hr class="border-hub-gelo mt-5" />
             </div>
 
           </div>
@@ -186,10 +237,11 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
 
         </div>
 
-      </div>
+      </aside>
 
-      <!-- ── Coluna 2: Cards ────────────────────────────────────────── -->
-      <div id="left-panel" class="w-full lg:w-[20%] shrink-0 bg-hub-gelo min-w-0">
+      <!-- ── Área de Resultados ────────────────────────────────────── -->
+      <!-- TODO: WP — substituir allBusinesses pelo resultado da query ao WP REST API -->
+      <div id="results-panel" class="flex-1 min-w-0 bg-hub-gelo">
 
         <!-- Compact bar: count + toggle -->
         <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center justify-between gap-3">
@@ -210,12 +262,16 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
           </div>
         </div>
 
-        <!-- Cards grid -->
-        <div id="listings-container" class="grid grid-cols-1 gap-4 p-4 lg:p-5">
+        <!-- Cards grid — responsivo: 1 col mobile / 2 tablet / 3 desktop -->
+        <div id="listings-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 lg:p-6">
+          {/* TODO: WP — substituir allBusinesses por posts vindos do WP REST API */}
+          {/* GET /wp-json/wp/v2/listing?per_page=12&_embed&empreendimento=<id> */}
           {allBusinesses.map(b => {
-            const url      = getBusinessUrl(b);
-            const urgencia = b.atendeUrgencia && b.atendeUrgencia !== 'nao' ? urgenciaConfig[b.atendeUrgencia] : null;
-            const preview  = b.services.slice(0, 3);
+            const url           = getBusinessUrl(b);
+            const hasUrgencia   = b.atendeUrgencia === 'sim-24h';
+            const stars         = b.rating ? '★'.repeat(Math.round(b.rating)) + '☆'.repeat(5 - Math.round(b.rating)) : null;
+            // TODO: WP — virá de b.acf.empreendimento ou taxonomy term
+            const empreendimento = bizEmpreendimento[b.slug];
             return (
               <a
                 href={url}
@@ -227,81 +283,90 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
                 data-lng={b.lng}
                 data-rating={b.rating ?? 0}
                 data-urgencia={b.atendeUrgencia ?? ''}
-                class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                data-cover={b.cover}
+                data-logo={b.logo ?? ''}
+                data-tagline={b.tagline}
+                data-description={b.description}
+                data-location={b.location ?? ''}
+                data-faixa={b.faixaHonorarios ?? ''}
+                data-cat-label={b.category}
+                data-empreendimento={empreendimento}
+                class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
               >
-                <div class="card-cover relative h-44 overflow-hidden bg-hub-pavao-profundo shrink-0">
-                  <img src={b.cover} alt={b.title} loading="lazy"
-                    class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500" />
-                  <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/80 via-hub-pavao-profundo/20 to-transparent" />
+                {/* Cover + logo wrapper */}
+                <div class="relative">
+                  {/* Image (clipped) */}
+                  <div class="card-cover relative h-44 overflow-hidden rounded-t-2xl bg-hub-pavao-profundo shrink-0">
+                    <img src={b.cover} alt={b.title} loading="lazy"
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
 
-                  <span class="absolute top-3 right-3 bg-hub-cobre text-white text-[10px] font-head font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                    {b.category.split(' ')[0]}
-                  </span>
+                    {/* Badge row at top of image */}
+                    <div class="absolute top-0 left-0 right-0 flex items-center gap-1 p-2">
+                      {hasUrgencia && (
+                        <span class="flex items-center justify-center w-7 h-7 rounded bg-amber-500 text-white text-sm shrink-0" title="Urgência 24h">⚡</span>
+                      )}
+                      {b.faixaHonorarios && (
+                        <span class="bg-black/65 backdrop-blur-sm text-white text-[11px] font-body px-2 py-1 rounded">$$</span>
+                      )}
+                      {stars && (
+                        <span class="bg-black/65 backdrop-blur-sm text-amber-400 text-[11px] font-body px-2 py-1 rounded tracking-tight">{stars}</span>
+                      )}
+                      {b.rating && (
+                        <span class="bg-black/65 backdrop-blur-sm text-white text-[11px] font-body font-semibold px-2 py-1 rounded">{b.rating.toFixed(1)}</span>
+                      )}
+                      <span class="ml-auto bg-white text-hub-chumbo text-[11px] font-body font-semibold px-2.5 py-1 rounded shadow">Ver Perfil</span>
+                    </div>
+                  </div>
 
-                  {urgencia && (
-                    <span class={`absolute top-3 left-3 text-xs font-body font-semibold px-2.5 py-1 rounded-full ${urgencia.color}`}>
-                      {urgencia.label}
-                    </span>
-                  )}
-
-                  <span class="absolute bottom-3 right-3 inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm text-hub-pavao text-[10px] font-body font-bold px-2 py-1 rounded-full shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
-                      <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 0 0 0-5.304 3 3 0 0 0-3.75-3.751 3 3 0 0 0-5.305 0 3 3 0 0 0-3.751 3.75 3 3 0 0 0 0 5.305 3 3 0 0 0 3.75 3.751 3 3 0 0 0 5.305 0 3 3 0 0 0 3.751-3.75Zm-2.546-4.46a.75.75 0 0 0-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
-                    </svg>
-                    Verificado
-                  </span>
-
+                  {/* Logo overlapping image bottom */}
                   {b.logo ? (
-                    <img src={b.logo} alt={b.title} class="absolute bottom-3 left-3 w-10 h-10 rounded-full border-2 border-white object-cover bg-white shadow" />
+                    <img src={b.logo} alt={b.title}
+                      class="absolute bottom-0 translate-y-1/2 left-3 w-14 h-14 rounded-full border-2 border-white object-cover bg-white shadow-md z-10" />
                   ) : (
-                    <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow">
-                      <span class="text-white font-head font-bold text-sm">{b.title.charAt(0)}</span>
+                    <div class="absolute bottom-0 translate-y-1/2 left-3 w-14 h-14 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow-md z-10">
+                      <span class="text-white font-head font-bold text-xl">{b.title.charAt(0)}</span>
                     </div>
                   )}
                 </div>
 
-                <div class="card-body flex flex-col flex-1 p-5 gap-2">
-                  <div class="flex items-start justify-between gap-2">
-                    <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-lg uppercase tracking-wide leading-tight">
+                {/* Card body */}
+                <div class="card-body pt-9 px-4 pb-2">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-base uppercase tracking-wide leading-tight">
                       {b.title}
                     </h3>
-                    {b.rating && (
-                      <span class="shrink-0 font-body text-hub-cobre text-sm font-semibold">★ {b.rating}</span>
-                    )}
+                    {/* Verified checkmark */}
+                    <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.491 4.491 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+                    </svg>
                   </div>
-
-                  <p class="font-body text-sm text-hub-chumbo/60 leading-snug">{b.tagline}</p>
-
-                  {b.location && (
-                    <div class="flex items-center gap-1.5 text-hub-chumbo/40 text-xs font-body">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0">
-                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
-                      </svg>
-                      {b.location}
-                    </div>
-                  )}
-
-                  <div class="flex flex-wrap gap-1.5 mt-auto pt-1">
-                    {preview.map(s => (
-                      <span class="inline-flex items-center gap-1 bg-hub-gelo text-hub-chumbo/70 text-xs font-body px-2.5 py-1 rounded-full">
-                        <span>{s.icon}</span><span>{s.name}</span>
-                      </span>
-                    ))}
-                    {b.services.length > 3 && (
-                      <span class="inline-flex items-center bg-hub-pavao-soft text-hub-pavao text-xs font-body px-2.5 py-1 rounded-full">
-                        +{b.services.length - 3}
-                      </span>
-                    )}
-                  </div>
+                  <p class="font-body text-sm text-hub-chumbo/60 mt-1 leading-snug line-clamp-2">{b.tagline}</p>
+                  {/* Badge de empreendimento — TODO: WP: taxonomy term 'empreendimento' */}
+                  <span class="inline-block mt-2 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                    {empreendimento}
+                  </span>
                 </div>
 
-                <div class="card-footer px-5 pb-4 pt-0">
-                  <span class="inline-flex items-center gap-1.5 text-hub-cobre text-sm font-body group-hover:gap-3 transition-all">
-                    Ver perfil completo
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                {/* Card footer */}
+                <div class="card-footer flex items-center justify-between px-4 py-3 mt-auto">
+                  <span class="flex items-center gap-1.5 border border-hub-gelo rounded-full px-2.5 py-1 text-xs font-body text-hub-chumbo/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3 h-3 text-red-400 shrink-0">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
+                    {b.category.split(' ')[0]}
                   </span>
+                  <div class="flex items-center gap-2">
+                    <button onclick="event.preventDefault();event.stopPropagation();openQuickView(this.closest('.biz-card'))" class="p-2 rounded-full text-hub-chumbo/40 hover:bg-hub-gelo hover:text-hub-pavao transition-colors" aria-label="Quick view">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                      </svg>
+                    </button>
+                    <button onclick="event.preventDefault();event.stopPropagation()" class="p-2 rounded-full text-hub-chumbo/40 hover:bg-hub-pavao hover:text-white transition-colors" aria-label="Favoritar">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </a>
             );
@@ -314,25 +379,19 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
         </div>
       </div>
 
-      <!-- ── Coluna 3: Mapa ─────────────────────────────────────────── -->
-      <div id="map-panel" class="hidden lg:block w-[60%] shrink-0 sticky">
-        <div id="map" class="w-full h-full"></div>
-      </div>
-
     </div>
   </main>
 
   <Footer />
 
-  <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
   <script is:inline>
   (function () {
     var subcategoriesByType = {
-      all:                    [],
-      digital:                ['Marketing Digital', 'Dev Web & Apps', 'Design Visual', 'Tráfego & Growth', 'Automação'],
+      all:                      [],
+      digital:                  ['Marketing Digital', 'Dev Web & Apps', 'Design Visual', 'Tráfego & Growth', 'Automação'],
       'servicos-profissionais': ['Contabilidade', 'Imobiliária', 'Seguros', 'Consultoria', 'RH'],
-      'servicos-tecnicos':    ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
+      'servicos-tecnicos':      ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
+      gastronomia:              ['Restaurantes', 'Cafeterias', 'Delivery', 'Eventos & Buffet', 'Bares & Drinks'],
     };
     var typeColors = {
       digital:                '#B87333',
@@ -340,7 +399,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       'servicos-tecnicos':    '#374151',
     };
 
-    var state = { query: '', type: 'all', subcategory: '', minRating: 0, urgencia: '', view: 'grid' };
+    var state = { query: '', type: 'all', subcategory: '', minRating: 0, urgencia: '', empreendimentos: [], view: 'grid' };
 
     var searchInput   = document.getElementById('search-input');
     var listingsCont  = document.getElementById('listings-container');
@@ -348,104 +407,37 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     var noResults     = document.getElementById('no-results');
     var viewGridBtn   = document.getElementById('view-grid');
     var viewListBtn   = document.getElementById('view-list');
-    var tabBtns       = document.querySelectorAll('.tab-btn');
-    var cards         = document.querySelectorAll('.biz-card');
-    var leftPanel     = document.getElementById('left-panel');
-    var subcatList    = document.getElementById('subcat-list');
+    var cards           = document.querySelectorAll('.biz-card');
+    var subcatList      = document.getElementById('subcat-list');
     var urgenciaSection = document.getElementById('urgencia-section');
-    var panelFiltros    = document.getElementById('panel-filtros');
-
-    /* ── offset dinâmico ────────────────────────────────────────── */
-    function updateOffset() {
-      var header  = document.querySelector('header');
-      var iconBar = document.querySelector('.type-icon-btn')?.closest('div[class*="sticky"]');
-      var h1 = header  ? header.offsetHeight  : 64;
-      var h2 = iconBar ? iconBar.offsetHeight : 72;
-      document.documentElement.style.setProperty('--map-offset', (h1 + h2) + 'px');
-    }
-    updateOffset();
-    window.addEventListener('resize', updateOffset);
-
-    /* ── mapa ───────────────────────────────────────────────────── */
-    var map = L.map('map', { zoomControl: true, scrollWheelZoom: true })
-               .setView([-22.999, -43.365], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 18,
-    }).addTo(map);
-
-    var markersLayer  = L.layerGroup().addTo(map);
-    var markersBySlug = {};
-
-    function makeIcon(color) {
-      return L.divIcon({
-        className: '',
-        html: '<div style="width:34px;height:34px;background:' + color + ';border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;">' +
-              '<div style="width:8px;height:8px;background:white;border-radius:50%;"></div></div>',
-        iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -18],
-      });
-    }
-
-    function buildMarker(card) {
-      var lat  = parseFloat(card.dataset.lat  || '');
-      var lng  = parseFloat(card.dataset.lng  || '');
-      var slug = card.dataset.slug || '';
-      var type = card.dataset.type || '';
-      if (!lat || !lng) return null;
-      var h3    = card.querySelector('h3');
-      var title = h3 ? h3.textContent.trim() : slug;
-      var cat   = (card.dataset.category || '').split(' ')[0];
-      var color = typeColors[type] || '#B87333';
-      var marker = L.marker([lat, lng], { icon: makeIcon(color) })
-        .bindPopup(
-          '<div class="map-popup"><div class="map-popup-title">' + title + '</div>' +
-          '<div class="map-popup-cat">' + cat + '</div></div>',
-          { maxWidth: 200, closeButton: false }
-        );
-      marker.on('click', function () {
-        var el = document.querySelector('.biz-card[data-slug="' + slug + '"]');
-        if (el && leftPanel) {
-          var panelRect = leftPanel.getBoundingClientRect();
-          var cardRect  = el.getBoundingClientRect();
-          leftPanel.scrollTo({ top: cardRect.top - panelRect.top + leftPanel.scrollTop - 80, behavior: 'smooth' });
-          el.classList.add('map-highlight');
-          setTimeout(function () { el.classList.remove('map-highlight'); }, 1500);
-        }
-      });
-      return marker;
-    }
 
     /* ── filtros ────────────────────────────────────────────────── */
     function applyFilters() {
-      var q         = state.query.toLowerCase();
-      var t         = state.type;
-      var sub       = state.subcategory.toLowerCase();
-      var minRating = state.minRating;
-      var urg       = state.urgencia;
-      var visible   = 0;
-
-      markersLayer.clearLayers();
+      var q          = state.query.toLowerCase();
+      var t          = state.type;
+      var sub        = state.subcategory.toLowerCase();
+      var minRating  = state.minRating;
+      var urg        = state.urgencia;
+      var empFilter  = state.empreendimentos; // array de strings selecionadas
+      var visible    = 0;
 
       cards.forEach(function (card) {
-        var ct     = card.dataset.type     || '';
-        var ccat   = card.dataset.category || '';
-        var ctitle = card.dataset.title    || '';
-        var slug   = card.dataset.slug     || '';
-        var crat   = parseFloat(card.dataset.rating   || '0');
-        var curg   = card.dataset.urgencia || '';
+        var ct   = card.dataset.type          || '';
+        var ccat = card.dataset.category      || '';
+        var ctit = card.dataset.title         || '';
+        var crat = parseFloat(card.dataset.rating    || '0');
+        var curg = card.dataset.urgencia      || '';
+        var cemp = card.dataset.empreendimento || '';
 
         var show = (t === 'all' || ct === t) &&
-                   (!sub  || ccat.includes(sub)) &&
-                   (!q    || ctitle.includes(q) || ccat.includes(q)) &&
+                   (!sub       || ccat.includes(sub)) &&
+                   (!q         || ctit.includes(q) || ccat.includes(q)) &&
                    (!minRating || crat >= minRating) &&
-                   (!urg  || curg === urg);
+                   (!urg       || curg === urg) &&
+                   (empFilter.length === 0 || empFilter.indexOf(cemp) !== -1);
 
         card.style.display = show ? '' : 'none';
-        if (show) {
-          visible++;
-          if (!markersBySlug[slug]) markersBySlug[slug] = buildMarker(card);
-          if (markersBySlug[slug])  markersLayer.addLayer(markersBySlug[slug]);
-        }
+        if (show) visible++;
       });
 
       if (resultsCount) resultsCount.textContent = visible + ' encontrados';
@@ -583,11 +575,18 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       });
     }
 
-    /* ── hover card → popup mapa ────────────────────────────────── */
-    cards.forEach(function (card) {
-      var slug = card.dataset.slug;
-      card.addEventListener('mouseenter', function () { var m = markersBySlug[slug]; if (m) m.openPopup(); });
-      card.addEventListener('mouseleave', function () { var m = markersBySlug[slug]; if (m) m.closePopup(); });
+    /* ── filtro empreendimento (checkboxes) ─────────────────────── */
+    // TODO: WP — quando os dados vierem da API, os checkboxes serão gerados dinamicamente
+    document.querySelectorAll('.empreendimento-cb').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var emp = cb.dataset.empreendimentoFilter || '';
+        if (cb.checked) {
+          if (state.empreendimentos.indexOf(emp) === -1) state.empreendimentos.push(emp);
+        } else {
+          state.empreendimentos = state.empreendimentos.filter(function (e) { return e !== emp; });
+        }
+        applyFilters();
+      });
     });
 
     /* ── init ───────────────────────────────────────────────────── */
@@ -596,44 +595,159 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     setRating(0);
     setUrgencia('');
     applyFilters();
+
+    /* ── quickview ──────────────────────────────────────────────── */
+    window.openQuickView = function (card) {
+      if (!card) return;
+      var d = card.dataset;
+      document.getElementById('qv-cover').src = d.cover || '';
+      document.getElementById('qv-cover').alt = d.title || '';
+      document.getElementById('qv-title').textContent = d.title || '';
+      document.getElementById('qv-description').textContent = d.description || '';
+      document.getElementById('qv-category').textContent = d.catLabel || '';
+
+      var locRow = document.getElementById('qv-location-row');
+      var locEl  = document.getElementById('qv-location');
+      if (d.location) { locEl.textContent = d.location; locRow.style.display = 'flex'; }
+      else { locRow.style.display = 'none'; }
+
+      var logoImg  = document.getElementById('qv-logo');
+      var logoInit = document.getElementById('qv-logo-initial');
+      if (d.logo) {
+        logoImg.src = d.logo; logoImg.style.display = ''; logoInit.style.display = 'none';
+      } else {
+        logoImg.style.display = 'none';
+        logoInit.textContent = (d.title || 'X').charAt(0).toUpperCase();
+        logoInit.style.display = '';
+      }
+
+      document.getElementById('qv-badge-urgencia').style.display = d.urgencia === 'sim-24h' ? 'flex' : 'none';
+      document.getElementById('qv-badge-price').style.display    = d.faixa ? '' : 'none';
+
+      var rating  = parseFloat(d.rating || '0');
+      var starsEl = document.getElementById('qv-badge-stars');
+      var scoreEl = document.getElementById('qv-badge-score');
+      if (rating > 0) {
+        starsEl.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
+        starsEl.style.display = ''; scoreEl.textContent = rating.toFixed(1); scoreEl.style.display = '';
+      } else {
+        starsEl.style.display = 'none'; scoreEl.style.display = 'none';
+      }
+
+      document.getElementById('qv-cta').href = card.getAttribute('href') || '#';
+      document.getElementById('qv-overlay').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    function closeQuickView() {
+      document.getElementById('qv-overlay').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('qv-close-btn').addEventListener('click', closeQuickView);
+    document.getElementById('qv-overlay').addEventListener('click', function (e) {
+      if (e.target === this) closeQuickView();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeQuickView(); });
+
   })();
   </script>
+
+  <!-- ── QuickView Lightbox ─────────────────────────────────────── -->
+  <div id="qv-overlay" class="fixed inset-0 z-50 items-center justify-center p-4" style="display:none;background:rgba(0,0,0,0.65)">
+    <div id="qv-modal" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" style="max-height:90vh;overflow-y:auto">
+
+      <!-- Cover -->
+      <div class="relative h-56 shrink-0">
+        <img id="qv-cover" src="" alt="" class="w-full h-full object-cover" />
+        <div class="absolute top-0 left-0 right-0 flex items-center gap-1 p-3">
+          <span id="qv-badge-urgencia" class="items-center justify-center w-7 h-7 rounded bg-amber-500 text-white text-sm" style="display:none">⚡</span>
+          <span id="qv-badge-price" class="bg-black/65 text-white text-[11px] font-body px-2 py-1 rounded" style="display:none">$$</span>
+          <span id="qv-badge-stars" class="bg-black/65 text-amber-400 text-[11px] font-body px-2 py-1 rounded tracking-tight"></span>
+          <span id="qv-badge-score" class="bg-black/65 text-white text-[11px] font-body font-semibold px-2 py-1 rounded" style="display:none"></span>
+        </div>
+        <button id="qv-close-btn" class="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-1.5 text-hub-chumbo transition-colors shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-4 h-4">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+        <!-- Logo overlapping -->
+        <div class="absolute -bottom-6 left-5 w-14 h-14 rounded-full border-2 border-white shadow-md bg-hub-pavao flex items-center justify-center overflow-hidden z-10">
+          <img id="qv-logo" src="" alt="" class="w-full h-full object-cover" style="display:none" />
+          <span id="qv-logo-initial" class="text-white font-head font-bold text-xl" style="display:none"></span>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="pt-9 px-5 pb-4 border-b border-hub-gelo">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <h2 id="qv-title" class="font-head font-bold text-hub-chumbo text-lg uppercase tracking-wide leading-tight"></h2>
+          <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.491 4.491 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div id="qv-location-row" class="items-center gap-1.5 mt-1.5 text-hub-chumbo/60 text-sm font-body" style="display:none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0 text-hub-cobre">
+            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+          </svg>
+          <span id="qv-location"></span>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="px-5 py-5 space-y-5">
+        <div>
+          <h3 class="flex items-center gap-2 font-head font-bold text-hub-chumbo text-xs uppercase tracking-widest mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-hub-cobre">
+              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+            Descrição
+          </h3>
+          <p id="qv-description" class="font-body text-sm text-hub-chumbo/70 leading-relaxed"></p>
+        </div>
+        <div>
+          <h3 class="flex items-center gap-2 font-head font-bold text-hub-chumbo text-xs uppercase tracking-widest mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-hub-cobre">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Categorias
+          </h3>
+          <div class="flex items-center gap-3">
+            <span class="w-9 h-9 rounded-full bg-red-500 flex items-center justify-center text-white shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-4 h-4">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </span>
+            <span id="qv-category" class="font-body text-hub-chumbo text-sm font-medium"></span>
+          </div>
+        </div>
+        <a id="qv-cta" href="#" class="flex items-center justify-center gap-2 w-full bg-hub-pavao text-white font-head font-semibold uppercase tracking-wide text-sm py-3 rounded-xl hover:bg-hub-pavao-profundo transition-colors">
+          Ver Perfil Completo
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
 </Layout>
 
 <style>
+  /* Sidebar sticky — ocupa altura disponível abaixo do header + icon bar */
   @media (min-width: 1024px) {
     #sidebar {
       position: sticky;
-      top: var(--map-offset, 114px);
-      height: calc(100vh - var(--map-offset, 114px));
+      top: 136px; /* header ~64px + icon bar ~72px */
+      height: calc(100vh - 136px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
-    #left-panel {
-      height: calc(100vh - var(--map-offset, 114px));
-      overflow-y: auto;
-    }
-    #map-panel {
-      position: sticky;
-      top: var(--map-offset, 114px);
-      height: calc(100vh - var(--map-offset, 114px));
-    }
   }
 
+  /* View lista: colapsa para coluna única */
   #listings-container.is-list-view { grid-template-columns: 1fr !important; }
   #listings-container.is-list-view .biz-card { flex-direction: row; }
   #listings-container.is-list-view .card-cover { width: 160px; min-width: 160px; height: auto; min-height: 130px; }
   #listings-container.is-list-view .card-footer { display: none; }
-
-  .biz-card.map-highlight {
-    box-shadow: 0 0 0 3px #B87333, 0 12px 28px rgba(0,0,0,.15) !important;
-    transform: translateY(-4px) !important;
-  }
-
-  .leaflet-popup-content-wrapper { border-radius: 12px !important; padding: 0 !important; box-shadow: 0 8px 24px rgba(0,0,0,.18) !important; }
-  .leaflet-popup-content { margin: 0 !important; }
-  .map-popup { padding: 10px 14px; min-width: 150px; }
-  .map-popup-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: #002C2D; margin-bottom: 3px; }
-  .map-popup-cat { font-family: 'Barlow', sans-serif; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #B87333; }
 </style>
