@@ -208,13 +208,45 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
           </button>
         ))}
       </div>
+      <!-- Mobile search — aparece quando o hero sai da viewport (só mobile) -->
+      <div id="mobile-top-search" class="lg:hidden hidden px-4 pb-3 pt-1">
+        <div class="relative">
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-hub-chumbo/40 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input
+            id="mobile-search-input"
+            type="text"
+            placeholder="Buscar serviço, especialidade..."
+            class="w-full bg-hub-gelo text-hub-chumbo font-body text-sm pl-9 pr-4 py-2.5 rounded-full border border-hub-gelo/80 focus:outline-none focus:ring-2 focus:ring-hub-cobre/40 transition-all"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Subcategorias mobile — chips horizontais rolável (só mobile) -->
+    <div id="mobile-subcat-bar" class="lg:hidden hidden bg-white border-b border-hub-gelo/60 sticky top-[64px] z-19">
+      <div id="mobile-subcat-list" class="flex items-center gap-2 overflow-x-auto px-4 py-2.5" style="scrollbar-width: none; -ms-overflow-style: none;"></div>
     </div>
 
     <!-- Layout: sidebar + grid de resultados -->
     <div class="flex items-start pt-[30px]">
 
+      <!-- Backdrop mobile drawer -->
+      <div id="drawer-backdrop" class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden" style="display:none" aria-hidden="true"></div>
+
       <!-- ── Sidebar de Filtros ─────────────────────────────────────── -->
-      <aside id="sidebar" class="hidden lg:flex w-[280px] shrink-0 flex-col bg-white border-r border-hub-gelo">
+      <aside id="sidebar" class="bg-white border-r border-hub-gelo shrink-0">
+
+        <!-- Cabeçalho do drawer (só mobile) -->
+        <div class="flex items-center justify-between px-4 py-4 border-b border-hub-gelo lg:hidden">
+          <span class="font-head font-bold text-hub-pavao uppercase tracking-wider text-sm">Filtros</span>
+          <button id="close-drawer-btn" class="p-2 rounded-full hover:bg-hub-gelo transition-colors text-hub-chumbo" aria-label="Fechar filtros">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
         <!-- Filtros -->
         <div id="panel-filtros" class="flex-1 overflow-y-auto flex flex-col min-h-0">
@@ -231,7 +263,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Localização</p>
               <div class="flex flex-col gap-2">
                 {empreendimentos.map(emp => (
-                  <label class="flex items-center gap-2.5 cursor-pointer group">
+                  <label class="flex items-center gap-2.5 cursor-pointer group min-h-[44px]">
                     <input
                       type="checkbox"
                       data-empreendimento-filter={emp}
@@ -254,7 +286,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
             </div>
 
             <!-- Tipo de Cozinha (só Gastronomia) — oculto por padrão -->
-            <div id="cozinha-section" style="display:none">
+            <div id="cozinha-section" class="filter-collapsible">
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Tipo de Cozinha</p>
               <div class="flex flex-wrap gap-1.5">
                 <button data-cozinha="" class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao">Todas</button>
@@ -284,7 +316,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
             <hr class="border-hub-gelo" />
 
             <!-- Urgência (só LT3) — oculto por padrão -->
-            <div id="urgencia-section" style="display:none">
+            <div id="urgencia-section" class="filter-collapsible">
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Urgência</p>
               <div class="flex flex-col gap-1.5">
                 <button data-urgencia=""             class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors bg-hub-pavao text-white border-hub-pavao">Todas</button>
@@ -314,8 +346,15 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       <div id="results-panel" class="flex-1 min-w-0 bg-hub-gelo">
 
         <!-- Compact bar: count + toggle -->
-        <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center justify-between gap-3">
-          <p id="results-count" class="font-body text-hub-chumbo/50 text-sm whitespace-nowrap">
+        <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center gap-3">
+          <!-- Botão Filtros (só mobile) -->
+          <button id="open-drawer-btn" class="lg:hidden flex items-center gap-1.5 min-h-[44px] px-3 bg-white border border-hub-gelo rounded-lg text-hub-chumbo/70 font-body text-sm hover:border-hub-pavao hover:text-hub-pavao transition-colors shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+            </svg>
+            Filtros
+          </button>
+          <p id="results-count" class="font-body text-hub-chumbo/50 text-sm whitespace-nowrap flex-1">
             {allBusinesses.length} encontrados
           </p>
           <div class="flex items-center gap-0.5 bg-white border border-hub-gelo rounded-lg p-1 shadow-sm shrink-0">
@@ -458,9 +497,23 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
           })}
         </div>
 
-        <div id="no-results" class="hidden px-6 py-20 text-center">
-          <p class="font-head font-bold text-hub-pavao text-xl uppercase mb-2">Nenhum resultado</p>
-          <p class="font-body text-hub-chumbo/50 text-sm">Tente outros termos ou remova os filtros.</p>
+        <div id="no-results" class="px-6 py-16 text-center" style="display:none">
+          <div class="w-16 h-16 rounded-full bg-hub-pavao-soft flex items-center justify-center mx-auto mb-5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7 text-hub-pavao/50">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+          </div>
+          <p class="font-head font-bold text-hub-pavao text-xl uppercase tracking-wide mb-2">Nenhum resultado</p>
+          <p class="font-body text-hub-chumbo/60 text-sm leading-relaxed mb-6">
+            Ainda não temos negócios nesta categoria no Hub.<br />
+            Conhece alguém? <a href="/indicar" class="text-hub-cobre underline underline-offset-2 hover:text-hub-cobre-luminoso transition-colors">Indique aqui!</a>
+          </p>
+          <button id="clear-filters-btn" class="inline-flex items-center gap-2 bg-hub-pavao text-white font-head font-semibold uppercase tracking-wider text-sm px-5 py-3 rounded-full hover:bg-hub-pavao-profundo transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+            Limpar Filtros
+          </button>
         </div>
       </div>
 
@@ -494,9 +547,11 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     var viewGridBtn     = document.getElementById('view-grid');
     var viewListBtn     = document.getElementById('view-list');
     var cards           = document.querySelectorAll('.biz-card');
-    var subcatList      = document.getElementById('subcat-list');
-    var urgenciaSection = document.getElementById('urgencia-section');
-    var cozinhaSection  = document.getElementById('cozinha-section');
+    var subcatList        = document.getElementById('subcat-list');
+    var mobileSubcatBar   = document.getElementById('mobile-subcat-bar');
+    var mobileSubcatList  = document.getElementById('mobile-subcat-list');
+    var urgenciaSection   = document.getElementById('urgencia-section');
+    var cozinhaSection    = document.getElementById('cozinha-section');
 
     /* ── filtros ────────────────────────────────────────────────── */
     function applyFilters() {
@@ -530,7 +585,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
 
       if (resultsCount) resultsCount.textContent = visible + ' encontrados';
       if (noResults && listingsCont) {
-        noResults.style.display     = visible === 0 ? '' : 'none';
+        noResults.style.display     = visible === 0 ? 'block' : 'none';
         listingsCont.style.display  = visible === 0 ? 'none' : '';
       }
     }
@@ -547,28 +602,45 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       applyFilters();
     }
 
-    function renderSubcatList(type) {
-      if (!subcatList) return;
-      var cats = subcategoriesByType[type] || [];
-      subcatList.innerHTML = '';
-      if (cats.length === 0) {
-        subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs py-1 w-full">Selecione uma categoria acima</p>';
-        return;
-      }
+    function makeSubcatChips(container, cats) {
+      container.innerHTML = '';
       var allBtn = document.createElement('button');
-      allBtn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao';
+      allBtn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-sm transition-colors cursor-pointer whitespace-nowrap bg-hub-pavao text-white border-hub-pavao shrink-0';
       allBtn.dataset.cat = '';
       allBtn.textContent = 'Todas';
       allBtn.addEventListener('click', function () { setSubcat(''); });
-      subcatList.appendChild(allBtn);
+      container.appendChild(allBtn);
       cats.forEach(function (cat) {
         var btn = document.createElement('button');
-        btn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao';
+        btn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-sm transition-colors cursor-pointer whitespace-nowrap shrink-0 border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao';
         btn.dataset.cat = cat;
         btn.textContent = cat;
         btn.addEventListener('click', function () { setSubcat(cat); });
-        subcatList.appendChild(btn);
+        container.appendChild(btn);
       });
+    }
+
+    function renderSubcatList(type) {
+      var cats = subcategoriesByType[type] || [];
+
+      // sidebar desktop
+      if (subcatList) {
+        if (cats.length === 0) {
+          subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs py-1 w-full">Selecione uma categoria acima</p>';
+        } else {
+          makeSubcatChips(subcatList, cats);
+        }
+      }
+
+      // barra mobile (só aparece quando há subcategorias)
+      if (mobileSubcatBar && mobileSubcatList) {
+        if (cats.length === 0) {
+          mobileSubcatBar.classList.add('hidden');
+        } else {
+          makeSubcatChips(mobileSubcatList, cats);
+          mobileSubcatBar.classList.remove('hidden');
+        }
+      }
     }
 
     /* ── rating ─────────────────────────────────────────────────── */
@@ -630,8 +702,8 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       state.cozinha     = '';
 
       renderSubcatList(newType);
-      if (urgenciaSection) urgenciaSection.style.display = newType === 'servicos-tecnicos' ? 'block' : 'none';
-      if (cozinhaSection)  cozinhaSection.style.display  = newType === 'gastronomia'        ? 'block' : 'none';
+      if (urgenciaSection) urgenciaSection.classList.toggle('filter-visible', newType === 'servicos-tecnicos');
+      if (cozinhaSection)  cozinhaSection.classList.toggle('filter-visible', newType === 'gastronomia');
 
       setUrgencia('');
       setCozinha('');
@@ -695,6 +767,69 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         applyFilters();
       });
     });
+
+    /* ── drawer mobile ──────────────────────────────────────────── */
+    var sidebar         = document.getElementById('sidebar');
+    var backdrop        = document.getElementById('drawer-backdrop');
+    var openDrawerBtn   = document.getElementById('open-drawer-btn');
+    var closeDrawerBtn  = document.getElementById('close-drawer-btn');
+
+    function openDrawer() {
+      if (sidebar)  sidebar.classList.add('drawer-open');
+      if (backdrop) backdrop.style.display = '';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+      if (sidebar)  sidebar.classList.remove('drawer-open');
+      if (backdrop) backdrop.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    if (openDrawerBtn)  openDrawerBtn.addEventListener('click', openDrawer);
+    if (closeDrawerBtn) closeDrawerBtn.addEventListener('click', closeDrawer);
+    if (backdrop)       backdrop.addEventListener('click', closeDrawer);
+
+    /* ── mobile sticky search (IntersectionObserver) ────────────── */
+    var mobileTopSearch  = document.getElementById('mobile-top-search');
+    var mobileSearchInput = document.getElementById('mobile-search-input');
+
+    if (searchInput && mobileTopSearch && window.IntersectionObserver) {
+      var heroObs = new IntersectionObserver(function (entries) {
+        mobileTopSearch.classList.toggle('hidden', entries[0].isIntersecting);
+      }, { threshold: 0 });
+      heroObs.observe(searchInput);
+    }
+
+    if (mobileSearchInput) {
+      mobileSearchInput.addEventListener('input', function (e) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+          state.query = e.target.value.trim();
+          if (searchInput) searchInput.value = state.query;
+          applyFilters();
+        }, 200);
+      });
+    }
+
+    /* ── limpar filtros ─────────────────────────────────────────── */
+    var clearFiltersBtn = document.getElementById('clear-filters-btn');
+    if (clearFiltersBtn) {
+      clearFiltersBtn.addEventListener('click', function () {
+        state.query = ''; state.type = 'all'; state.subcategory = '';
+        state.minRating = 0; state.urgencia = ''; state.cozinha = ''; state.empreendimentos = [];
+        if (searchInput) searchInput.value = '';
+        if (mobileSearchInput) mobileSearchInput.value = '';
+        document.querySelectorAll('.empreendimento-cb').forEach(function (cb) { cb.checked = false; });
+        if (urgenciaSection) urgenciaSection.classList.remove('filter-visible');
+        if (cozinhaSection)  cozinhaSection.classList.remove('filter-visible');
+        updateIconBar('all');
+        renderSubcatList('all');
+        setRating(0);
+        setUrgencia('');
+        setCozinha('');
+        applyFilters();
+      });
+    }
 
     /* ── init ───────────────────────────────────────────────────── */
     updateIconBar('all');
@@ -849,6 +984,10 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       overflow: hidden;
       display: flex;
       flex-direction: column;
+      transform: none !important;
+      width: 280px;
+      max-width: none;
+      z-index: auto;
     }
   }
 
@@ -857,4 +996,37 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
   #listings-container.is-list-view .biz-card { flex-direction: row; }
   #listings-container.is-list-view .card-cover { width: 160px; min-width: 160px; height: auto; min-height: 130px; }
   #listings-container.is-list-view .card-footer { display: none; }
+
+  /* Filtros condicionais — animação suave de reveal */
+  .filter-collapsible {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.25s ease;
+  }
+  .filter-collapsible.filter-visible {
+    max-height: 380px;
+    opacity: 1;
+  }
+
+  /* Sidebar mobile drawer — só abaixo de 1024px */
+  @media (max-width: 1023px) {
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 85vw;
+      max-width: 320px;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+    }
+    #sidebar.drawer-open {
+      transform: translateX(0);
+    }
+  }
 </style>
