@@ -30,6 +30,10 @@ export interface Business {
   prazoAtendimento?: string;
   disponibilidade?: string;
   garantia?: string;
+  // Mapa & Rating
+  lat?: number;
+  lng?: number;
+  rating?: number;
 }
 
 // ─── Mock Data — LT1: Agências & Serviços Digitais ───────────────────────────
@@ -45,6 +49,7 @@ export const mockBusinesses: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -22.998, lng: -43.362, rating: 4.9,
     category: 'Agências de Marketing Digital',
     technologies: ['Meta Ads', 'Google Ads', 'WordPress', 'n8n', 'Figma', 'HubSpot'],
     clientSectors: 'Saúde & Clínicas, Imóveis, Negócios B2B, Moda & Luxo',
@@ -97,6 +102,7 @@ export const mockBusinesses: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · 100% Remoto',
+    lat: -22.995, lng: -43.366, rating: 4.7,
     category: 'Desenvolvimento Web & Apps',
     technologies: ['React', 'Next.js', 'Node.js', 'Python', 'PostgreSQL', 'AWS'],
     clientSectors: 'Startups, SaaS, E-commerce, Fintechs',
@@ -143,6 +149,7 @@ export const mockBusinesses: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1542744094-3a31f272c490?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.001, lng: -43.360, rating: 4.8,
     category: 'Design & Criação Visual',
     technologies: ['Figma', 'Adobe CC', 'Framer', 'Webflow', 'After Effects'],
     clientSectors: 'Saúde, Advocacia, Imóveis, Beleza & Lifestyle',
@@ -194,6 +201,7 @@ export const mockBusinessesB2B: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -22.997, lng: -43.368, rating: 4.6,
     category: 'Contabilidade & Gestão Financeira',
     registroProfissional: 'CRC/RJ-045231',
     faixaHonorarios: 'R$800 – R$3.000/mês',
@@ -248,6 +256,7 @@ export const mockBusinessesB2B: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.003, lng: -43.371, rating: 4.9,
     category: 'Imobiliária & Corretagem',
     registroProfissional: 'CRECI/RJ-87432-J',
     faixaHonorarios: '6% sobre o valor da transação',
@@ -295,6 +304,7 @@ export const mockBusinessesB2B: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Atende todo o Rio de Janeiro',
+    lat: -22.994, lng: -43.358, rating: 4.5,
     category: 'RH, Headhunting & Carreira',
     faixaHonorarios: 'R$2.000 – R$8.000/processo',
     clientesAtendidos: 'Mais de 80 empresas atendidas · 600+ posições preenchidas',
@@ -347,6 +357,7 @@ export const mockBusinessesTec: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.002, lng: -43.373, rating: 4.8,
     category: 'Eletricidade & Hidráulica',
     atendeUrgencia: 'sim-24h',
     areaCobertura: ['Barra da Tijuca', 'Recreio', 'Ilha Pura', 'Rio2', 'Barra de Guaratiba'],
@@ -396,6 +407,7 @@ export const mockBusinessesTec: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1631567091534-92b62c78d3ce?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Recreio · Jacarepaguá',
+    lat: -22.998, lng: -43.355, rating: 4.7,
     category: 'Ar-Condicionado & Climatização',
     atendeUrgencia: 'sim-comercial',
     areaCobertura: ['Barra da Tijuca', 'Recreio', 'Jacarepaguá', 'Ilha Pura'],
@@ -445,6 +457,7 @@ export const mockBusinessesTec: Business[] = [
     cover:
       'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1600&auto=format&fit=crop',
     location: 'Barra da Tijuca · Recreio · Barra de Guaratiba',
+    lat: -23.005, lng: -43.365, rating: 4.4,
     category: 'Reforma & Construção Civil',
     atendeUrgencia: 'nao',
     areaCobertura: ['Barra da Tijuca', 'Recreio', 'Barra de Guaratiba', 'Rio2'],

@@ -2,150 +2,518 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import BusinessCard from '../../components/BusinessCard.astro';
 import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec } from '../../utils/mockBusinesses';
 
-const listingTypes = [
-  {
-    icon: '💻',
-    eyebrow: 'Listing Type 1',
-    title: 'Agências & Serviços Digitais',
-    description: 'Marketing digital, desenvolvimento web, design, tráfego pago e automação. Negócios baseados em tecnologia e criatividade.',
-    href: '/digital',
-    count: mockBusinesses.filter(b => b.type === 'digital').length,
-    categories: ['Marketing Digital', 'Dev Web & Apps', 'Design Visual', 'Tráfego & Growth', 'Automação', 'Educação'],
-    color: 'bg-hub-pavao',
-    accent: 'border-hub-pavao',
-    featured: mockBusinesses.filter(b => b.type === 'digital').slice(0, 3),
-  },
-  {
-    icon: '🏛️',
-    eyebrow: 'Listing Type 2',
-    title: 'Profissionais B2B',
-    description: 'Contadores, corretores, consultores e especialistas com registro profissional. Credenciais verificadas e faixa de honorários transparente.',
-    href: '/servicos-profissionais',
-    count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length,
-    categories: ['Contabilidade', 'Imobiliária', 'Seguros', 'Consultoria', 'RH & Headhunting'],
-    color: 'bg-hub-pavao-profundo',
-    accent: 'border-hub-cobre',
-    featured: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').slice(0, 3),
-  },
-  {
-    icon: '🔧',
-    eyebrow: 'Listing Type 3',
-    title: 'Técnicos & Casa',
-    description: 'Eletricistas, técnicos de ar-condicionado, reforma e construção. Área de cobertura definida e badge de urgência visível no perfil.',
-    href: '/servicos-tecnicos',
-    count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,
-    categories: ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
-    color: 'bg-hub-chumbo',
-    accent: 'border-hub-cobre-luminoso',
-    featured: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').slice(0, 3),
-  },
+const allBusinesses = [
+  ...mockBusinesses.filter(b => b.type === 'digital'),
+  ...mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais'),
+  ...mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos'),
 ];
+
+const typeTabs = [
+  { id: 'all',                    label: 'Todos',             count: allBusinesses.length },
+  { id: 'digital',                label: 'Agências Digitais', count: mockBusinesses.filter(b => b.type === 'digital').length },
+  { id: 'servicos-profissionais', label: 'Profissionais B2B', count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
+  { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
+];
+
+const urgenciaConfig: Record<string, { label: string; color: string }> = {
+  'sim-24h':       { label: '⚡ Urgência 24h',    color: 'bg-red-500 text-white' },
+  'sim-comercial': { label: '✓ Atende urgências', color: 'bg-amber-500 text-white' },
+};
+
+function getBusinessUrl(b: (typeof allBusinesses)[0]) {
+  if (b.type === 'servicos-profissionais') return `/servicos-profissionais/${b.slug}`;
+  if (b.type === 'servicos-tecnicos')      return `/servicos-tecnicos/${b.slug}`;
+  return `/digital/${b.slug}`;
+}
 ---
 
 <Layout
   title="Serviços — HUBMETROPOLITANO"
   description="Agências digitais, profissionais B2B e técnicos especializados verificados na Barra da Tijuca."
 >
+  <link slot="head" rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <Header />
 
   <main>
-    <!-- Hero -->
-    <div class="bg-hub-pavao-profundo py-20 lg:py-28">
+    <!-- Hero compacto -->
+    <div class="bg-hub-pavao-profundo py-10 lg:py-14">
       <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
-        <h5 class="text-hub-cobre mb-4">Vitrine de Negócios</h5>
-        <h1 class="text-white mb-5 max-w-2xl">
-          Serviços<br />
-          <span class="text-hub-cobre">Verificados</span>
+        <h5 class="text-hub-cobre mb-3">Vitrine de Negócios</h5>
+        <h1 class="text-white mb-6 max-w-2xl">
+          Serviços<br /><span class="text-hub-cobre">Verificados</span>
         </h1>
-        <p class="font-body text-white/60 text-lg max-w-xl leading-relaxed">
-          3 tipos de negócios, cada um com campos e credenciais próprias. Encontre o profissional certo para o que você precisa.
-        </p>
+        <div class="relative max-w-2xl">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-hub-chumbo/40 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Buscar agência, serviço, especialidade..."
+            class="w-full bg-white text-hub-chumbo font-body text-base pl-12 pr-4 py-3.5 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-hub-cobre transition-shadow"
+          />
+        </div>
       </div>
     </div>
 
-    <!-- Listing Types -->
-    {listingTypes.map((lt, i) => (
-      <section class={`py-20 lg:py-28 ${i % 2 === 0 ? 'bg-hub-gelo' : 'bg-white'}`}>
-        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+    <!-- Type Tabs -->
+    <div id="type-tabs" class="sticky top-[60px] z-20 bg-white border-b border-hub-gelo shadow-sm">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="flex gap-1 overflow-x-auto py-2" style="scrollbar-width: none; -ms-overflow-style: none;">
+          {typeTabs.map((tab, i) => (
+            <button
+              data-tab={tab.id}
+              class={`tab-btn shrink-0 inline-flex items-center gap-2 font-head font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-xl transition-all duration-200 ${
+                i === 0 ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/60 hover:text-hub-pavao hover:bg-hub-pavao-soft'
+              }`}
+            >
+              {tab.label}
+              <span class={`tab-count inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full text-[10px] font-bold px-1 ${
+                i === 0 ? 'bg-white/20 text-white' : 'bg-hub-gelo text-hub-chumbo/50'
+              }`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+    <!-- Split layout -->
+    <div class="flex items-start relative">
 
-            <!-- Info lateral -->
-            <div class={`lg:sticky lg:top-24 ${i % 2 !== 0 ? 'lg:order-2' : ''}`}>
-              <div class={`inline-flex items-center gap-3 ${lt.color} text-white rounded-2xl px-5 py-3 mb-8`}>
-                <span class="text-2xl">{lt.icon}</span>
-                <span class="font-head font-semibold uppercase tracking-widest text-xs">{lt.eyebrow}</span>
-              </div>
+      <!-- Left panel -->
+      <div id="left-panel" class="w-full lg:w-[55%] bg-hub-gelo">
 
-              <h2 class="text-hub-pavao mb-5">{lt.title}</h2>
-
-              <p class="font-body text-hub-chumbo/70 text-lg leading-relaxed mb-8">
-                {lt.description}
-              </p>
-
-              <!-- Categorias -->
-              <div class="flex flex-wrap gap-2 mb-10">
-                {lt.categories.map(cat => (
-                  <span class="font-body text-xs text-hub-chumbo/60 bg-hub-gelo border border-hub-gelo px-3 py-1.5 rounded-full">
-                    {cat}
-                  </span>
-                ))}
-              </div>
-
-              <!-- Stats + CTA -->
-              <div class="flex items-center gap-6">
-                <div>
-                  <p class="font-head font-bold text-hub-pavao text-3xl uppercase">{lt.count}</p>
-                  <p class="font-body text-hub-chumbo/40 text-xs uppercase tracking-wider">cadastrados</p>
-                </div>
-                <div class="w-px h-10 bg-hub-gelo"></div>
-                <a
-                  href={lt.href}
-                  class="inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-colors"
-                >
-                  Ver todos
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                  </svg>
-                </a>
-              </div>
+        <!-- Filter bar -->
+        <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-6 py-3.5 flex flex-wrap items-center gap-3">
+          <div id="subcategory-pills" class="flex gap-2 overflow-x-auto flex-1 min-w-0" style="scrollbar-width: none; -ms-overflow-style: none;"></div>
+          <div class="flex items-center gap-4 shrink-0">
+            <p id="results-count" class="font-body text-hub-chumbo/50 text-sm whitespace-nowrap">
+              {allBusinesses.length} encontrados
+            </p>
+            <div class="flex items-center gap-0.5 bg-white border border-hub-gelo rounded-lg p-1 shadow-sm">
+              <button id="view-grid" aria-label="Grid" class="p-1.5 rounded bg-hub-pavao text-white transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                </svg>
+              </button>
+              <button id="view-list" aria-label="Lista" class="p-1.5 rounded text-hub-chumbo/40 hover:text-hub-pavao transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                </svg>
+              </button>
             </div>
-
-            <!-- Cards preview -->
-            <div class={`flex flex-col gap-4 ${i % 2 !== 0 ? 'lg:order-1' : ''}`}>
-              {lt.featured.map(b => <BusinessCard business={b} />)}
-            </div>
-
           </div>
         </div>
-      </section>
-    ))}
 
-    <!-- CTA final -->
-    <section class="bg-hub-pavao py-20">
-      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl text-center">
-        <h5 class="text-hub-cobre mb-4">Cadastre seu negócio</h5>
-        <h2 class="text-white mb-6 max-w-xl mx-auto">
-          Seu negócio merece ser encontrado
-        </h2>
-        <p class="font-body text-white/60 max-w-md mx-auto mb-10 text-lg">
-          Escolha o tipo certo para o seu perfil e mostre exatamente o que você oferece.
-        </p>
-        <a
-          href="#"
-          class="inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-colors"
-        >
-          Quero cadastrar meu negócio
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
+        <!-- Cards -->
+        <div id="listings-container" class="grid grid-cols-1 sm:grid-cols-2 gap-5 p-4 lg:p-6">
+          {allBusinesses.map(b => {
+            const url      = getBusinessUrl(b);
+            const urgencia = b.atendeUrgencia && b.atendeUrgencia !== 'nao' ? urgenciaConfig[b.atendeUrgencia] : null;
+            const preview  = b.services.slice(0, 3);
+            return (
+              <a
+                href={url}
+                data-slug={b.slug}
+                data-type={b.type}
+                data-category={b.category.toLowerCase()}
+                data-title={b.title.toLowerCase()}
+                data-lat={b.lat}
+                data-lng={b.lng}
+                class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+              >
+                <!-- Cover -->
+                <div class="card-cover relative h-44 overflow-hidden bg-hub-pavao-profundo shrink-0">
+                  <img src={b.cover} alt={b.title} loading="lazy"
+                    class="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-500" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/80 via-hub-pavao-profundo/20 to-transparent" />
+
+                  <span class="absolute top-3 right-3 bg-hub-cobre text-white text-[10px] font-head font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                    {b.category.split(' ')[0]}
+                  </span>
+
+                  {urgencia && (
+                    <span class={`absolute top-3 left-3 text-xs font-body font-semibold px-2.5 py-1 rounded-full ${urgencia.color}`}>
+                      {urgencia.label}
+                    </span>
+                  )}
+
+                  <span class="absolute bottom-3 right-3 inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm text-hub-pavao text-[10px] font-body font-bold px-2 py-1 rounded-full shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
+                      <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 0 0 0-5.304 3 3 0 0 0-3.75-3.751 3 3 0 0 0-5.305 0 3 3 0 0 0-3.751 3.75 3 3 0 0 0 0 5.305 3 3 0 0 0 3.75 3.751 3 3 0 0 0 5.305 0 3 3 0 0 0 3.751-3.75Zm-2.546-4.46a.75.75 0 0 0-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
+                    </svg>
+                    Verificado
+                  </span>
+
+                  {b.logo ? (
+                    <img src={b.logo} alt={b.title} class="absolute bottom-3 left-3 w-10 h-10 rounded-full border-2 border-white object-cover bg-white shadow" />
+                  ) : (
+                    <div class="absolute bottom-3 left-3 w-10 h-10 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow">
+                      <span class="text-white font-head font-bold text-sm">{b.title.charAt(0)}</span>
+                    </div>
+                  )}
+                </div>
+
+                <!-- Body -->
+                <div class="card-body flex flex-col flex-1 p-5 gap-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-lg uppercase tracking-wide leading-tight">
+                      {b.title}
+                    </h3>
+                    {b.rating && (
+                      <span class="shrink-0 font-body text-hub-cobre text-sm font-semibold">★ {b.rating}</span>
+                    )}
+                  </div>
+
+                  <p class="font-body text-sm text-hub-chumbo/60 leading-snug">{b.tagline}</p>
+
+                  {b.location && (
+                    <div class="flex items-center gap-1.5 text-hub-chumbo/40 text-xs font-body">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0">
+                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                      </svg>
+                      {b.location}
+                    </div>
+                  )}
+
+                  <div class="flex flex-wrap gap-1.5 mt-auto pt-1">
+                    {preview.map(s => (
+                      <span class="inline-flex items-center gap-1 bg-hub-gelo text-hub-chumbo/70 text-xs font-body px-2.5 py-1 rounded-full">
+                        <span>{s.icon}</span><span>{s.name}</span>
+                      </span>
+                    ))}
+                    {b.services.length > 3 && (
+                      <span class="inline-flex items-center bg-hub-pavao-soft text-hub-pavao text-xs font-body px-2.5 py-1 rounded-full">
+                        +{b.services.length - 3}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="card-footer px-5 pb-4 pt-0">
+                  <span class="inline-flex items-center gap-1.5 text-hub-cobre text-sm font-body group-hover:gap-3 transition-all">
+                    Ver perfil completo
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                    </svg>
+                  </span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+
+        <div id="no-results" class="hidden px-6 py-20 text-center">
+          <p class="font-head font-bold text-hub-pavao text-xl uppercase mb-2">Nenhum resultado</p>
+          <p class="font-body text-hub-chumbo/50 text-sm">Tente outros termos ou remova os filtros.</p>
+        </div>
       </div>
-    </section>
+
+      <!-- Right panel: mapa -->
+      <div id="map-panel" class="hidden lg:block lg:w-[45%] sticky">
+        <div id="map" class="w-full h-full"></div>
+      </div>
+
+    </div>
   </main>
 
   <Footer />
+
+  <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script is:inline>
+  (function () {
+    var subcategoriesByType = {
+      all:                    [],
+      digital:                ['Marketing Digital', 'Dev Web & Apps', 'Design Visual', 'Tráfego & Growth', 'Automação'],
+      'servicos-profissionais': ['Contabilidade', 'Imobiliária', 'Seguros', 'Consultoria', 'RH'],
+      'servicos-tecnicos':    ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
+    };
+
+    var typeColors = {
+      digital:                '#B87333',
+      'servicos-profissionais': '#004445',
+      'servicos-tecnicos':    '#374151',
+    };
+
+    var state = { query: '', type: 'all', subcategory: '', view: 'grid' };
+
+    var searchInput       = document.getElementById('search-input');
+    var listingsCont      = document.getElementById('listings-container');
+    var subcatPills       = document.getElementById('subcategory-pills');
+    var resultsCount      = document.getElementById('results-count');
+    var noResults         = document.getElementById('no-results');
+    var viewGridBtn       = document.getElementById('view-grid');
+    var viewListBtn       = document.getElementById('view-list');
+    var tabBtns           = document.querySelectorAll('.tab-btn');
+    var cards             = document.querySelectorAll('.biz-card');
+    var leftPanel         = document.getElementById('left-panel');
+
+    /* altura dinâmica */
+    function updateOffset() {
+      var header = document.querySelector('header');
+      var tabs   = document.getElementById('type-tabs');
+      var offset = (header ? header.offsetHeight : 64) + (tabs ? tabs.offsetHeight : 50);
+      document.documentElement.style.setProperty('--map-offset', offset + 'px');
+    }
+    updateOffset();
+    window.addEventListener('resize', updateOffset);
+
+    /* mapa */
+    var map = L.map('map', { zoomControl: true, scrollWheelZoom: true })
+               .setView([-22.999, -43.365], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18,
+    }).addTo(map);
+
+    var markersLayer  = L.layerGroup().addTo(map);
+    var markersBySlug = {};
+
+    function makeIcon(color) {
+      return L.divIcon({
+        className: '',
+        html: '<div style="width:34px;height:34px;background:' + color + ';border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;">' +
+              '<div style="width:8px;height:8px;background:white;border-radius:50%;"></div></div>',
+        iconSize:    [34, 34],
+        iconAnchor:  [17, 17],
+        popupAnchor: [0, -18],
+      });
+    }
+
+    function buildMarker(card) {
+      var lat  = parseFloat(card.dataset.lat  || '');
+      var lng  = parseFloat(card.dataset.lng  || '');
+      var slug = card.dataset.slug  || '';
+      var type = card.dataset.type  || '';
+      if (!lat || !lng) return null;
+
+      var h3    = card.querySelector('h3');
+      var title = h3 ? h3.textContent.trim() : slug;
+      var cat   = (card.dataset.category || '').split(' ')[0];
+      var color = typeColors[type] || '#B87333';
+
+      var marker = L.marker([lat, lng], { icon: makeIcon(color) })
+        .bindPopup(
+          '<div class="map-popup"><div class="map-popup-title">' + title + '</div>' +
+          '<div class="map-popup-cat">' + cat + '</div></div>',
+          { maxWidth: 200, closeButton: false }
+        );
+
+      marker.on('click', function () {
+        var el = document.querySelector('.biz-card[data-slug="' + slug + '"]');
+        if (el && leftPanel) {
+          var panelRect = leftPanel.getBoundingClientRect();
+          var cardRect  = el.getBoundingClientRect();
+          var scrollTo  = cardRect.top - panelRect.top + leftPanel.scrollTop - 80;
+          leftPanel.scrollTo({ top: scrollTo, behavior: 'smooth' });
+          el.classList.add('map-highlight');
+          setTimeout(function () { el.classList.remove('map-highlight'); }, 1500);
+        }
+      });
+
+      return marker;
+    }
+
+    function applyFilters() {
+      var q   = state.query.toLowerCase();
+      var t   = state.type;
+      var sub = state.subcategory.toLowerCase();
+      var visible = 0;
+
+      markersLayer.clearLayers();
+
+      cards.forEach(function (card) {
+        var ct    = card.dataset.type     || '';
+        var ccat  = card.dataset.category || '';
+        var ctitle= card.dataset.title    || '';
+        var slug  = card.dataset.slug     || '';
+
+        var show = (t === 'all' || ct === t) &&
+                   (!sub || ccat.includes(sub)) &&
+                   (!q   || ctitle.includes(q) || ccat.includes(q));
+
+        card.style.display = show ? '' : 'none';
+
+        if (show) {
+          visible++;
+          if (!markersBySlug[slug]) markersBySlug[slug] = buildMarker(card);
+          if (markersBySlug[slug])  markersLayer.addLayer(markersBySlug[slug]);
+        }
+      });
+
+      if (resultsCount) resultsCount.textContent = visible + ' encontrados';
+      if (noResults && listingsCont) {
+        noResults.style.display     = visible === 0 ? '' : 'none';
+        listingsCont.style.display  = visible === 0 ? 'none' : '';
+      }
+    }
+
+    function setCat(cat) {
+      state.subcategory = cat;
+      document.querySelectorAll('.cat-pill').forEach(function (p) {
+        var active = p.dataset.cat === cat;
+        p.className = 'cat-pill shrink-0 font-head font-semibold uppercase tracking-wider text-xs px-3.5 py-2 rounded-xl border transition-all duration-200 ' +
+          (active ? 'bg-hub-pavao text-white border-hub-pavao shadow-sm'
+                  : 'bg-white text-hub-chumbo/60 border-hub-gelo hover:border-hub-pavao hover:text-hub-pavao');
+      });
+      applyFilters();
+    }
+
+    function renderSubcatPills(type) {
+      if (!subcatPills) return;
+      var cats = subcategoriesByType[type] || [];
+      subcatPills.innerHTML = '';
+
+      var allBtn = document.createElement('button');
+      allBtn.className   = 'cat-pill shrink-0 font-head font-semibold uppercase tracking-wider text-xs px-3.5 py-2 rounded-xl border transition-all duration-200 bg-hub-pavao text-white border-hub-pavao shadow-sm';
+      allBtn.dataset.cat = '';
+      allBtn.textContent = 'Todas';
+      allBtn.addEventListener('click', function () { setCat(''); });
+      subcatPills.appendChild(allBtn);
+
+      cats.forEach(function (cat) {
+        var btn = document.createElement('button');
+        btn.className   = 'cat-pill shrink-0 font-head font-semibold uppercase tracking-wider text-xs px-3.5 py-2 rounded-xl border border-hub-gelo bg-white text-hub-chumbo/60 hover:border-hub-pavao hover:text-hub-pavao transition-all duration-200';
+        btn.dataset.cat = cat;
+        btn.textContent = cat;
+        btn.addEventListener('click', function () { setCat(cat); });
+        subcatPills.appendChild(btn);
+      });
+    }
+
+    tabBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var newType = btn.dataset.tab || 'all';
+        state.type        = newType;
+        state.subcategory = '';
+
+        tabBtns.forEach(function (b) {
+          var active = b.dataset.tab === newType;
+          b.className = 'tab-btn shrink-0 inline-flex items-center gap-2 font-head font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-xl transition-all duration-200 ' +
+            (active ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/60 hover:text-hub-pavao hover:bg-hub-pavao-soft');
+          var badge = b.querySelector('.tab-count');
+          if (badge) badge.className = 'tab-count inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full text-[10px] font-bold px-1 ' +
+            (active ? 'bg-white/20 text-white' : 'bg-hub-gelo text-hub-chumbo/50');
+        });
+
+        renderSubcatPills(newType);
+        applyFilters();
+      });
+    });
+
+    var searchTimer;
+    if (searchInput) {
+      searchInput.addEventListener('input', function (e) {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () {
+          state.query = e.target.value.trim();
+          applyFilters();
+        }, 200);
+      });
+    }
+
+    if (viewGridBtn) {
+      viewGridBtn.addEventListener('click', function () {
+        state.view = 'grid';
+        if (listingsCont) listingsCont.classList.remove('is-list-view');
+        viewGridBtn.className = 'p-1.5 rounded bg-hub-pavao text-white transition-colors';
+        if (viewListBtn) viewListBtn.className = 'p-1.5 rounded text-hub-chumbo/40 hover:text-hub-pavao transition-colors';
+      });
+    }
+    if (viewListBtn) {
+      viewListBtn.addEventListener('click', function () {
+        state.view = 'list';
+        if (listingsCont) listingsCont.classList.add('is-list-view');
+        viewListBtn.className = 'p-1.5 rounded bg-hub-pavao text-white transition-colors';
+        if (viewGridBtn) viewGridBtn.className = 'p-1.5 rounded text-hub-chumbo/40 hover:text-hub-pavao transition-colors';
+      });
+    }
+
+    cards.forEach(function (card) {
+      var slug = card.dataset.slug;
+      card.addEventListener('mouseenter', function () {
+        var m = markersBySlug[slug];
+        if (m) m.openPopup();
+      });
+      card.addEventListener('mouseleave', function () {
+        var m = markersBySlug[slug];
+        if (m) m.closePopup();
+      });
+    });
+
+    renderSubcatPills('all');
+    applyFilters();
+  })();
+  </script>
 </Layout>
+
+<style>
+  @media (min-width: 1024px) {
+    #left-panel {
+      height: calc(100vh - var(--map-offset, 114px));
+      overflow-y: auto;
+    }
+    #map-panel {
+      height: calc(100vh - var(--map-offset, 114px));
+      top: var(--map-offset, 114px);
+    }
+  }
+
+  #listings-container.is-list-view {
+    grid-template-columns: 1fr !important;
+  }
+  #listings-container.is-list-view .biz-card {
+    flex-direction: row;
+  }
+  #listings-container.is-list-view .card-cover {
+    width: 180px;
+    min-width: 180px;
+    height: auto;
+    min-height: 140px;
+  }
+  #listings-container.is-list-view .card-footer {
+    display: none;
+  }
+
+  .biz-card.map-highlight {
+    box-shadow: 0 0 0 3px #B87333, 0 12px 28px rgba(0,0,0,.15) !important;
+    transform: translateY(-4px) !important;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 12px !important;
+    padding: 0 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18) !important;
+  }
+  .leaflet-popup-content {
+    margin: 0 !important;
+  }
+  .map-popup {
+    padding: 10px 14px;
+    min-width: 150px;
+  }
+  .map-popup-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #002C2D;
+    margin-bottom: 3px;
+  }
+  .map-popup-cat {
+    font-family: 'Barlow', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #B87333;
+  }
+</style>
