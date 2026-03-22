@@ -20,7 +20,10 @@ const related = categories[0]
   : [];
 ---
 
-<Layout title={`${post.title} — Blog HUBMETROPOLITANO`}>
+<Layout
+  title={`${post.title} — Blog HUBMETROPOLITANO`}
+  seoHead={post.seo?.fullHead}
+>
   <Header />
 
   <main>

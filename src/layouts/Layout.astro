@@ -4,9 +4,13 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  /** HTML gerado pelo RankMath SEO via WPGraphQL (fullHead). Quando presente,
+   *  substitui o <title> e <meta name="description"> manuais e injeta
+   *  todos os meta tags de SEO, OG, Twitter Cards, canonical e JSON-LD. */
+  seoHead?: string;
 }
 
-const { title, description = "HUBMETROPOLITANO - Diretório Inteligente para a Barra da Tijuca" } = Astro.props;
+const { title, description = "HUBMETROPOLITANO - Diretório Inteligente para a Barra da Tijuca", seoHead } = Astro.props;
 ---
 
 <!doctype html>
@@ -16,9 +20,14 @@ const { title, description = "HUBMETROPOLITANO - Diretório Inteligente para a B
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    
+    {seoHead
+      ? <Fragment set:html={seoHead} />
+      : <>
+          <title>{title}</title>
+          <meta name="description" content={description} />
+        </>
+    }
+
     <!-- Google Fonts: Cormorant Garamond, Barlow, Barlow Condensed -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

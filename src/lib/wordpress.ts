@@ -18,6 +18,12 @@ async function gql<T>(query: string, variables?: Record<string, unknown>): Promi
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface RankMathSEO {
+  fullHead: string;
+  title?: string;
+  description?: string;
+}
+
 export interface WPPost {
   id: number;
   slug: string;
@@ -29,6 +35,7 @@ export interface WPPost {
   categories?: { nodes: WPCategory[] };
   tags?: { nodes: WPTag[] };
   author?: { node: { name: string } };
+  seo?: RankMathSEO;
 }
 
 export interface WPCategory {
@@ -71,6 +78,11 @@ const POST_FULL_FIELDS = /* GraphQL */ `
   categories { nodes { id: databaseId name slug count } }
   tags { nodes { id: databaseId name slug count } }
   author { node { name } }
+  seo {
+    fullHead
+    title
+    description
+  }
 `;
 
 // ─── Queries ──────────────────────────────────────────────────────────────────

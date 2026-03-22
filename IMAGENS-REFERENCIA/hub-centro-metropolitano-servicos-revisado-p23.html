@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Hub Centro Metropolitano — Serviços Revisado · Página 23</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f0f3fa;
+    --white:   #ffffff;
+    --ink:     #0d1420;
+    --navy:    #1a2748;
+    --muted:   #64748b;
+    --border:  #e1e8f5;
+    --surf:    #f7f9ff;
+    --digital: #1e40af;
+    --digital2:#3b82f6;
+    --prof:    #0f766e;
+    --prof2:   #14b8a6;
+    --tec:     #92400e;
+    --tec2:    #f59e0b;
+    --green:   #16a34a;
+    --amber:   #d97706;
+    --red:     #dc2626;
+  }
+
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; }
+
+  /* ══ COVER ══ */
+  .cover {
+    min-height: 320px; background: var(--navy);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 64px 32px; position: relative; overflow: hidden;
+  }
+  .cover-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 20% 50%, rgba(30,64,175,0.5), transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 40%, rgba(15,118,110,0.3), transparent 60%),
+      radial-gradient(ellipse 40% 50% at 55% 85%, rgba(146,64,14,0.25), transparent 55%);
+  }
+  .cover-inner { position: relative; z-index: 1; }
+  .cover-label { font-family: 'JetBrains Mono', monospace; font-size: 0.67em; letter-spacing: 5px; text-transform: uppercase; color: #93c5fd; margin-bottom: 16px; }
+  .cover h1 { font-size: 2.8em; font-weight: 800; color: white; line-height: 1.08; margin-bottom: 12px; }
+  .cover h1 em { font-style: normal; color: #93c5fd; }
+  .cover-sub { font-size: 0.9em; color: rgba(255,255,255,0.58); max-width: 600px; margin: 0 auto 28px; line-height: 1.75; }
+  .badge-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .bdg { padding: 5px 14px; border-radius: 4px; font-size: 0.72em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .bdg-d { background: rgba(59,130,246,0.3); color: #93c5fd; border: 1px solid rgba(59,130,246,0.4); }
+  .bdg-p { background: rgba(20,184,166,0.3); color: #99f6e4; border: 1px solid rgba(20,184,166,0.4); }
+  .bdg-t { background: rgba(245,158,11,0.3); color: #fde68a; border: 1px solid rgba(245,158,11,0.4); }
+  .bdg-w { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.2); }
+
+  /* ══ LAYOUT ══ */
+  .container { max-width: 1080px; margin: 0 auto; padding: 56px 24px; }
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 48px 0; }
+
+  /* ══ HEADERS ══ */
+  .sec-tag { font-family: 'JetBrains Mono', monospace; font-size: 0.64em; letter-spacing: 4px; text-transform: uppercase; color: var(--digital); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .sec-tag::after { content:''; flex:1; height:1px; background:var(--border); max-width:180px; }
+  h2 { font-size: 1.5em; font-weight: 800; color: var(--navy); margin-bottom: 6px; line-height: 1.2; }
+  h3 { font-size: 0.93em; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .sec-intro { font-size: 0.87em; color: var(--muted); max-width: 740px; margin-bottom: 24px; line-height: 1.82; }
+
+  /* ══ CALLOUTS ══ */
+  .box { border-radius: 0 8px 8px 0; padding: 13px 18px; margin: 14px 0; font-size: 0.85em; line-height: 1.72; }
+  .box-blue   { background: #eff6ff; border-left: 4px solid var(--digital); }
+  .box-teal   { background: #f0fdfa; border-left: 4px solid var(--prof); }
+  .box-amber  { background: #fffbeb; border-left: 4px solid var(--amber); }
+  .box-green  { background: #f0fdf4; border-left: 4px solid var(--green); }
+  .box-red    { background: #fef2f2; border-left: 4px solid var(--red); }
+  code { font-family: 'JetBrains Mono', monospace; font-size: 0.82em; background: #eff6ff; color: #1d4ed8; border-radius: 3px; padding: 1px 7px; }
+
+  /* ══ BEFORE/AFTER ══ */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+  @media(max-width:650px){ .compare { grid-template-columns: 1fr; } }
+  .cmp-card { border-radius: 12px; overflow: hidden; }
+  .cmp-head { padding: 14px 18px; font-weight: 800; font-size: 0.88em; }
+  .cmp-body { padding: 14px 18px; font-size: 0.82em; line-height: 1.8; }
+  .before .cmp-head { background: #fef2f2; color: #991b1b; }
+  .before .cmp-body { background: white; border: 1px solid #fecaca; border-top: none; color: var(--muted); }
+  .after  .cmp-head { background: #f0fdf4; color: #166534; }
+  .after  .cmp-body { background: white; border: 1px solid #bbf7d0; border-top: none; color: var(--ink); }
+  .cmp-item { display: flex; gap: 8px; margin-bottom: 5px; }
+  .cmp-dot { flex-shrink: 0; margin-top: 2px; }
+
+  /* ══ ARCH GRID ══ */
+  .arch-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 24px 0; }
+  @media(max-width:750px){ .arch-grid { grid-template-columns: 1fr; } }
+  .arch-card { border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .ac-head { padding: 22px 20px; color: white; }
+  .ac-head.digital { background: linear-gradient(135deg, var(--digital), var(--digital2)); }
+  .ac-head.prof    { background: linear-gradient(135deg, var(--prof), var(--prof2)); }
+  .ac-head.tec     { background: linear-gradient(135deg, var(--tec), var(--tec2)); }
+  .ac-icon { font-size: 2em; margin-bottom: 10px; }
+  .ac-num  { font-family: 'JetBrains Mono', monospace; font-size: 0.62em; opacity: 0.7; margin-bottom: 6px; letter-spacing: 2px; }
+  .ac-name { font-weight: 800; font-size: 1.05em; line-height: 1.2; margin-bottom: 6px; }
+  .ac-slug { font-family: 'JetBrains Mono', monospace; font-size: 0.65em; opacity: 0.7; }
+  .ac-body { background: white; padding: 16px 20px; }
+  .ac-why  { font-size: 0.8em; color: var(--muted); margin-bottom: 12px; line-height: 1.65; }
+  .ac-cats-label { font-size: 0.68em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .ac-cat  { display: flex; align-items: center; gap: 8px; font-size: 0.78em; padding: 4px 0; border-bottom: 1px solid #f5f5f8; }
+  .ac-cat:last-child { border-bottom: none; }
+  .ac-schema { font-family: 'JetBrains Mono', monospace; font-size: 0.68em; border-radius: 4px; padding: 3px 8px; margin-top: 10px; display: inline-block; font-weight: 700; }
+
+  /* ══ O QUE FAZEMOS DEMO ══ */
+  .so-demo { background: white; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.07); margin: 28px 0; }
+  .so-demo-head { background: var(--digital); color: white; padding: 14px 20px; }
+  .so-demo-title { font-weight: 800; font-size: 0.9em; }
+  .so-demo-sub   { font-size: 0.72em; opacity: 0.75; margin-top: 2px; }
+  .so-section { padding: 20px; border-bottom: 1px solid var(--border); }
+  .so-section:last-child { border-bottom: none; }
+  .so-section-label { font-size: 0.67em; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 14px; }
+  .so-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  @media(max-width:600px){ .so-cards { grid-template-columns: 1fr 1fr; } }
+  .so-card { background: var(--surf); border: 1.5px solid var(--border); border-radius: 10px; padding: 14px; }
+  .so-card.active { border-color: var(--digital); background: #eff6ff; }
+  .so-card-ico  { font-size: 1.5em; margin-bottom: 8px; }
+  .so-card-name { font-weight: 700; font-size: 0.83em; margin-bottom: 4px; }
+  .so-card-desc { font-size: 0.73em; color: var(--muted); line-height: 1.5; }
+  .so-card-price{ font-family: 'JetBrains Mono', monospace; font-size: 0.72em; color: var(--digital); font-weight: 700; margin-top: 6px; }
+  .so-add-btn { border: 2px dashed var(--border); border-radius: 10px; padding: 14px; text-align: center; font-size: 0.8em; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  /* ══ AGENCY PREVIEW ══ */
+  .agency-preview { background: white; border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+  .ap-cover { height: 110px; background: linear-gradient(135deg, var(--digital), var(--digital2)); position: relative; display: flex; align-items: flex-end; padding: 14px; }
+  .ap-logo  { width: 46px; height: 46px; background: white; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4em; margin-right: 10px; flex-shrink: 0; }
+  .ap-info  { color: white; }
+  .ap-name  { font-weight: 800; font-size: 0.9em; }
+  .ap-sub   { font-size: 0.7em; opacity: 0.8; }
+  .ap-tag   { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); color: white; font-size: 0.6em; font-weight: 800; border-radius: 4px; padding: 2px 8px; }
+  .ap-body  { padding: 16px 18px; }
+  .ap-section-title { font-weight: 800; font-size: 0.85em; margin-bottom: 10px; color: var(--navy); }
+  .ap-services { display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-bottom: 14px; }
+  .ap-svc { background: var(--surf); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+  .ap-svc-ico  { font-size: 1.1em; margin-bottom: 4px; }
+  .ap-svc-name { font-weight: 700; font-size: 0.76em; margin-bottom: 2px; }
+  .ap-svc-desc { font-size: 0.67em; color: var(--muted); line-height: 1.4; }
+  .ap-svc-price{ font-family: 'JetBrains Mono', monospace; font-size: 0.67em; color: var(--digital); font-weight: 700; margin-top: 3px; }
+  .ap-pills { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+  .ap-pill  { font-size: 0.67em; font-weight: 700; border-radius: 4px; padding: 2px 8px; }
+  .pill-d { background: #dbeafe; color: var(--digital); }
+  .pill-p { background: #f0fdfa; color: var(--prof); }
+  .ap-footer { display: flex; gap: 7px; }
+  .ap-btn { flex: 1; padding: 9px; text-align: center; font-size: 0.73em; font-weight: 800; border-radius: 7px; }
+  .ap-btn.primary { background: var(--digital); color: white; }
+  .ap-btn.ghost   { background: #eff6ff; color: var(--digital); }
+
+  /* ══ EXAMPLES — 3 PROFISSIONAIS ══ */
+  .profiles-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin: 24px 0; }
+  @media(max-width:700px){ .profiles-grid { grid-template-columns: 1fr; } }
+  .prof-card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+  .pc-head { padding: 16px; color: white; }
+  .pc-head.d { background: var(--digital); }
+  .pc-head.p { background: var(--prof); }
+  .pc-head.t { background: var(--tec); }
+  .pc-icon { font-size: 1.8em; margin-bottom: 8px; }
+  .pc-type { font-family: 'JetBrains Mono', monospace; font-size: 0.6em; opacity: 0.75; margin-bottom: 4px; }
+  .pc-name { font-weight: 800; font-size: 0.9em; }
+  .pc-sub  { font-size: 0.72em; opacity: 0.75; }
+  .pc-body { padding: 14px 16px; }
+  .pc-svc-label { font-size: 0.68em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+  .pc-svc { display: flex; gap: 8px; font-size: 0.78em; padding: 5px 0; border-bottom: 1px solid #f5f7fc; }
+  .pc-svc:last-child { border-bottom: none; }
+  .pc-svc-ico { flex-shrink: 0; }
+  .pc-svc-info { flex: 1; }
+  .pc-svc-name { font-weight: 700; }
+  .pc-svc-price { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: var(--muted); margin-top: 1px; }
+  .pc-badge { display: inline-block; font-size: 0.65em; font-weight: 800; border-radius: 3px; padding: 2px 7px; margin-top: 8px; }
+  .badge-d { background: #dbeafe; color: var(--digital); }
+  .badge-p { background: #ccfbf1; color: var(--prof); }
+  .badge-t { background: #fef3c7; color: var(--tec); }
+  .badge-urgente { background: #fef2f2; color: var(--red); }
+
+  /* ══ FIELDS TABLE ══ */
+  .ftable { width: 100%; border-collapse: collapse; font-size: 0.81em; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.05); margin: 14px 0; border: 1px solid var(--border); }
+  .ftable th { padding: 10px 14px; text-align: left; font-size: 0.8em; }
+  .ftable td { padding: 9px 14px; border-bottom: 1px solid #f5f7fc; vertical-align: top; }
+  .ftable tr:last-child td { border-bottom: none; }
+  .ftable tr:hover td { background: #f8faff; }
+  .ftable tr.grp td { font-weight: 800; font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.5px; }
+  .ftable td:first-child { font-weight: 600; }
+  .fk { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; border-radius: 3px; padding: 1px 7px; }
+  .fk-d { background: #dbeafe; color: var(--digital); }
+  .fk-p { background: #ccfbf1; color: var(--prof); }
+  .fk-t { background: #fef3c7; color: var(--tec); }
+  .req { color: #991b1b; font-weight: 800; font-size: 0.78em; }
+  .opt { color: #166534; font-weight: 800; font-size: 0.78em; }
+  .pro { color: #6d28d9; font-weight: 800; font-size: 0.78em; }
+  .new-tag { background: #fef3c7; color: #92400e; border-radius: 3px; padding: 1px 6px; font-size: 0.7em; font-weight: 800; }
+  .star-tag { background: #dbeafe; color: #1e40af; border-radius: 3px; padding: 1px 6px; font-size: 0.7em; font-weight: 800; }
+
+  /* ══ REVIEWS ══ */
+  .rev-cols { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin: 20px 0; }
+  @media(max-width:650px){ .rev-cols { grid-template-columns: 1fr; } }
+  .rev-col-head { font-weight: 800; font-size: 0.85em; margin-bottom: 10px; padding: 8px 0; border-bottom: 2px solid var(--rc); color: var(--rc); }
+  .rev-item { padding: 8px 10px; background: white; border-radius: 7px; border: 1px solid var(--border); margin-bottom: 6px; border-left: 3px solid var(--rc); }
+  .rv-name { font-weight: 700; font-size: 0.82em; }
+  .rv-key  { font-family: 'JetBrains Mono', monospace; font-size: 0.64em; color: var(--rc); }
+  .rv-why  { font-size: 0.73em; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+
+  /* ══ SEO TABLE ══ */
+  .seo-table { width: 100%; border-collapse: collapse; font-size: 0.81em; background: white; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); margin: 14px 0; }
+  .seo-table th { padding: 10px 14px; text-align: left; color: white; }
+  .seo-table td { padding: 10px 14px; border-bottom: 1px solid #f5f7fc; vertical-align: top; }
+  .seo-table tr:last-child td { border-bottom: none; }
+  .kw { display: inline-block; border-radius: 3px; padding: 2px 7px; font-size: 0.72em; margin: 2px; font-family: 'JetBrains Mono', monospace; }
+  .vol { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  /* ══ SCHEMA ══ */
+  .schema-box { border-radius: 10px; overflow: hidden; margin: 16px 0; box-shadow: 0 2px 12px rgba(0,0,0,0.1); }
+  .schema-bar { background: #0d1527; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .schema-title { font-family: 'JetBrains Mono', monospace; font-size: 0.72em; color: #93c5fd; }
+  .copy-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); border-radius: 4px; padding: 3px 12px; font-size: 0.72em; cursor: pointer; }
+  pre { background: #0d1527; padding: 20px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.77em; line-height: 1.9; margin: 0; }
+  .jk { color: #93c5fd; } .js { color: #a5d6a7; } .jt { color: #fcd34d; }
+  .jtype { color: #fde68a; font-weight: bold; } .jc { color: #4b5563; font-style: italic; }
+
+  /* ══ RANK MATH UPDATE ══ */
+  .rm-update { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin: 20px 0; }
+  .rm-head { background: #ea580c; color: white; padding: 12px 18px; font-weight: 800; font-size: 0.88em; }
+  .rm-body { padding: 0; }
+  .rm-row { display: grid; grid-template-columns: 220px 1fr 1fr; gap: 14px; padding: 11px 18px; border-bottom: 1px solid var(--border); font-size: 0.81em; align-items: start; }
+  .rm-row:last-child { border-bottom: none; }
+  .rm-row.header { background: var(--surf); font-weight: 800; font-size: 0.73em; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+  .rm-cpt { font-weight: 700; }
+  .rm-pattern { font-family: 'JetBrains Mono', monospace; font-size: 0.85em; color: #1d4ed8; background: #eff6ff; border-radius: 4px; padding: 3px 8px; }
+  .rm-example { color: var(--muted); font-size: 0.9em; }
+
+  /* ══ IMPLEMENTATION PHASES ══ */
+  .impl-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 20px 0; }
+  @media(max-width:650px){ .impl-grid { grid-template-columns: 1fr; } }
+  .impl-card { background: white; border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  .impl-head { padding: 12px 14px; color: white; font-weight: 800; font-size: 0.85em; }
+  .impl-head.d { background: var(--digital); }
+  .impl-head.p { background: var(--prof); }
+  .impl-head.t { background: var(--tec); }
+  .impl-body { padding: 12px 14px; }
+  .impl-step { display: flex; gap: 8px; font-size: 0.78em; margin-bottom: 6px; color: var(--muted); }
+  .impl-num { width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: 800; color: white; flex-shrink: 0; margin-top: 2px; }
+  .n-d { background: var(--digital); }
+  .n-p { background: var(--prof); }
+  .n-t { background: var(--tec); }
+
+  /* ══ CHECKLIST ══ */
+  .cl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  @media(max-width:600px){ .cl-grid { grid-template-columns: 1fr; } }
+  .cl-item { background: white; border-radius: 8px; padding: 12px 14px; font-size: 0.82em; display: flex; gap: 10px; border: 1px solid var(--border); }
+  .cl-item input { margin-top: 2px; flex-shrink: 0; accent-color: var(--digital); }
+  .cl-label strong { display: block; margin-bottom: 2px; }
+  .cl-label span { color: var(--muted); font-size: 0.9em; }
+
+  /* ══ FINISH BANNER ══ */
+  .finish { background: var(--navy); border-radius: 14px; padding: 36px; text-align: center; margin-top: 24px; }
+  .finish h2 { font-size: 1.6em; font-weight: 800; color: white; margin-bottom: 10px; }
+  .finish p { color: rgba(255,255,255,0.6); font-size: 0.88em; max-width: 580px; margin: 0 auto; line-height: 1.8; }
+
+  footer { background: var(--navy); color: rgba(255,255,255,0.5); text-align: center; padding: 26px; font-size: 0.8em; }
+  footer strong { color: rgba(255,255,255,0.85); }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-inner">
+    <div class="cover-label">Hub Centro Metropolitano · Página 23 · Revisão Profunda</div>
+    <h1>Serviços<br><em>Reengenharia Completa</em></h1>
+    <p class="cover-sub">Um Listing Type não serve para tudo. A solução definitiva: 3 Listing Types especializados + o sistema "O que Fazemos" que transforma cada perfil numa vitrine de negócios real.</p>
+    <div class="badge-row">
+      <span class="bdg bdg-d">💻 Agências & Digitais</span>
+      <span class="bdg bdg-p">🏢 Profissionais B2B</span>
+      <span class="bdg bdg-t">🔧 Técnicos & Casa</span>
+      <span class="bdg bdg-w">✨ "O que Fazemos"</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══ DIAGNÓSTICO ══ -->
+  <div class="sec-tag">00 — O diagnóstico</div>
+  <h2>Por que 1 Listing Type não funciona para Serviços</h2>
+  <p class="sec-intro">Serviços é a categoria mais ampla e diversa do Hub. Um único template trata igual uma agência de marketing digital, um contador, um eletricista e um pet sitter — profissionais com necessidades, campos, schemas e SEO radicalmente diferentes.</p>
+
+  <div class="compare">
+    <div class="cmp-card before">
+      <div class="cmp-head">❌ Antes — Um Listing Type genérico</div>
+      <div class="cmp-body">
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Agência de marketing e encanador no mesmo template</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Schema ProfessionalService genérico — SEO fraco</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Sem forma de listar serviços individuais com preço</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Técnico não tem campo para urgência e área de cobertura</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Contador não tem campo para CRC e registro profissional</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> Agência não tem campo para cases e portfólio de projetos</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> URL /servicos/ sem especificidade — ranking diluído</div>
+        <div class="cmp-item"><span class="cmp-dot">🚫</span> ~1.200 pesquisas/mês capturadas no total</div>
+      </div>
+    </div>
+    <div class="cmp-card after">
+      <div class="cmp-head">✅ Depois — 3 Listing Types especializados</div>
+      <div class="cmp-body">
+        <div class="cmp-item"><span class="cmp-dot">✅</span> Cada tipo com campos e UX adequados ao perfil</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> Schemas distintos: Organization, FinancialService, HomeAndConstruction</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> Sistema "O que Fazemos" — cards individuais por serviço</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> Urgência + área de cobertura para técnicos</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> CRC, CRECI, CREA por tipo de profissional</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> Cases + portfólio + resultados para agências</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> 3 URLs semânticas especializadas</div>
+        <div class="cmp-item"><span class="cmp-dot">✅</span> ~14.800 pesquisas/mês potenciais — 12× mais</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ ARQUITETURA ══ -->
+  <div class="sec-tag">01 — Nova Arquitetura</div>
+  <h2>3 Listing Types — A divisão certa</h2>
+  <p class="sec-intro">A divisão foi feita por <strong>como o profissional trabalha</strong>, não pelo que faz. Um contador e uma agência de tráfego são ambos B2B — mas têm jornadas de venda, campos e schemas completamente diferentes.</p>
+
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="ac-head digital">
+        <div class="ac-icon">💻</div>
+        <div class="ac-num">LISTING TYPE 1</div>
+        <div class="ac-name">Agências & Serviços Digitais</div>
+        <div class="ac-slug">slug: digital · /digital/</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-why">Negócios baseados em tecnologia e criatividade. Entregam projetos que não dependem de presença física. Portfólio e cases são o principal diferencial.</div>
+        <div class="ac-cats-label" style="color:var(--digital)">📂 6 Categorias</div>
+        <div class="ac-cat">💼 Agências de Marketing Digital</div>
+        <div class="ac-cat">🌐 Desenvolvimento Web & Apps</div>
+        <div class="ac-cat">🎨 Design & Criação Visual</div>
+        <div class="ac-cat">📊 Tráfego Pago & Growth</div>
+        <div class="ac-cat">🤖 Automação & Integrações</div>
+        <div class="ac-cat">📚 Educação & Mentoria Online</div>
+        <div class="ac-schema" style="background:#dbeafe;color:var(--digital)">ProfessionalService + hasOfferCatalog</div>
+      </div>
+    </div>
+
+    <div class="arch-card">
+      <div class="ac-head prof">
+        <div class="ac-icon">🏢</div>
+        <div class="ac-num">LISTING TYPE 2</div>
+        <div class="ac-name">Serviços Profissionais B2B</div>
+        <div class="ac-slug">slug: servicos-profissionais · /servicos-profissionais/</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-why">Profissionais com formação regulamentada. Credenciais (CRC, CRECI, CFA) são o principal diferencial. Cliente decide pela especialidade e pelo registro.</div>
+        <div class="ac-cats-label" style="color:var(--prof)">📂 5 Categorias</div>
+        <div class="ac-cat">📊 Contabilidade & Gestão Financeira</div>
+        <div class="ac-cat">🏠 Imobiliária & Corretagem</div>
+        <div class="ac-cat">🛡️ Seguros & Previdência</div>
+        <div class="ac-cat">📋 Consultoria & Gestão Empresarial</div>
+        <div class="ac-cat">🔍 RH, Headhunting & Carreira</div>
+        <div class="ac-schema" style="background:#ccfbf1;color:var(--prof)">FinancialService / ProfessionalService</div>
+      </div>
+    </div>
+
+    <div class="arch-card">
+      <div class="ac-head tec">
+        <div class="ac-icon">🔧</div>
+        <div class="ac-num">LISTING TYPE 3</div>
+        <div class="ac-name">Serviços Técnicos & Casa</div>
+        <div class="ac-slug">slug: servicos-tecnicos · /servicos-tecnicos/</div>
+      </div>
+      <div class="ac-body">
+        <div class="ac-why">Serviços presenciais que dependem de deslocamento. Cliente quer rapidez e confiança. Disponibilidade para urgência e área de cobertura são decisivos.</div>
+        <div class="ac-cats-label" style="color:var(--tec)">📂 6 Categorias</div>
+        <div class="ac-cat">🏗️ Reforma & Construção Civil</div>
+        <div class="ac-cat">⚡ Eletricidade & Hidráulica</div>
+        <div class="ac-cat">❄️ Ar-Condicionado & Climatização</div>
+        <div class="ac-cat">🐾 Pet Care & Veterinária</div>
+        <div class="ac-cat">🚗 Transporte & Mudanças</div>
+        <div class="ac-cat">🧹 Limpeza & Conservação</div>
+        <div class="ac-schema" style="background:#fef3c7;color:var(--tec)">HomeAndConstructionBusiness</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ O QUE FAZEMOS ══ -->
+  <div class="sec-tag">02 — A Feature Principal</div>
+  <h2>✨ Sistema "O que Fazemos" — Cards de Serviços por Profissional</h2>
+  <p class="sec-intro">Esta é a feature que separa o Hub de qualquer diretório no Brasil. Cada profissional cria até 8 cards individuais — com ícone, nome, descrição e preço opcional. A agência lista "Tráfego Pago, Sites, Automação". O eletricista lista "Instalações, Quadros, Emergências 24h". O visitante vê imediatamente o que pode contratar — e decide no perfil, sem precisar ligar para perguntar.</p>
+
+  <div class="so-demo">
+    <div class="so-demo-head">
+      <div class="so-demo-title">✨ O que Fazemos — Formulário de Edição</div>
+      <div class="so-demo-sub">O profissional adiciona até 8 cards — cada um com ícone, nome, descrição e preço opcional</div>
+    </div>
+    <div class="so-section">
+      <div class="so-section-label">Serviços cadastrados (exemplo: Agência Digital)</div>
+      <div class="so-cards">
+        <div class="so-card active">
+          <div class="so-card-ico">📊</div>
+          <div class="so-card-name">Tráfego Pago</div>
+          <div class="so-card-desc">Google Ads e Meta Ads com gestão mensal e relatórios semanais</div>
+          <div class="so-card-price">A partir de R$1.500/mês</div>
+        </div>
+        <div class="so-card">
+          <div class="so-card-ico">🌐</div>
+          <div class="so-card-name">Sites & Landing Pages</div>
+          <div class="so-card-desc">Design, desenvolvimento e hospedagem inclusa no primeiro ano</div>
+          <div class="so-card-price">A partir de R$3.800</div>
+        </div>
+        <div class="so-card">
+          <div class="so-card-ico">🤖</div>
+          <div class="so-card-name">Automação</div>
+          <div class="so-card-desc">n8n, Make e integrações customizadas para o seu negócio</div>
+          <div class="so-card-price">Sob consulta</div>
+        </div>
+        <div class="so-card">
+          <div class="so-card-ico">📱</div>
+          <div class="so-card-name">Social Media</div>
+          <div class="so-card-desc">Criação de conteúdo, calendário editorial e gestão das redes</div>
+          <div class="so-card-price">R$2.200/mês</div>
+        </div>
+        <div class="so-card">
+          <div class="so-card-ico">📧</div>
+          <div class="so-card-name">E-mail Marketing</div>
+          <div class="so-card-desc">Estratégia de nutrição, copywriting e automação de campanhas</div>
+          <div class="so-card-price">R$1.200/mês</div>
+        </div>
+        <div class="so-add-btn">
+          <span style="font-size:1.2em">+</span> Adicionar serviço (3 restantes)
+        </div>
+      </div>
+    </div>
+    <div class="so-section" style="background:#f8faff">
+      <div class="so-section-label">Como aparece no perfil público</div>
+      <div class="agency-preview">
+        <div class="ap-cover">
+          <div class="ap-logo">🚀</div>
+          <div class="ap-info">
+            <div class="ap-name">Orbital Agency</div>
+            <div class="ap-sub">Marketing Digital & Growth · WWO Centro Metropolitano</div>
+          </div>
+          <div class="ap-tag">Agência Digital</div>
+        </div>
+        <div class="ap-body">
+          <div class="ap-pills">
+            <span class="ap-pill pill-d">Tráfego Pago</span>
+            <span class="ap-pill pill-d">Automação</span>
+            <span class="ap-pill pill-d">Social Media</span>
+            <span class="ap-pill pill-p">5 anos de experiência</span>
+          </div>
+          <div class="ap-section-title">✨ O que fazemos <span style="font-size:0.75em;color:var(--muted);font-weight:400">— 5 serviços</span></div>
+          <div class="ap-services">
+            <div class="ap-svc">
+              <div class="ap-svc-ico">📊</div>
+              <div class="ap-svc-name">Tráfego Pago</div>
+              <div class="ap-svc-desc">Google Ads e Meta Ads com relatórios semanais</div>
+              <div class="ap-svc-price">A partir de R$1.500/mês</div>
+            </div>
+            <div class="ap-svc">
+              <div class="ap-svc-ico">🌐</div>
+              <div class="ap-svc-name">Sites & Landing Pages</div>
+              <div class="ap-svc-desc">Design, dev e hospedagem inclusa</div>
+              <div class="ap-svc-price">A partir de R$3.800</div>
+            </div>
+            <div class="ap-svc">
+              <div class="ap-svc-ico">🤖</div>
+              <div class="ap-svc-name">Automação</div>
+              <div class="ap-svc-desc">n8n, Make e integrações customizadas</div>
+              <div class="ap-svc-price">Sob consulta</div>
+            </div>
+          </div>
+          <div class="ap-footer">
+            <div class="ap-btn primary">💬 Solicitar proposta</div>
+            <div class="ap-btn ghost">📂 Ver portfólio</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 3 EXEMPLOS REAIS ══ -->
+  <h3 style="margin-top:28px;margin-bottom:16px">"O que Fazemos" em 3 contextos diferentes</h3>
+  <div class="profiles-grid">
+
+    <div class="prof-card">
+      <div class="pc-head d">
+        <div class="pc-icon">💻</div>
+        <div class="pc-type">LISTING TYPE DIGITAL</div>
+        <div class="pc-name">Orbital Agency</div>
+        <div class="pc-sub">Marketing Digital · WWO</div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-svc-label">O que fazemos</div>
+        <div class="pc-svc"><span class="pc-svc-ico">📊</span><div class="pc-svc-info"><div class="pc-svc-name">Tráfego Pago</div><div class="pc-svc-price">A partir de R$1.500/mês</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">🌐</span><div class="pc-svc-info"><div class="pc-svc-name">Criação de Sites</div><div class="pc-svc-price">A partir de R$3.800</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">🤖</span><div class="pc-svc-info"><div class="pc-svc-name">Automação & Integrações</div><div class="pc-svc-price">Sob consulta</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">📱</span><div class="pc-svc-info"><div class="pc-svc-name">Social Media</div><div class="pc-svc-price">R$2.200/mês</div></div></div>
+        <span class="pc-badge badge-d">💼 Portfólio disponível</span>
+      </div>
+    </div>
+
+    <div class="prof-card">
+      <div class="pc-head p">
+        <div class="pc-icon">📊</div>
+        <div class="pc-type">LISTING TYPE B2B</div>
+        <div class="pc-name">Contábil Soluções</div>
+        <div class="pc-sub">Contabilidade · Ilha Pura</div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-svc-label">O que fazemos</div>
+        <div class="pc-svc"><span class="pc-svc-ico">🏢</span><div class="pc-svc-info"><div class="pc-svc-name">Abertura de Empresa</div><div class="pc-svc-price">A partir de R$890</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">📋</span><div class="pc-svc-info"><div class="pc-svc-name">BPO Financeiro</div><div class="pc-svc-price">R$1.200–3.500/mês</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">💰</span><div class="pc-svc-info"><div class="pc-svc-name">Declaração IRPF</div><div class="pc-svc-price">A partir de R$280</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">📈</span><div class="pc-svc-info"><div class="pc-svc-name">Planejamento Tributário</div><div class="pc-svc-price">Sob consulta</div></div></div>
+        <span class="pc-badge badge-p">🏅 CRC-RJ 045.678</span>
+      </div>
+    </div>
+
+    <div class="prof-card">
+      <div class="pc-head t">
+        <div class="pc-icon">⚡</div>
+        <div class="pc-type">LISTING TYPE TÉCNICO</div>
+        <div class="pc-name">Carlos Elétrica</div>
+        <div class="pc-sub">Eletricista · Rio2 & Região</div>
+      </div>
+      <div class="pc-body">
+        <div class="pc-svc-label">O que fazemos</div>
+        <div class="pc-svc"><span class="pc-svc-ico">🔌</span><div class="pc-svc-info"><div class="pc-svc-name">Instalações Residenciais</div><div class="pc-svc-price">A partir de R$180</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">⚡</span><div class="pc-svc-info"><div class="pc-svc-name">Quadros de Distribuição</div><div class="pc-svc-price">A partir de R$450</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">📋</span><div class="pc-svc-info"><div class="pc-svc-name">Laudo Elétrico</div><div class="pc-svc-price">R$380</div></div></div>
+        <div class="pc-svc"><span class="pc-svc-ico">🚨</span><div class="pc-svc-info"><div class="pc-svc-name">Emergências 24h</div><div class="pc-svc-price">Taxa de visita: R$120</div></div></div>
+        <span class="pc-badge badge-urgente">⚡ Atende urgências 24h</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ CAMPOS - DIGITAL ══ -->
+  <div class="sec-tag">03 — Campos por Listing Type</div>
+  <h2 style="color:var(--digital)">💻 LT1 — Agências & Serviços Digitais</h2>
+
+  <table class="ftable">
+    <thead><tr><th style="background:var(--digital)">Label</th><th style="background:var(--digital)">Key</th><th style="background:var(--digital)">Tipo</th><th style="background:var(--digital)">Req.</th><th style="background:var(--digital)">Observação</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="5" style="background:#dbeafe;color:var(--digital)">📌 GRUPO 1 — Identidade</td></tr>
+      <tr><td>Nome da Agência / Profissional</td><td><span class="fk fk-d">title</span></td><td>Título</td><td><span class="req">SIM</span></td><td>"Orbital Agency" ou "João Silva — Dev Full Stack"</td></tr>
+      <tr><td>Tagline</td><td><span class="fk fk-d">tagline</span></td><td>Slogan</td><td><span class="req">SIM</span></td><td>"Marketing digital que converte no Centro Metropolitano"</td></tr>
+      <tr><td>Sobre a Agência / Profissional</td><td><span class="fk fk-d">description</span></td><td>Textarea</td><td><span class="req">SIM</span></td><td>História, especialidades, metodologia, diferenciais</td></tr>
+      <tr><td>Logo</td><td><span class="fk fk-d">logo</span></td><td>Logo</td><td><span class="opt">NÃO</span></td><td></td></tr>
+      <tr><td>Capa</td><td><span class="fk fk-d">cover</span></td><td>Cover</td><td><span class="req">SIM</span></td><td>Foto do escritório, equipe ou trabalho representativo</td></tr>
+      <tr><td>Localização</td><td><span class="fk fk-d">location</span></td><td>Location</td><td><span class="opt">NÃO</span></td><td>Opcional — muitas agências atendem 100% remoto</td></tr>
+      <tr class="grp"><td colspan="5" style="background:#dbeafe;color:var(--digital)">✨ GRUPO 2 — O que Fazemos <span class="new-tag">NOVO</span> <span class="star-tag">⭐ Feature Principal</span></td></tr>
+      <tr><td>Serviços Oferecidos</td><td><span class="fk fk-d">o-que-fazemos</span></td><td>Repeater (até 8)</td><td><span class="req">SIM</span></td><td>ícone + nome + descrição (120 char) + preço opcional. Renderizado como grid de cards no perfil.</td></tr>
+      <tr><td>Tecnologias & Ferramentas</td><td><span class="fk fk-d">tecnologias</span></td><td>Tags</td><td><span class="opt">NÃO</span></td><td>Meta Ads, WordPress, n8n, Figma, React, Python — aparece como pills</td></tr>
+      <tr><td>Clientes & Setores Atendidos</td><td><span class="fk fk-d">clientes-setores</span></td><td>Text</td><td><span class="opt">NÃO</span></td><td>"E-commerce, Clínicas, Construtoras"</td></tr>
+      <tr class="grp"><td colspan="5" style="background:#dbeafe;color:var(--digital)">📋 GRUPO 3 — Classificação</td></tr>
+      <tr><td>Categoria</td><td><span class="fk fk-d">category</span></td><td>Categoria</td><td><span class="req">SIM</span></td><td>Uma das 6 categorias do tipo Digital</td></tr>
+      <tr><td>Modalidade</td><td><span class="fk fk-d">modalidade-digital</span></td><td>Taxonomy</td><td><span class="req">SIM</span></td><td>Remoto · Presencial no Hub · Híbrido</td></tr>
+      <tr><td>Público-Alvo</td><td><span class="fk fk-d">publico-digital</span></td><td>Taxonomy</td><td><span class="opt">NÃO</span></td><td>MEI · Pequenas Empresas · Médias · Profissionais Liberais</td></tr>
+      <tr><td>Anos de Experiência</td><td><span class="fk fk-d">anos-experiencia</span></td><td>Text</td><td><span class="opt">NÃO</span></td><td></td></tr>
+      <tr class="grp"><td colspan="5" style="background:#dbeafe;color:var(--digital)">💎 GRUPO 4 — Pro+ (Vitrine Completa)</td></tr>
+      <tr><td>Link para Proposta / Briefing</td><td><span class="fk fk-d">proposta-link</span></td><td>URL</td><td><span class="pro">Pro+</span></td><td>Formulário de briefing, Typeform ou Calendly para reunião</td></tr>
+      <tr><td>Cases & Resultados</td><td><span class="fk fk-d">cases-resultados</span></td><td>Textarea</td><td><span class="pro">Pro+</span></td><td>"Geramos +340% de ROAS para clínica odontológica em 3 meses"</td></tr>
+      <tr><td>Link do Portfólio</td><td><span class="fk fk-d">portfolio-link</span></td><td>URL</td><td><span class="pro">Pro+</span></td><td>Behance, site próprio, casos em PDF</td></tr>
+      <tr><td>Galeria de Trabalhos</td><td><span class="fk fk-d">gallery</span></td><td>Gallery</td><td><span class="pro">Pro+</span></td><td>Capturas de campanhas, interfaces criadas, materiais</td></tr>
+      <tr><td>Vídeo de Apresentação</td><td><span class="fk fk-d">video</span></td><td>Video URL</td><td><span class="pro">Pro+</span></td><td>Apresentação da agência ou depoimento de cliente</td></tr>
+      <tr><td>Contato (telefone, e-mail, links)</td><td><span class="fk fk-d">phone / email / links</span></td><td>Vários</td><td><span class="req">SIM</span></td><td>LinkedIn e Instagram essenciais para digitais</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══ CAMPOS - B2B ══ -->
+  <h2 style="color:var(--prof);margin-top:32px">🏢 LT2 — Serviços Profissionais B2B</h2>
+
+  <table class="ftable">
+    <thead><tr><th style="background:var(--prof)">Label</th><th style="background:var(--prof)">Key</th><th style="background:var(--prof)">Tipo</th><th style="background:var(--prof)">Req.</th><th style="background:var(--prof)">Observação</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="5" style="background:#ccfbf1;color:var(--prof)">📌 GRUPO 1 — Identidade + Credencial</td></tr>
+      <tr><td>Nome / Empresa</td><td><span class="fk fk-p">title</span></td><td>Título</td><td><span class="req">SIM</span></td><td></td></tr>
+      <tr><td>Especialidade</td><td><span class="fk fk-p">tagline</span></td><td>Slogan</td><td><span class="req">SIM</span></td><td>"Contabilidade para clínicas médicas e profissionais de saúde"</td></tr>
+      <tr><td>Registro Profissional</td><td><span class="fk fk-p">registro-profissional</span></td><td>Text <span class="new-tag">NOVO</span></td><td><span class="opt">NÃO</span></td><td>CRC, CRECI, CFA, CRA — exibido no card para credibilidade imediata</td></tr>
+      <tr><td>Sobre</td><td><span class="fk fk-p">description</span></td><td>Textarea</td><td><span class="req">SIM</span></td><td></td></tr>
+      <tr class="grp"><td colspan="5" style="background:#ccfbf1;color:var(--prof)">✨ GRUPO 2 — O que Fazemos <span class="new-tag">NOVO</span></td></tr>
+      <tr><td>Serviços Oferecidos</td><td><span class="fk fk-p">o-que-fazemos</span></td><td>Repeater (até 8)</td><td><span class="req">SIM</span></td><td>Contador: "Abertura de Empresa | BPO Financeiro | Declaração IRPF | Planejamento Tributário"</td></tr>
+      <tr><td>Setores de Especialidade</td><td><span class="fk fk-p">setores-especialidade</span></td><td>Tags <span class="new-tag">NOVO</span></td><td><span class="opt">NÃO</span></td><td>"Saúde, Construção Civil, E-commerce, Startups" — aumenta matches de busca interna</td></tr>
+      <tr class="grp"><td colspan="5" style="background:#ccfbf1;color:var(--prof)">📋 GRUPO 3 — Classificação</td></tr>
+      <tr><td>Categoria</td><td><span class="fk fk-p">category</span></td><td>Categoria</td><td><span class="req">SIM</span></td><td></td></tr>
+      <tr><td>Público Atendido</td><td><span class="fk fk-p">publico-b2b</span></td><td>Taxonomy</td><td><span class="opt">NÃO</span></td><td>MEI · ME · Médio Porte · Grande Empresa · Pessoa Física</td></tr>
+      <tr><td>Modalidade</td><td><span class="fk fk-p">modalidade-b2b</span></td><td>Taxonomy</td><td><span class="req">SIM</span></td><td>Presencial · Remoto · Híbrido</td></tr>
+      <tr><td>Faixa de Honorários</td><td><span class="fk fk-p">faixa-honorarios</span></td><td>Taxonomy</td><td><span class="opt">NÃO</span></td><td>Até R$500/mês · R$500–2K · R$2K–5K · Acima de R$5K</td></tr>
+      <tr><td>Clientes Atendidos</td><td><span class="fk fk-p">clientes-atendidos</span></td><td>Text</td><td><span class="pro">Pro+</span></td><td>"Atendo mais de 45 empresas no Centro Metropolitano" — prova social B2B</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ══ CAMPOS - TÉCNICO ══ -->
+  <h2 style="color:var(--tec);margin-top:32px">🔧 LT3 — Serviços Técnicos & Casa</h2>
+
+  <table class="ftable">
+    <thead><tr><th style="background:var(--tec)">Label</th><th style="background:var(--tec)">Key</th><th style="background:var(--tec)">Tipo</th><th style="background:var(--tec)">Req.</th><th style="background:var(--tec)">Observação</th></tr></thead>
+    <tbody>
+      <tr class="grp"><td colspan="5" style="background:#fef3c7;color:var(--tec)">📌 GRUPO 1 — Identidade + Urgência</td></tr>
+      <tr><td>Nome / Empresa</td><td><span class="fk fk-t">title</span></td><td>Título</td><td><span class="req">SIM</span></td><td>"Carlos Elétrica" ou "Carlos Silva — Eletricista"</td></tr>
+      <tr><td>Especialidade</td><td><span class="fk fk-t">tagline</span></td><td>Slogan</td><td><span class="req">SIM</span></td><td>"Eletricista residencial e predial — atendo urgências no Rio2 e Barra"</td></tr>
+      <tr><td>Atende Urgência?</td><td><span class="fk fk-t">atende-urgencia</span></td><td>Taxonomy <span class="new-tag">NOVO</span></td><td><span class="req">SIM</span></td><td>Sim 24h · Sim em horário comercial · Não. Badge colorido no card — decisivo para conversão.</td></tr>
+      <tr><td>Sobre</td><td><span class="fk fk-t">description</span></td><td>Textarea</td><td><span class="req">SIM</span></td><td></td></tr>
+      <tr class="grp"><td colspan="5" style="background:#fef3c7;color:var(--tec)">✨ GRUPO 2 — O que Fazemos <span class="new-tag">NOVO</span></td></tr>
+      <tr><td>Serviços Oferecidos</td><td><span class="fk fk-t">o-que-fazemos</span></td><td>Repeater (até 8)</td><td><span class="req">SIM</span></td><td>Eletricista: "Instalações | Quadros de Distribuição | Laudos | Emergências 24h"</td></tr>
+      <tr><td>Área de Cobertura</td><td><span class="fk fk-t">area-cobertura</span></td><td>Tags <span class="new-tag">NOVO</span></td><td><span class="req">SIM</span></td><td>"Rio2, Ilha Pura, Recreio, Barra da Tijuca" — fundamental para serviços presenciais</td></tr>
+      <tr><td>Prazo Médio de Atendimento</td><td><span class="fk fk-t">prazo-atendimento</span></td><td>Select <span class="new-tag">NOVO</span></td><td><span class="opt">NÃO</span></td><td>Mesmo dia · 24–48h · Agendado. Gera confiança antes do primeiro contato.</td></tr>
+      <tr class="grp"><td colspan="5" style="background:#fef3c7;color:var(--tec)">📋 GRUPO 3 — Classificação</td></tr>
+      <tr><td>Categoria</td><td><span class="fk fk-t">category</span></td><td>Categoria</td><td><span class="req">SIM</span></td><td></td></tr>
+      <tr><td>Disponibilidade</td><td><span class="fk fk-t">disponibilidade-tec</span></td><td>Taxonomy</td><td><span class="req">SIM</span></td><td>Disponível Agora · Agenda Aberta · Agendado · Em pausa</td></tr>
+      <tr><td>Garantia do Serviço</td><td><span class="fk fk-t">garantia</span></td><td>Text <span class="new-tag">NOVO</span></td><td><span class="opt">NÃO</span></td><td>"90 dias de garantia em instalações elétricas" — grande diferencial de conversão</td></tr>
+      <tr><td>Registro Técnico (CREA, etc.)</td><td><span class="fk fk-t">registro-tecnico</span></td><td>Text</td><td><span class="opt">NÃO</span></td><td>Para serviços regulamentados — elétrica, hidráulica, construção</td></tr>
+      <tr><td>Galeria de Trabalhos</td><td><span class="fk fk-t">gallery</span></td><td>Gallery</td><td><span class="pro">Pro+</span></td><td>Antes e depois — conversão altíssima para serviços técnicos</td></tr>
+      <tr><td>WhatsApp / Telefone</td><td><span class="fk fk-t">whatsapp / phone</span></td><td>Text / Phone</td><td><span class="req">SIM</span></td><td>Canal principal de contato para serviços técnicos</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box box-teal">
+    🔧 <strong>Implementação do Repeater "O que Fazemos":</strong> No MyListing, use o campo tipo <strong>Repeater</strong> no formulário. Cada repetição tem 4 subcampos: <code>servico-icone</code> (emoji, texto livre), <code>servico-nome</code> (obrigatório), <code>servico-descricao</code> (textarea, máx. 120 char) e <code>servico-preco</code> (opcional). No Single Page, use um bloco custom que percorre os itens do Repeater e renderiza os cards em grid 2 ou 3 colunas. Se o Repeater não estiver disponível, a alternativa é um campo Textarea com formato estruturado + shortcode PHP para renderizar.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ REVIEWS ══ -->
+  <div class="sec-tag">04 — Reviews</div>
+  <h2>Critérios de Avaliação — Específicos por Tipo</h2>
+
+  <div class="rev-cols">
+
+    <div>
+      <div class="rev-col-head" style="--rc:var(--digital)">💻 Digital — 5 critérios</div>
+      <div class="rev-item" style="--rc:var(--digital)">
+        <div class="rv-name">Qualidade da Entrega</div>
+        <div class="rv-key">qualidade-entrega</div>
+        <div class="rv-why">O resultado final correspondeu ao briefing acordado?</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--digital)">
+        <div class="rv-name">Cumprimento de Prazo</div>
+        <div class="rv-key">prazo-digital</div>
+        <div class="rv-why">Entregou no prazo combinado sem atrasos?</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--digital)">
+        <div class="rv-name">Comunicação</div>
+        <div class="rv-key">comunicacao-digital</div>
+        <div class="rv-why">Clareza nos feedbacks e transparência no andamento</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--digital)">
+        <div class="rv-name">Resultados Gerados</div>
+        <div class="rv-key">resultados-gerados</div>
+        <div class="rv-why">O trabalho trouxe resultados concretos para o negócio?</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--digital)">
+        <div class="rv-name">Indicaria Novamente</div>
+        <div class="rv-key">indicaria-digital</div>
+        <div class="rv-why">Contrataria ou recomendaria este profissional?</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="rev-col-head" style="--rc:var(--prof)">🏢 B2B — 5 critérios</div>
+      <div class="rev-item" style="--rc:var(--prof)">
+        <div class="rv-name">Qualidade Técnica</div>
+        <div class="rv-key">qualidade-b2b</div>
+        <div class="rv-why">Domínio técnico do serviço prestado</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--prof)">
+        <div class="rv-name">Disponibilidade</div>
+        <div class="rv-key">disponibilidade-b2b</div>
+        <div class="rv-why">Acessível quando necessário, retorno rápido</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--prof)">
+        <div class="rv-name">Clareza nas Orientações</div>
+        <div class="rv-key">clareza-b2b</div>
+        <div class="rv-why">Explicou o serviço de forma compreensível e objetiva</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--prof)">
+        <div class="rv-name">Custo-Benefício</div>
+        <div class="rv-key">custo-b2b</div>
+        <div class="rv-why">O preço cobrado foi justo pelo serviço entregue</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--prof)">
+        <div class="rv-name">Indicaria Novamente</div>
+        <div class="rv-key">indicaria-b2b</div>
+        <div class="rv-why">Contrataria ou recomendaria este profissional?</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="rev-col-head" style="--rc:var(--tec)">🔧 Técnico — 5 critérios</div>
+      <div class="rev-item" style="--rc:var(--tec)">
+        <div class="rv-name">Qualidade do Serviço</div>
+        <div class="rv-key">qualidade-tec</div>
+        <div class="rv-why">Serviço bem executado, sem retrabalho</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--tec)">
+        <div class="rv-name">Pontualidade</div>
+        <div class="rv-key">pontualidade-tec</div>
+        <div class="rv-why">Chegou no horário combinado e finalizou no prazo</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--tec)">
+        <div class="rv-name">Limpeza & Organização</div>
+        <div class="rv-key">limpeza-tec</div>
+        <div class="rv-why">Deixou o espaço limpo após o serviço</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--tec)">
+        <div class="rv-name">Transparência no Preço</div>
+        <div class="rv-key">transparencia-tec</div>
+        <div class="rv-why">Cobrou o valor combinado sem surpresas</div>
+      </div>
+      <div class="rev-item" style="--rc:var(--tec)">
+        <div class="rv-name">Indicaria Novamente</div>
+        <div class="rv-key">indicaria-tec</div>
+        <div class="rv-why">Contrataria ou recomendaria este profissional?</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ SEO ══ -->
+  <div class="sec-tag">05 — SEO</div>
+  <h2>Volume de Keywords — 3 Tipos vs 1 Genérico</h2>
+
+  <table class="seo-table">
+    <thead><tr><th style="background:var(--navy)">Listing Type</th><th style="background:var(--navy)">Keywords capturadas</th><th style="background:var(--navy)">Vol./mês estimado</th><th style="background:var(--navy)">Antes (1 tipo)</th></tr></thead>
+    <tbody>
+      <tr>
+        <td style="color:var(--digital);font-weight:800">💻 Digitais<br><small style="font-family:monospace;font-size:0.8em">/digital/</small></td>
+        <td>
+          <span class="kw" style="background:#dbeafe;color:var(--digital)">agência marketing digital barra tijuca</span>
+          <span class="kw" style="background:#dbeafe;color:var(--digital)">desenvolvedor web centro metropolitano</span>
+          <span class="kw" style="background:#dbeafe;color:var(--digital)">designer barra da tijuca</span>
+          <span class="kw" style="background:#dbeafe;color:var(--digital)">tráfego pago barra tijuca</span>
+        </td>
+        <td class="vol" style="color:var(--digital)">1.800–3.600/mês</td>
+        <td style="color:var(--red);font-size:0.82em">Misturado com eletricista no /servicos/ — nenhum ranking específico</td>
+      </tr>
+      <tr>
+        <td style="color:var(--prof);font-weight:800">🏢 B2B<br><small style="font-family:monospace;font-size:0.8em">/servicos-profissionais/</small></td>
+        <td>
+          <span class="kw" style="background:#ccfbf1;color:var(--prof)">contador barra da tijuca</span>
+          <span class="kw" style="background:#ccfbf1;color:var(--prof)">corretor de imóveis centro metropolitano</span>
+          <span class="kw" style="background:#ccfbf1;color:var(--prof)">consultoria empresarial barra</span>
+        </td>
+        <td class="vol" style="color:var(--prof)">2.400–4.800/mês</td>
+        <td style="color:var(--red);font-size:0.82em">URL genérica — relevância diluída, posição 10+</td>
+      </tr>
+      <tr>
+        <td style="color:var(--tec);font-weight:800">🔧 Técnicos<br><small style="font-family:monospace;font-size:0.8em">/servicos-tecnicos/</small></td>
+        <td>
+          <span class="kw" style="background:#fef3c7;color:var(--tec)">eletricista barra da tijuca</span>
+          <span class="kw" style="background:#fef3c7;color:var(--tec)">reforma apartamento barra</span>
+          <span class="kw" style="background:#fef3c7;color:var(--tec)">ar condicionado instalação centro</span>
+          <span class="kw" style="background:#fef3c7;color:var(--tec)">pet sitter barra da tijuca</span>
+        </td>
+        <td class="vol" style="color:var(--tec)">3.200–6.400/mês</td>
+        <td style="color:var(--red);font-size:0.82em">Schema genérico — sem destaque local nos resultados</td>
+      </tr>
+      <tr style="background:#f0fdf4">
+        <td style="font-weight:800">📊 TOTAL</td>
+        <td style="color:var(--green);font-weight:700">3 URLs especializadas · cada uma rankeia em seu nicho de forma independente</td>
+        <td class="vol" style="color:var(--green);font-size:1.1em">7.400–14.800/mês</td>
+        <td style="color:var(--red);font-weight:700">~1.200/mês com 1 URL genérica</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- ══ RANK MATH UPDATE ══ -->
+  <div class="sec-tag">06 — Rank Math</div>
+  <h2>Atualizar Configuração do Rank Math — 3 novos CPTs</h2>
+
+  <div class="rm-update">
+    <div class="rm-head">⚠️ Substituir o CPT "servicos" antigo pelos 3 novos — atualizar title patterns</div>
+    <div class="rm-body">
+      <div class="rm-row header"><div>CPT</div><div>Title Pattern</div><div>Exemplo gerado</div></div>
+      <div class="rm-row">
+        <div class="rm-cpt" style="color:var(--digital)">💻 digital</div>
+        <div><span class="rm-pattern">%title% – %term% em Barra da Tijuca | Hub</span></div>
+        <div class="rm-example">Orbital Agency – Agência de Marketing Digital em Barra da Tijuca | Hub</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-cpt" style="color:var(--prof)">🏢 servicos-profissionais</div>
+        <div><span class="rm-pattern">%title% – %term% na Barra da Tijuca | Hub</span></div>
+        <div class="rm-example">Contábil Soluções – Contabilidade & Finanças na Barra da Tijuca | Hub</div>
+      </div>
+      <div class="rm-row">
+        <div class="rm-cpt" style="color:var(--tec)">🔧 servicos-tecnicos</div>
+        <div><span class="rm-pattern">%title% – %term% em Barra da Tijuca | Hub</span></div>
+        <div class="rm-example">Carlos Elétrica – Eletricidade & Hidráulica em Barra da Tijuca | Hub</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-amber">
+    ⚠️ <strong>Schema para os 3 tipos:</strong> Digital → <code>None</code> (schema ProfessionalService + hasOfferCatalog já está no MyListing). B2B → <code>None</code> (schema FinancialService no MyListing). Técnico → <code>None</code> (schema HomeAndConstructionBusiness no MyListing). Mesma lógica dos outros Listing Types — Rank Math <strong>não duplica schema</strong>.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ SCHEMA DIGITAL ══ -->
+  <div class="sec-tag">07 — Schema</div>
+  <h2>Schema com hasOfferCatalog — O diferencial de SEO</h2>
+  <p class="sec-intro">O schema <code>hasOfferCatalog</code> é o que conecta o perfil da agência com cada serviço individual do "O que Fazemos". O Google processa cada serviço como uma <code>Offer</code> distinta — aumentando a probabilidade de ranquear para "tráfego pago barra da tijuca" mesmo que o título do perfil seja o nome da agência.</p>
+
+  <div class="schema-box">
+    <div class="schema-bar">
+      <span class="schema-title">Agências & Digitais · @type ProfessionalService + hasOfferCatalog</span>
+      <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('sch1').innerText)">Copiar</button>
+    </div>
+<pre id="sch1">{
+  <span class="jk">"@context"</span>: <span class="js">"https://schema.org"</span>,
+  <span class="jk">"@type"</span>: [<span class="jtype">"ProfessionalService"</span>, <span class="jtype">"LocalBusiness"</span>],
+  <span class="jk">"name"</span>: <span class="jt">"[[title]]"</span>,
+  <span class="jk">"description"</span>: <span class="jt">"[[description]]"</span>,
+  <span class="jk">"url"</span>: <span class="jt">"[[:url]]"</span>,
+  <span class="jk">"telephone"</span>: <span class="jt">"[[phone]]"</span>,
+  <span class="jk">"email"</span>: <span class="jt">"[[email]]"</span>,
+  <span class="jk">"sameAs"</span>: <span class="jt">"[[links]]"</span>,
+  <span class="jk">"hasOfferCatalog"</span>: {          <span class="jc">// Cada item = um card do "O que Fazemos"</span>
+    <span class="jk">"@type"</span>: <span class="jtype">"OfferCatalog"</span>,
+    <span class="jk">"name"</span>: <span class="js">"Serviços Oferecidos"</span>,
+    <span class="jk">"itemListElement"</span>: [
+      {
+        <span class="jk">"@type"</span>: <span class="jtype">"Offer"</span>,
+        <span class="jk">"itemOffered"</span>: {
+          <span class="jk">"@type"</span>: <span class="jtype">"Service"</span>,
+          <span class="jk">"name"</span>: <span class="jt">"[[servico-nome-1]]"</span>,
+          <span class="jk">"description"</span>: <span class="jt">"[[servico-descricao-1]]"</span>
+        },
+        <span class="jk">"price"</span>: <span class="jt">"[[servico-preco-1]]"</span>,
+        <span class="jk">"priceCurrency"</span>: <span class="js">"BRL"</span>
+      }
+      <span class="jc">// Repetir para servico-nome-2, servico-nome-3... até 8</span>
+    ]
+  },
+  <span class="jk">"potentialAction"</span>: {
+    <span class="jk">"@type"</span>: <span class="jtype">"QuoteAction"</span>,
+    <span class="jk">"target"</span>: <span class="jt">"[[proposta-link]]"</span>,
+    <span class="jk">"name"</span>: <span class="js">"Solicitar Proposta"</span>
+  },
+  <span class="jk">"address"</span>: {
+    <span class="jk">"@type"</span>: <span class="jtype">"PostalAddress"</span>,
+    <span class="jk">"addressLocality"</span>: <span class="js">"Rio de Janeiro"</span>,
+    <span class="jk">"addressRegion"</span>: <span class="js">"RJ"</span>,
+    <span class="jk">"addressCountry"</span>: <span class="js">"BR"</span>
+  },
+  <span class="jk">"aggregateRating"</span>: {
+    <span class="jk">"@type"</span>: <span class="jtype">"AggregateRating"</span>,
+    <span class="jk">"ratingValue"</span>: <span class="jt">"[[:reviews-average]]"</span>,
+    <span class="jk">"reviewCount"</span>: <span class="jt">"[[:reviews-count]]"</span>
+  }
+}</pre>
+  </div>
+
+  <div class="box box-green">
+    🏆 <strong>Por que o hasOfferCatalog muda o SEO:</strong> Quando o Google processa este schema, entende que a Orbital Agency oferece especificamente "Tráfego Pago", "Criação de Sites" e "Automação" como serviços distintos. A probabilidade do listing aparecer em buscas por cada serviço individualmente aumenta significativamente — não só pela categoria genérica "Agência Digital". É a diferença entre ranquear para 1 keyword vs 8 keywords com um único perfil.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ IMPLEMENTAÇÃO ══ -->
+  <div class="sec-tag">08 — Implementação</div>
+  <h2>Executar nesta ordem — 3 Listing Types do zero</h2>
+
+  <div class="impl-grid">
+    <div class="impl-card">
+      <div class="impl-head d">💻 Agências & Digitais — ~90min</div>
+      <div class="impl-body">
+        <div class="impl-step"><span class="impl-num n-d">1</span>Criar 3 taxonomias: modalidade-digital, publico-digital, faixa-digital</div>
+        <div class="impl-step"><span class="impl-num n-d">2</span>Criar 6 categorias com ícones e cores: marketing digital, dev web, design, tráfego pago, automação, educação</div>
+        <div class="impl-step"><span class="impl-num n-d">3</span>Criar Listing Type · Permalink: digital</div>
+        <div class="impl-step"><span class="impl-num n-d">4</span>Configurar 5 Grupos de Campos incluindo o Repeater "O que Fazemos"</div>
+        <div class="impl-step"><span class="impl-num n-d">5</span>Configurar Reviews (5 critérios de digital)</div>
+        <div class="impl-step"><span class="impl-num n-d">6</span>Single Page com bloco de cards do Repeater em destaque</div>
+        <div class="impl-step"><span class="impl-num n-d">7</span>Schema ProfessionalService + hasOfferCatalog</div>
+        <div class="impl-step"><span class="impl-num n-d">8</span>Explore Page · Rank Math configurado</div>
+      </div>
+    </div>
+
+    <div class="impl-card">
+      <div class="impl-head p">🏢 Profissionais B2B — ~75min</div>
+      <div class="impl-body">
+        <div class="impl-step"><span class="impl-num n-p">1</span>Criar 3 taxonomias: publico-b2b, modalidade-b2b, faixa-honorarios</div>
+        <div class="impl-step"><span class="impl-num n-p">2</span>Criar 5 categorias: contabilidade, imobiliária, seguros, consultoria, RH</div>
+        <div class="impl-step"><span class="impl-num n-p">3</span>Criar Listing Type · Permalink: servicos-profissionais</div>
+        <div class="impl-step"><span class="impl-num n-p">4</span>Campos incluindo registro-profissional e setores-especialidade</div>
+        <div class="impl-step"><span class="impl-num n-p">5</span>Repeater "O que Fazemos" com 4 subcampos</div>
+        <div class="impl-step"><span class="impl-num n-p">6</span>Reviews (5 critérios B2B)</div>
+        <div class="impl-step"><span class="impl-num n-p">7</span>Schema FinancialService / ProfessionalService</div>
+        <div class="impl-step"><span class="impl-num n-p">8</span>Explore Page + Rank Math</div>
+      </div>
+    </div>
+
+    <div class="impl-card">
+      <div class="impl-head t">🔧 Técnicos & Casa — ~75min</div>
+      <div class="impl-body">
+        <div class="impl-step"><span class="impl-num n-t">1</span>Criar 3 taxonomias: atende-urgencia, disponibilidade-tec, area-cobertura (como taxonomy)</div>
+        <div class="impl-step"><span class="impl-num n-t">2</span>Criar 6 categorias: reforma, elétrica, ar-condicionado, pet care, transporte, limpeza</div>
+        <div class="impl-step"><span class="impl-num n-t">3</span>Criar Listing Type · Permalink: servicos-tecnicos</div>
+        <div class="impl-step"><span class="impl-num n-t">4</span>Campos incluindo prazo-atendimento e garantia</div>
+        <div class="impl-step"><span class="impl-num n-t">5</span>Repeater "O que Fazemos" com preço por serviço</div>
+        <div class="impl-step"><span class="impl-num n-t">6</span>Reviews (5 critérios técnicos)</div>
+        <div class="impl-step"><span class="impl-num n-t">7</span>Schema HomeAndConstructionBusiness</div>
+        <div class="impl-step"><span class="impl-num n-t">8</span>Badge de urgência visível no Card e Single Page</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-amber">
+    ⚠️ <strong>O que fazer com o Listing Type "Serviços" anterior:</strong> Se já houver listings cadastrados no tipo antigo, migre-os para o tipo correto antes de despublicar o tipo antigo. Exporte os dados via plugin de export do MyListing, reatribua ao novo CPT, e configure um redirect 301 de <code>/servicos/[slug]</code> para o novo URL. Nunca delete o tipo antigo sem redirect — você perde qualquer link ou indexação já existente.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══ CHECKLIST ══ -->
+  <div class="sec-tag">09 — Checklist</div>
+  <h2>Serviços Revisado — Pronto para implementar</h2>
+
+  <div class="cl-grid">
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>LT1 Digital criado com Repeater "O que Fazemos"</strong><span>6 categorias · 3 taxonomias · schema com hasOfferCatalog</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>LT2 Profissionais B2B criado</strong><span>5 categorias · campo registro-profissional · schema FinancialService</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>LT3 Técnicos & Casa criado</strong><span>6 categorias · atende-urgencia · área de cobertura · badge de urgência</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Repeater "O que Fazemos" funcionando nos 3 tipos</strong><span>Ícone + nome + descrição + preço opcional renderizados em cards</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Reviews específicos configurados por tipo</strong><span>Digital (resultados), B2B (clareza), Técnico (limpeza + pontualidade)</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>3 Explore Pages criadas — /digital/, /servicos-profissionais/, /servicos-tecnicos/</strong><span>Search form com Submit to Page configurado em cada uma</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Rank Math: title patterns atualizados para os 3 novos CPTs</strong><span>Schema = None nos 3 (schema já está no MyListing)</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Schema validado no Rich Results Test para 1 perfil de cada tipo</strong><span>hasOfferCatalog detectado no Digital — confirmar</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Cards de segmento na homepage atualizados</strong><span>3 cards novos substituem o card "Serviços" antigo — ou agrupados em menu</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Redirect 301 de /servicos/* para os novos URLs (se houver listings antigos)</strong><span>Preservar qualquer indexação e links já existentes</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Assistente de IA (página 18) atualizado para os 3 tipos</strong><span>Prompt diferente para digital vs B2B vs técnico</span></div></div>
+    <div class="cl-item"><input type="checkbox"><div class="cl-label"><strong>Pelo menos 3 listings de teste por tipo — com "O que Fazemos" preenchido</strong><span>Confirmar que os cards aparecem corretamente no perfil público</span></div></div>
+  </div>
+
+  <div class="finish">
+    <h2>Serviços agora é a categoria mais poderosa do Hub.</h2>
+    <p>3 Listing Types especializados com schemas distintos, URLs semânticas e o sistema "O que Fazemos" — que nenhum diretório local no Brasil tem. Uma agência lista seus serviços como vitrine. Um eletricista lista o que atende com preço e área de cobertura. O visitante decide sem precisar ligar para perguntar. Isso é conversão.</p>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Hub Centro Metropolitano</strong> · hubcentrometropolitano.com.br<br>
+  Serviços Revisado · Página 23 · 3 Listing Types · "O que Fazemos" · hasOfferCatalog · 17 Categorias · 9 Taxonomias<br>
+  Av. Abelardo Bueno · Barra da Tijuca · Rio de Janeiro
+</footer>
+</body>
+</html>
