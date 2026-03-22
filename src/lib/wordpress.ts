@@ -35,7 +35,6 @@ export interface WPPost {
   categories?: { nodes: WPCategory[] };
   tags?: { nodes: WPTag[] };
   author?: { node: { name: string } };
-  seo?: RankMathSEO;
 }
 
 export interface WPCategory {
@@ -78,11 +77,6 @@ const POST_FULL_FIELDS = /* GraphQL */ `
   categories { nodes { id: databaseId name slug count } }
   tags { nodes { id: databaseId name slug count } }
   author { node { name } }
-  seo {
-    fullHead
-    title
-    description
-  }
 `;
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
