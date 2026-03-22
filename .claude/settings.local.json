@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__ssh-mcp__run_ssh_command"
+      "mcp__ssh-mcp__run_ssh_command",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__evaluate_script"
     ]
   }
 }

@@ -1,0 +1,95 @@
+---
+import type { Business } from '../utils/mockBusinesses';
+
+interface Props {
+  business: Business;
+}
+
+const { business } = Astro.props;
+const previewServices = business.services.slice(0, 3);
+const baseUrl = `/digital/${business.slug}`;
+---
+
+<a
+  href={baseUrl}
+  class="group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+>
+  <!-- Cover -->
+  <div class="relative h-44 overflow-hidden bg-hub-pavao-profundo">
+    <img
+      src={business.cover}
+      alt={business.title}
+      loading="lazy"
+      class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/80 via-hub-pavao-profundo/20 to-transparent" />
+
+    <!-- Category badge -->
+    <span class="absolute top-3 right-3 bg-hub-cobre text-white text-xs font-head font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
+      {business.category.split(' ')[0]}
+    </span>
+
+    <!-- Logo -->
+    {business.logo ? (
+      <img
+        src={business.logo}
+        alt={`Logo ${business.title}`}
+        class="absolute bottom-3 left-4 w-10 h-10 rounded-full border-2 border-white object-cover bg-white shadow"
+      />
+    ) : (
+      <div class="absolute bottom-3 left-4 w-10 h-10 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow">
+        <span class="text-white font-head font-bold text-sm">
+          {business.title.charAt(0)}
+        </span>
+      </div>
+    )}
+  </div>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-1 p-5 gap-3">
+    <!-- Name + tagline -->
+    <div>
+      <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-lg uppercase tracking-wide leading-tight">
+        {business.title}
+      </h3>
+      <p class="font-body text-sm text-hub-chumbo/60 mt-0.5 leading-snug">
+        {business.tagline}
+      </p>
+    </div>
+
+    <!-- Location -->
+    {business.location && (
+      <div class="flex items-center gap-1.5 text-hub-chumbo/40 text-xs font-body">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0">
+          <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+        </svg>
+        {business.location}
+      </div>
+    )}
+
+    <!-- O que Fazemos preview -->
+    <div class="flex flex-wrap gap-1.5 mt-auto">
+      {previewServices.map(s => (
+        <span class="inline-flex items-center gap-1 bg-hub-gelo text-hub-chumbo/70 text-xs font-body px-2.5 py-1 rounded-full">
+          <span>{s.icon}</span>
+          <span>{s.name}</span>
+        </span>
+      ))}
+      {business.services.length > 3 && (
+        <span class="inline-flex items-center bg-hub-pavao-soft text-hub-pavao text-xs font-body px-2.5 py-1 rounded-full">
+          +{business.services.length - 3}
+        </span>
+      )}
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="px-5 pb-4 pt-0">
+    <span class="inline-flex items-center gap-1.5 text-hub-cobre text-sm font-body group-hover:gap-3 transition-all">
+      Ver perfil completo
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+      </svg>
+    </span>
+  </div>
+</a>

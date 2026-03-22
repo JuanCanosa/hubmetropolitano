@@ -1,0 +1,175 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { getBusiness, mockBusinesses } from '../../utils/mockBusinesses';
+
+export function getStaticPaths() {
+  return mockBusinesses
+    .filter(b => b.type === 'digital')
+    .map(b => ({ params: { slug: b.slug } }));
+}
+
+const { slug } = Astro.params;
+const business = getBusiness(slug!);
+if (!business) return Astro.redirect('/digital');
+---
+
+<Layout
+  title={`${business.title} — Agências & Digitais · HUBMETROPOLITANO`}
+  description={business.tagline}
+>
+  <Header />
+
+  <main>
+    <!-- Hero com cover -->
+    <div class="relative h-[55vh] min-h-80 bg-hub-pavao-profundo overflow-hidden">
+      <img
+        src={business.cover}
+        alt={business.title}
+        class="w-full h-full object-cover opacity-30"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/95 via-hub-pavao-profundo/50 to-transparent" />
+
+      <!-- Back link -->
+      <div class="absolute top-6 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <a href="/digital" class="inline-flex items-center gap-2 font-body text-sm text-white/50 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Agências & Digitais
+        </a>
+      </div>
+
+      <!-- Business identity -->
+      <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-6xl pb-12">
+        <div class="flex items-end gap-5">
+          <!-- Logo -->
+          {business.logo ? (
+            <img
+              src={business.logo}
+              alt={`Logo ${business.title}`}
+              class="w-16 h-16 rounded-full border-2 border-white object-cover bg-white shadow-lg shrink-0"
+            />
+          ) : (
+            <div class="w-16 h-16 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow-lg shrink-0">
+              <span class="text-white font-head font-bold text-xl">{business.title.charAt(0)}</span>
+            </div>
+          )}
+
+          <!-- Info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-xs px-3 py-1 rounded-full">
+                {business.category}
+              </span>
+            </div>
+            <h1 class="text-white text-3xl md:text-4xl mb-2 normal-case tracking-normal" style="font-size: clamp(1.75rem, 4vw, 2.5rem);">
+              {business.title}
+            </h1>
+            <p class="font-body text-white/60 text-base leading-snug">
+              {business.tagline}
+            </p>
+            {business.location && (
+              <div class="flex items-center gap-1.5 text-white/40 text-sm font-body mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 shrink-0">
+                  <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                </svg>
+                {business.location}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- O que Fazemos -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="mb-12">
+          <h5 class="mb-3">O que Fazemos</h5>
+          <h2 class="text-hub-pavao max-w-lg normal-case" style="font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: 0;">
+            Serviços oferecidos
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {business.services.map(service => <ServiceCard service={service} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre -->
+    <section class="py-20 bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+          <!-- Description -->
+          <div class="lg:col-span-2">
+            <h5 class="mb-4">Sobre</h5>
+            <h2 class="text-hub-pavao mb-6 normal-case" style="font-size: clamp(1.4rem, 2.5vw, 1.75rem); letter-spacing: 0;">
+              {business.title}
+            </h2>
+            <p class="font-body text-hub-chumbo/80 text-lg leading-relaxed">
+              {business.description}
+            </p>
+          </div>
+
+          <!-- Sidebar info -->
+          <div class="space-y-8">
+
+            {business.technologies && business.technologies.length > 0 && (
+              <div>
+                <h5 class="mb-4 text-hub-chumbo">Tecnologias</h5>
+                <div class="flex flex-wrap gap-2">
+                  {business.technologies.map(tech => (
+                    <span class="font-body text-sm bg-white text-hub-chumbo/70 border border-hub-gelo px-3 py-1.5 rounded-full">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {business.clientSectors && (
+              <div>
+                <h5 class="mb-3 text-hub-chumbo">Clientes & Setores</h5>
+                <p class="font-body text-hub-chumbo/70 text-sm leading-relaxed">
+                  {business.clientSectors}
+                </p>
+              </div>
+            )}
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-hub-pavao py-16">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h5 class="text-hub-cobre mb-3">Entre em contato</h5>
+            <h2 class="text-white normal-case" style="font-size: clamp(1.25rem, 2.5vw, 1.75rem); letter-spacing: 0;">
+              Fale com {business.title}
+            </h2>
+          </div>
+          <a
+            href="#"
+            class="shrink-0 inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-colors"
+          >
+            Solicitar contato
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

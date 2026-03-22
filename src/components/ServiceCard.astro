@@ -1,0 +1,31 @@
+---
+import type { ServiceItem } from '../utils/mockBusinesses';
+
+interface Props {
+  service: ServiceItem;
+}
+
+const { service } = Astro.props;
+---
+
+<div class="flex flex-col gap-3 bg-white rounded-xl border border-hub-gelo p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+  <!-- Icon -->
+  <span class="text-3xl leading-none" aria-hidden="true">{service.icon}</span>
+
+  <!-- Name -->
+  <h3 class="font-head font-bold text-hub-pavao uppercase tracking-widest text-sm leading-tight">
+    {service.name}
+  </h3>
+
+  <!-- Description -->
+  <p class="font-body text-hub-chumbo/70 text-sm leading-relaxed flex-1">
+    {service.description}
+  </p>
+
+  <!-- Price -->
+  {service.price && (
+    <p class="font-body text-hub-cobre text-sm font-semibold mt-auto pt-2 border-t border-hub-gelo">
+      {service.price}
+    </p>
+  )}
+</div>
