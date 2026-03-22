@@ -643,3 +643,73 @@ export const mockBusinessesGastro: Business[] = [
 export function getBusiness(slug: string): Business | undefined {
   return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro].find((b) => b.slug === slug);
 }
+
+// ─── BusinessCardProps — Template Interface para o Componente Astro de Card ───
+//
+// TODO: WP — Esta interface representa os dados que virão do WordPress REST API
+// quando os listings forem CPTs (Custom Post Types) gerenciados pelo ACF.
+// Campos marcados com "// WP:" indicam o mapeamento para a API do WP.
+
+export interface BusinessCardLocation {
+  edificio: string;       // WP: taxonomy 'empreendimento' (term name)
+  bloco?: string;         // WP: acf.bloco
+  sala?: string;          // WP: acf.sala_numero
+  reference?: string;     // WP: acf.referencia_localizacao
+}
+
+export interface BusinessCardProps {
+  title: string;          // WP: post.title.rendered
+  slogan: string;         // WP: acf.tagline || post.excerpt.rendered (stripped)
+  category: string[];     // WP: post._embedded['wp:term'][0] → taxonomy 'listing_category'
+  location: BusinessCardLocation;
+  image: string;          // WP: post._embedded['wp:featuredmedia'][0].source_url
+  verified: boolean;      // WP: acf.verified (true/false toggle field)
+  tags: string[];         // WP: post._embedded['wp:term'][1] → taxonomy 'post_tag'
+}
+
+// ─── Dados estáticos — validação de layout antes da integração WP ────────────
+
+// TODO: WP — substituir por: GET /wp-json/wp/v2/listing?type=digital&_embed&per_page=12
+export const exampleAgencia: BusinessCardProps = {
+  title: 'Orbital Agency',
+  slogan: 'Marketing digital que converte no Centro Metropolitano',
+  category: ['Agências Digitais', 'Marketing Digital'],
+  location: {
+    edificio: 'Worldwide Offices',
+    bloco: 'Torre A',
+    sala: '1204',
+    reference: 'Barra da Tijuca, Rio de Janeiro',
+  },
+  image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800',
+  verified: true,
+  tags: ['Meta Ads', 'Google Ads', 'SEO', 'Branding'],
+};
+
+// TODO: WP — substituir por: GET /wp-json/wp/v2/listing?type=servicos-profissionais&_embed&per_page=12
+export const exampleClinica: BusinessCardProps = {
+  title: 'Contábil Soluções',
+  slogan: 'Contabilidade e planejamento tributário para PMEs na Barra',
+  category: ['Profissionais B2B', 'Contabilidade'],
+  location: {
+    edificio: 'Metropolitan',
+    sala: '803',
+    reference: 'Barra da Tijuca, Rio de Janeiro',
+  },
+  image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=800',
+  verified: true,
+  tags: ['Contabilidade', 'Tributos', 'BPO Financeiro', 'Folha de Pagamento'],
+};
+
+// TODO: WP — substituir por: GET /wp-json/wp/v2/listing?type=gastronomia&_embed&per_page=12
+export const exampleGastro: BusinessCardProps = {
+  title: 'Barra Grill',
+  slogan: 'Cortes premium e churrasco artesanal na Barra da Tijuca',
+  category: ['Gastronomia', 'Restaurantes & Grills'],
+  location: {
+    edificio: 'Rio2 Shopping',
+    reference: 'Barra da Tijuca, Rio de Janeiro',
+  },
+  image: 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800',
+  verified: true,
+  tags: ['Churrasco', 'Carnes Nobres', 'Eventos Corporativos', 'Delivery'],
+};

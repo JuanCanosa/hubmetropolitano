@@ -85,6 +85,19 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
   return `/digital/${b.slug}`;
 }
 
+// Deriva o tipo de cozinha a partir da categoria, para o filtro de gastronomia
+// TODO: WP — virá de acf.tipo_cozinha (select/radio field no CPT listing)
+function getCozinhaKey(b: (typeof allBusinesses)[0]): string {
+  if (b.type !== 'gastronomia') return '';
+  const cat = b.category.toLowerCase();
+  if (cat.includes('grill') || cat.includes('churrasco') || cat.includes('carne')) return 'carnes';
+  if (cat.includes('cafe') || cat.includes('café') || cat.includes('padaria')) return 'cafe';
+  if (cat.includes('brasileira')) return 'brasileira';
+  if (cat.includes('italiana')) return 'italiana';
+  if (cat.includes('japonesa')) return 'japonesa';
+  return '';
+}
+
 // TODO: WP — este array virá de uma Custom Taxonomy 'empreendimento' do WordPress
 // Substituir por: await fetch(`${WP_API}/wp-json/wp/v2/empreendimento`)
 const empreendimentos = [
@@ -109,20 +122,21 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
   <main>
     <!-- Hero compacto -->
     <div class="bg-hub-pavao-profundo py-10 lg:py-14">
-      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+      <div class="container mx-auto px-4 lg:px-8">
         <h5 class="text-hub-cobre mb-3">Vitrine de Negócios</h5>
-        <h1 class="text-white mb-6 max-w-2xl">
-          Serviços<br /><span class="text-hub-cobre">Verificados</span>
+        <h1 class="mb-6 max-w-2xl font-black">
+          <span class="text-hub-cobre">Serviços</span><br />
+          <span class="text-white">Verificados</span>
         </h1>
         <div class="relative max-w-2xl">
-          <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-hub-chumbo/40 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <svg class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-hub-chumbo/40 pointer-events-none" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
           </svg>
           <input
             id="search-input"
             type="text"
             placeholder="Buscar agência, serviço, especialidade..."
-            class="w-full bg-white text-hub-chumbo font-body text-base pl-12 pr-4 py-3.5 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-hub-cobre transition-shadow"
+            class="w-full bg-white text-hub-chumbo font-body text-lg pl-14 pr-6 py-4 rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-hub-cobre/50 transition-shadow"
           />
         </div>
       </div>
@@ -197,6 +211,20 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
               </div>
             </div>
 
+            <!-- Tipo de Cozinha (só Gastronomia) — oculto por padrão -->
+            <div id="cozinha-section" style="display:none">
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Tipo de Cozinha</p>
+              <div class="flex flex-wrap gap-1.5">
+                <button data-cozinha="" class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao">Todas</button>
+                <button data-cozinha="brasileira" class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🍲 Brasileira</button>
+                <button data-cozinha="italiana"   class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🍝 Italiana</button>
+                <button data-cozinha="japonesa"   class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🍱 Japonesa</button>
+                <button data-cozinha="carnes"     class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🥩 Carnes & Grills</button>
+                <button data-cozinha="cafe"       class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">☕ Cafeteria</button>
+                <button data-cozinha="fast-food"  class="cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🍔 Fast Food</button>
+              </div>
+            </div>
+
             <hr class="border-hub-gelo" />
 
             <!-- Avaliação -->
@@ -213,8 +241,8 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
 
             <hr class="border-hub-gelo" />
 
-            <!-- Urgência (só LT3) -->
-            <div id="urgencia-section" class="hidden">
+            <!-- Urgência (só LT3) — oculto por padrão -->
+            <div id="urgencia-section" style="display:none">
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Urgência</p>
               <div class="flex flex-col gap-1.5">
                 <button data-urgencia=""             class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors bg-hub-pavao text-white border-hub-pavao">Todas</button>
@@ -291,6 +319,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                 data-faixa={b.faixaHonorarios ?? ''}
                 data-cat-label={b.category}
                 data-empreendimento={empreendimento}
+                data-cozinha={getCozinhaKey(b)}
                 class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
               >
                 {/* Cover + logo wrapper */}
@@ -399,17 +428,18 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       'servicos-tecnicos':    '#374151',
     };
 
-    var state = { query: '', type: 'all', subcategory: '', minRating: 0, urgencia: '', empreendimentos: [], view: 'grid' };
+    var state = { query: '', type: 'all', subcategory: '', minRating: 0, urgencia: '', cozinha: '', empreendimentos: [], view: 'grid' };
 
-    var searchInput   = document.getElementById('search-input');
-    var listingsCont  = document.getElementById('listings-container');
-    var resultsCount  = document.getElementById('results-count');
-    var noResults     = document.getElementById('no-results');
-    var viewGridBtn   = document.getElementById('view-grid');
-    var viewListBtn   = document.getElementById('view-list');
+    var searchInput     = document.getElementById('search-input');
+    var listingsCont    = document.getElementById('listings-container');
+    var resultsCount    = document.getElementById('results-count');
+    var noResults       = document.getElementById('no-results');
+    var viewGridBtn     = document.getElementById('view-grid');
+    var viewListBtn     = document.getElementById('view-list');
     var cards           = document.querySelectorAll('.biz-card');
     var subcatList      = document.getElementById('subcat-list');
     var urgenciaSection = document.getElementById('urgencia-section');
+    var cozinhaSection  = document.getElementById('cozinha-section');
 
     /* ── filtros ────────────────────────────────────────────────── */
     function applyFilters() {
@@ -422,18 +452,20 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       var visible    = 0;
 
       cards.forEach(function (card) {
-        var ct   = card.dataset.type          || '';
-        var ccat = card.dataset.category      || '';
-        var ctit = card.dataset.title         || '';
-        var crat = parseFloat(card.dataset.rating    || '0');
-        var curg = card.dataset.urgencia      || '';
+        var ct   = card.dataset.type           || '';
+        var ccat = card.dataset.category       || '';
+        var ctit = card.dataset.title          || '';
+        var crat = parseFloat(card.dataset.rating || '0');
+        var curg = card.dataset.urgencia       || '';
         var cemp = card.dataset.empreendimento || '';
+        var ccoz = card.dataset.cozinha        || '';
 
         var show = (t === 'all' || ct === t) &&
-                   (!sub       || ccat.includes(sub)) &&
-                   (!q         || ctit.includes(q) || ccat.includes(q)) &&
-                   (!minRating || crat >= minRating) &&
-                   (!urg       || curg === urg) &&
+                   (!sub            || ccat.includes(sub)) &&
+                   (!q              || ctit.includes(q) || ccat.includes(q)) &&
+                   (!minRating      || crat >= minRating) &&
+                   (!urg            || curg === urg) &&
+                   (!state.cozinha  || ccoz === state.cozinha) &&
                    (empFilter.length === 0 || empFilter.indexOf(cemp) !== -1);
 
         card.style.display = show ? '' : 'none';
@@ -516,6 +548,21 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       btn.addEventListener('click', function () { setUrgencia(btn.dataset.urgencia || ''); });
     });
 
+    /* ── tipo de cozinha (só Gastronomia) ───────────────────────── */
+    function setCozinha(val) {
+      state.cozinha = val;
+      document.querySelectorAll('.cozinha-btn').forEach(function (btn) {
+        var active = btn.dataset.cozinha === val;
+        btn.className = 'cozinha-btn px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer ' +
+          (active ? 'bg-hub-pavao text-white border-hub-pavao' : 'border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao');
+      });
+      applyFilters();
+    }
+
+    document.querySelectorAll('.cozinha-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { setCozinha(btn.dataset.cozinha || ''); });
+    });
+
     /* ── botão buscar (só aplica filtros, já reativo por default) ── */
     var applyBtn = document.getElementById('apply-filters-btn');
     if (applyBtn) applyBtn.addEventListener('click', applyFilters);
@@ -524,10 +571,13 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       state.type        = newType;
       state.subcategory = '';
       state.urgencia    = '';
+      state.cozinha     = '';
 
       renderSubcatList(newType);
-      if (urgenciaSection) urgenciaSection.style.display = newType === 'servicos-tecnicos' ? '' : 'none';
+      if (urgenciaSection) urgenciaSection.style.display = newType === 'servicos-tecnicos' ? 'block' : 'none';
+      if (cozinhaSection)  cozinhaSection.style.display  = newType === 'gastronomia'        ? 'block' : 'none';
       setUrgencia('');
+      setCozinha('');
       applyFilters();
     }
 
