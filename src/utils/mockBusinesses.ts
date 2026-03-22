@@ -9,7 +9,7 @@ export interface ServiceItem {
 
 export interface Business {
   slug: string;
-  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia';
+  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia' | 'saude';
   title: string;
   tagline: string;
   description: string;
@@ -640,8 +640,76 @@ export const mockBusinessesGastro: Business[] = [
   },
 ];
 
+// ─── Mock Data — LT5: Saúde & Bem-Estar ─────────────────────────────────────
+
+export const mockBusinessesSaude: Business[] = [
+  {
+    slug: 'espaco-odonto',
+    type: 'saude',
+    title: 'Espaço Odonto',
+    tagline: 'Odontologia de excelência no coração do Centro Metropolitano',
+    description:
+      'Clínica odontológica completa com atendimento personalizado para moradores e profissionais do Centro Metropolitano. Equipe de especialistas em implantodontia, estética dental, ortodontia e periodontia. Tecnologia de ponta, ambiente acolhedor e resultados que transformam sorrisos.',
+    cover: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1600&auto=format&fit=crop',
+    location: 'Metropolitan Office Tower · Barra da Tijuca',
+    lat: -22.999, lng: -43.364, rating: 4.9,
+    category: 'Odontologia & Estética Dental',
+    faixaHonorarios: 'R$200 – R$8.000',
+    clientesAtendidos: 'Mais de 3.000 pacientes atendidos',
+    services: [
+      { icon: '🦷', name: 'Implante Dentário',    description: 'Implantes de titânio com carga imediata e protocolo all-on-4.',         price: 'A partir de R$2.800' },
+      { icon: '✨', name: 'Clareamento Dental',   description: 'Clareamento a laser com resultado em sessão única.',                    price: 'R$800' },
+      { icon: '😁', name: 'Facetas de Porcelana', description: 'Lentes de contato dental para transformação estética completa.',         price: 'A partir de R$1.200/dente' },
+      { icon: '🔲', name: 'Ortodontia',           description: 'Aparelho fixo, removível e alinhadores invisíveis Invisalign.',         price: 'A partir de R$3.500' },
+      { icon: '🔬', name: 'Periodontia',          description: 'Tratamento de gengiva, raspagem e cirurgia periodontal.',               price: 'A partir de R$350' },
+    ],
+  },
+  {
+    slug: 'dermacenter-clinica',
+    type: 'saude',
+    title: 'DermaCenter Clínica',
+    tagline: 'Dermatologia clínica e estética — diagnóstico preciso e tratamento avançado',
+    description:
+      'Clínica de dermatologia referência na Barra da Tijuca, com médicos especialistas em dermatologia clínica, cirúrgica e estética. Atendemos desde diagnóstico de doenças de pele até tratamentos estéticos avançados com laser, toxina botulínica e preenchimento. Conforto, privacidade e excelência médica.',
+    cover: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=1600&auto=format&fit=crop',
+    location: 'CEO Corporate · Barra da Tijuca',
+    lat: -22.996, lng: -43.360, rating: 4.8,
+    category: 'Dermatologia & Medicina Estética',
+    faixaHonorarios: 'R$350 – R$4.000',
+    clientesAtendidos: 'Mais de 5.000 consultas realizadas',
+    services: [
+      { icon: '🔬', name: 'Consulta Dermatológica', description: 'Avaliação completa da pele, diagnóstico e prescrição de tratamento.',   price: 'R$380' },
+      { icon: '✨', name: 'Laser & Fototerapia',    description: 'Tratamentos a laser para manchas, acne, rejuvenescimento e depilação.',  price: 'A partir de R$450' },
+      { icon: '💉', name: 'Toxina Botulínica',      description: 'Aplicação de Botox para linhas de expressão e hiperidrose.',            price: 'A partir de R$1.200' },
+      { icon: '💊', name: 'Dermatologia Clínica',   description: 'Tratamento de acne, rosácea, psoríase, vitiligo e dermatites.',          price: 'R$380' },
+      { icon: '🩺', name: 'Mapeamento de Pintas',   description: 'Dermoscopia digital para rastreamento de lesões suspeitas.',             price: 'R$550' },
+    ],
+  },
+  {
+    slug: 'psico-espaco-barra',
+    type: 'saude',
+    title: 'PsicoEspaço Barra',
+    tagline: 'Psicologia e saúde mental para profissionais e famílias do Centro Metropolitano',
+    description:
+      'Centro de psicologia e saúde mental com equipe multidisciplinar de psicólogos, psiquiatras e terapeutas. Atendemos adultos, adolescentes, casais e crianças. Consultório presencial e atendimento online disponível. Espaço acolhedor e sigiloso para cuidar do seu bem-estar mental.',
+    cover: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=1600&auto=format&fit=crop',
+    location: 'Union Square · Barra da Tijuca',
+    lat: -23.001, lng: -43.369, rating: 4.7,
+    category: 'Psicologia & Saúde Mental',
+    faixaHonorarios: 'R$180 – R$450/sessão',
+    clientesAtendidos: 'Mais de 200 pacientes em acompanhamento',
+    services: [
+      { icon: '🧠', name: 'Psicoterapia Individual', description: 'Atendimento para adultos e adolescentes com diferentes abordagens terapêuticas.', price: 'R$220/sessão' },
+      { icon: '👫', name: 'Terapia de Casal',         description: 'Trabalho focado na comunicação, conflitos e fortalecimento do relacionamento.',   price: 'R$280/sessão' },
+      { icon: '👶', name: 'Psicologia Infantil',      description: 'Atendimento especializado para crianças com ludoterapia e avaliação psicológica.',  price: 'R$200/sessão' },
+      { icon: '💼', name: 'Psicologia Organizacional', description: 'Coaching, desenvolvimento de liderança e gestão de estresse no trabalho.',         price: 'Sob consulta' },
+      { icon: '💊', name: 'Psiquiatria',               description: 'Avaliação psiquiátrica, diagnóstico e acompanhamento farmacológico.',               price: 'R$450/consulta' },
+    ],
+  },
+];
+
 export function getBusiness(slug: string): Business | undefined {
-  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro].find((b) => b.slug === slug);
+  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro, ...mockBusinessesSaude].find((b) => b.slug === slug);
 }
 
 // ─── BusinessCardProps — Template Interface para o Componente Astro de Card ───

@@ -2,13 +2,14 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro } from '../../utils/mockBusinesses';
+import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro, mockBusinessesSaude } from '../../utils/mockBusinesses';
 
 const allBusinesses = [
   ...mockBusinesses.filter(b => b.type === 'digital'),
   ...mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais'),
   ...mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos'),
   ...mockBusinessesGastro.filter(b => b.type === 'gastronomia'),
+  ...mockBusinessesSaude.filter(b => b.type === 'saude'),
 ];
 
 const typeTabs = [
@@ -17,6 +18,7 @@ const typeTabs = [
   { id: 'servicos-profissionais', label: 'Profissionais B2B', count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
   { id: 'gastronomia',            label: 'Gastronomia',        count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
+  { id: 'saude',                  label: 'Saúde & Bem-Estar',  count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
 ];
 
 const ltCategories = [
@@ -24,6 +26,7 @@ const ltCategories = [
   { id: 'servicos-profissionais', label: 'Profissionais B2B', icon: '🏛️', count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length, cover: mockBusinessesB2B[0].cover },
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   icon: '🔧', count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,      cover: mockBusinessesTec[0].cover },
   { id: 'gastronomia',            label: 'Gastronomia',        icon: '🍽️', count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length,         cover: mockBusinessesGastro[0].cover },
+  { id: 'saude',                  label: 'Saúde & Bem-Estar',  icon: '🏥', count: mockBusinessesSaude.filter(b => b.type === 'saude').length,                cover: mockBusinessesSaude[0].cover },
 ];
 
 const subcatGroups = [
@@ -71,6 +74,18 @@ const subcatGroups = [
       { name: 'Bares & Drinks',   icon: '🍹' },
     ],
   },
+  {
+    typeId: 'saude',
+    cover: mockBusinessesSaude[0].cover,
+    subs: [
+      { name: 'Odontologia',   icon: '🦷' },
+      { name: 'Dermatologia',  icon: '🔬' },
+      { name: 'Psicologia',    icon: '🧠' },
+      { name: 'Fisioterapia',  icon: '🏃' },
+      { name: 'Nutrição',      icon: '🥗' },
+      { name: 'Clínica Geral', icon: '🩺' },
+    ],
+  },
 ];
 
 const urgenciaConfig: Record<string, { label: string; color: string }> = {
@@ -82,6 +97,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
   if (b.type === 'servicos-profissionais') return `/servicos-profissionais/${b.slug}`;
   if (b.type === 'servicos-tecnicos')      return `/servicos-tecnicos/${b.slug}`;
   if (b.type === 'gastronomia')            return `/gastronomia/${b.slug}`;
+  if (b.type === 'saude')                  return `/saude/${b.slug}`;
   return `/digital/${b.slug}`;
 }
 
@@ -95,6 +111,20 @@ function getCozinhaKey(b: (typeof allBusinesses)[0]): string {
   if (cat.includes('brasileira')) return 'brasileira';
   if (cat.includes('italiana')) return 'italiana';
   if (cat.includes('japonesa')) return 'japonesa';
+  return '';
+}
+
+// Deriva a especialidade médica a partir da categoria, para o filtro de saúde
+// TODO: WP — virá de acf.especialidade (select field no CPT listing)
+function getEspecialidadeKey(b: (typeof allBusinesses)[0]): string {
+  if (b.type !== 'saude') return '';
+  const cat = b.category.toLowerCase();
+  if (cat.includes('odonto') || cat.includes('dental')) return 'odontologia';
+  if (cat.includes('derma'))                             return 'dermatologia';
+  if (cat.includes('psico') || cat.includes('mental'))  return 'psicologia';
+  if (cat.includes('fisio'))                             return 'fisioterapia';
+  if (cat.includes('exame') || cat.includes('lab'))      return 'exames';
+  if (cat.includes('família') || cat.includes('familia') || cat.includes('clínica geral')) return 'clinica-familia';
   return '';
 }
 
@@ -120,9 +150,20 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
   <Header />
 
   <main>
-    <!-- Hero compacto -->
-    <div class="bg-hub-pavao-profundo py-10 lg:py-14">
-      <div class="container mx-auto px-4 lg:px-8">
+    <!-- Hero -->
+    <div class="relative bg-hub-pavao-profundo py-24 lg:py-32 overflow-hidden">
+      <!-- Imagem de fundo: arquitetura corporativa moderna -->
+      <img
+        src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop"
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+      />
+      <!-- Overlay gradiente para legibilidade -->
+      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
+
+      <!-- Conteúdo -->
+      <div class="relative container mx-auto px-4 lg:px-8">
         <h5 class="text-hub-cobre mb-3">Vitrine de Negócios</h5>
         <h1 class="mb-6 max-w-2xl font-black">
           <span class="text-hub-cobre">Serviços</span><br />
@@ -151,6 +192,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
           { id: 'servicos-profissionais', icon: '🏛️', label: 'Profissionais B2B',   count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
           { id: 'servicos-tecnicos',      icon: '🔧', label: 'Técnicos & Casa',     count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
           { id: 'gastronomia',            icon: '🍽️', label: 'Gastronomia',          count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
+          { id: 'saude',                  icon: '🏥', label: 'Saúde & Bem-Estar',    count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
         ].map((t, i) => (
           <button
             data-type-icon={t.id}
@@ -320,6 +362,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                 data-cat-label={b.category}
                 data-empreendimento={empreendimento}
                 data-cozinha={getCozinhaKey(b)}
+                data-especialidade={getEspecialidadeKey(b)}
                 class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
               >
                 {/* Cover + logo wrapper */}
@@ -364,16 +407,29 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                     <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-base uppercase tracking-wide leading-tight">
                       {b.title}
                     </h3>
+                    {/* Ícone médico para categoria Saúde */}
+                    {b.type === 'saude' && (
+                      <span class="text-base leading-none shrink-0" title="Saúde & Bem-Estar">🩺</span>
+                    )}
                     {/* Verified checkmark */}
                     <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
                       <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.491 4.491 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
                     </svg>
                   </div>
                   <p class="font-body text-sm text-hub-chumbo/60 mt-1 leading-snug line-clamp-2">{b.tagline}</p>
-                  {/* Badge de empreendimento — TODO: WP: taxonomy term 'empreendimento' */}
-                  <span class="inline-block mt-2 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
-                    {empreendimento}
-                  </span>
+                  {/* Badge de empreendimento/polo — destaque extra para Saúde — TODO: WP: taxonomy term 'empreendimento' */}
+                  {b.type === 'saude' ? (
+                    <span class="inline-flex items-center gap-1 mt-2 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
+                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                      </svg>
+                      {empreendimento}
+                    </span>
+                  ) : (
+                    <span class="inline-block mt-2 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
+                      {empreendimento}
+                    </span>
+                  )}
                 </div>
 
                 {/* Card footer */}
@@ -421,6 +477,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       'servicos-profissionais': ['Contabilidade', 'Imobiliária', 'Seguros', 'Consultoria', 'RH'],
       'servicos-tecnicos':      ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
       gastronomia:              ['Restaurantes', 'Cafeterias', 'Delivery', 'Eventos & Buffet', 'Bares & Drinks'],
+      saude:                    ['Odontologia', 'Dermatologia', 'Psicologia', 'Fisioterapia', 'Nutrição', 'Clínica Geral'],
     };
     var typeColors = {
       digital:                '#B87333',
@@ -459,13 +516,12 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         var curg = card.dataset.urgencia       || '';
         var cemp = card.dataset.empreendimento || '';
         var ccoz = card.dataset.cozinha        || '';
-
         var show = (t === 'all' || ct === t) &&
-                   (!sub            || ccat.includes(sub)) &&
-                   (!q              || ctit.includes(q) || ccat.includes(q)) &&
-                   (!minRating      || crat >= minRating) &&
-                   (!urg            || curg === urg) &&
-                   (!state.cozinha  || ccoz === state.cozinha) &&
+                   (!sub           || ccat.includes(sub)) &&
+                   (!q             || ctit.includes(q) || ccat.includes(q)) &&
+                   (!minRating     || crat >= minRating) &&
+                   (!urg           || curg === urg) &&
+                   (!state.cozinha || ccoz === state.cozinha) &&
                    (empFilter.length === 0 || empFilter.indexOf(cemp) !== -1);
 
         card.style.display = show ? '' : 'none';
@@ -576,6 +632,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       renderSubcatList(newType);
       if (urgenciaSection) urgenciaSection.style.display = newType === 'servicos-tecnicos' ? 'block' : 'none';
       if (cozinhaSection)  cozinhaSection.style.display  = newType === 'gastronomia'        ? 'block' : 'none';
+
       setUrgencia('');
       setCozinha('');
       applyFilters();
