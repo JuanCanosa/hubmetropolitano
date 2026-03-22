@@ -9,7 +9,7 @@ async function gql<T>(query: string, variables?: Record<string, unknown>): Promi
     });
     if (!res.ok) return null;
     const { data, errors } = await res.json();
-    if (errors?.length) return null;
+    if (errors?.length && !data) return null;
     return data as T;
   } catch {
     return null;
@@ -35,6 +35,7 @@ export interface WPPost {
   categories?: { nodes: WPCategory[] };
   tags?: { nodes: WPTag[] };
   author?: { node: { name: string } };
+  seo?: RankMathSEO;
 }
 
 export interface WPCategory {
@@ -77,6 +78,7 @@ const POST_FULL_FIELDS = /* GraphQL */ `
   categories { nodes { id: databaseId name slug count } }
   tags { nodes { id: databaseId name slug count } }
   author { node { name } }
+  seo { fullHead title description }
 `;
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -113,6 +115,15 @@ export async function getPostsCount(params: {
   const argsStr = args.length ? `(${args.join(', ')})` : '';
   const data = await gql<{ postsCount: number }>(`{ postsCount${argsStr} }`);
   return data?.postsCount ?? 0;
+}
+
+export async function getAllPostSlugsAndDates(): Promise<{ slug: string; date: string }[]> {
+  const data = await gql<{ posts: { nodes: { slug: string; date: string }[] } }>(`{
+    posts(first: 1000, where: { status: PUBLISH }) {
+      nodes { slug date }
+    }
+  }`);
+  return data?.posts?.nodes ?? [];
 }
 
 export async function getPost(slug: string): Promise<WPPost | null> {
