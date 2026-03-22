@@ -23,6 +23,42 @@ const ltCategories = [
   { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',   icon: '🔧', count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,      cover: mockBusinessesTec[0].cover },
 ];
 
+const subcatGroups = [
+  {
+    typeId: 'digital',
+    cover: mockBusinesses[0].cover,
+    subs: [
+      { name: 'Marketing Digital', icon: '📣' },
+      { name: 'Dev Web & Apps',    icon: '💻' },
+      { name: 'Design Visual',     icon: '🎨' },
+      { name: 'Tráfego & Growth',  icon: '📈' },
+      { name: 'Automação',         icon: '⚙️' },
+    ],
+  },
+  {
+    typeId: 'servicos-profissionais',
+    cover: mockBusinessesB2B[0].cover,
+    subs: [
+      { name: 'Contabilidade', icon: '📊' },
+      { name: 'Imobiliária',   icon: '🏠' },
+      { name: 'Seguros',       icon: '🛡️' },
+      { name: 'Consultoria',   icon: '💼' },
+      { name: 'RH',            icon: '👥' },
+    ],
+  },
+  {
+    typeId: 'servicos-tecnicos',
+    cover: mockBusinessesTec[0].cover,
+    subs: [
+      { name: 'Reforma & Construção', icon: '🔨' },
+      { name: 'Eletricidade',         icon: '⚡' },
+      { name: 'Ar-Condicionado',      icon: '❄️' },
+      { name: 'Pet Care',             icon: '🐾' },
+      { name: 'Transporte',           icon: '🚚' },
+    ],
+  },
+];
+
 const urgenciaConfig: Record<string, { label: string; color: string }> = {
   'sim-24h':       { label: '⚡ Urgência 24h',    color: 'bg-red-500 text-white' },
   'sim-comercial': { label: '✓ Atende urgências', color: 'bg-amber-500 text-white' },
@@ -65,26 +101,28 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       </div>
     </div>
 
-    <!-- Type Tabs -->
-    <div id="type-tabs" class="sticky top-[60px] z-20 bg-white border-b border-hub-gelo shadow-sm">
-      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
-        <div class="flex gap-1 overflow-x-auto py-2" style="scrollbar-width: none; -ms-overflow-style: none;">
-          {typeTabs.map((tab, i) => (
-            <button
-              data-tab={tab.id}
-              class={`tab-btn shrink-0 inline-flex items-center gap-2 font-head font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-xl transition-all duration-200 ${
-                i === 0 ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/60 hover:text-hub-pavao hover:bg-hub-pavao-soft'
-              }`}
-            >
-              {tab.label}
-              <span class={`tab-count inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full text-[10px] font-bold px-1 ${
-                i === 0 ? 'bg-white/20 text-white' : 'bg-hub-gelo text-hub-chumbo/50'
-              }`}>
-                {tab.count}
-              </span>
-            </button>
-          ))}
-        </div>
+    <!-- Top icon bar: listing types -->
+    <div class="bg-white border-b border-hub-gelo sticky top-[64px] z-20 shadow-sm">
+      <div class="flex items-center gap-3 overflow-x-auto px-6 py-4" style="scrollbar-width: none; -ms-overflow-style: none;">
+        {[
+          { id: 'all',                    icon: '🏢', label: 'Todos',              count: allBusinesses.length },
+          { id: 'digital',                icon: '💻', label: 'Agências Digitais',   count: mockBusinesses.filter(b => b.type === 'digital').length },
+          { id: 'servicos-profissionais', icon: '🏛️', label: 'Profissionais B2B',   count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
+          { id: 'servicos-tecnicos',      icon: '🔧', label: 'Técnicos & Casa',     count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
+        ].map((t, i) => (
+          <button
+            data-type-icon={t.id}
+            class={`type-icon-btn flex items-center gap-3 px-5 py-2.5 rounded-full border shrink-0 transition-all duration-200 ${
+              i === 0
+                ? 'bg-hub-pavao border-hub-pavao text-white'
+                : 'bg-white border-hub-gelo text-hub-chumbo/60 hover:border-hub-pavao hover:text-hub-pavao'
+            }`}
+          >
+            <span class="text-lg leading-none">{t.icon}</span>
+            <span class="font-head font-semibold uppercase tracking-wide text-base whitespace-nowrap">{t.label}</span>
+            <span class="font-body text-sm opacity-60">({t.count})</span>
+          </button>
+        ))}
       </div>
     </div>
 
@@ -92,77 +130,66 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     <div class="flex items-start relative">
 
       <!-- ── Coluna 1: Sidebar Filtros / Categorias ────────────────── -->
-      <div id="sidebar" class="hidden lg:flex w-56 shrink-0 flex-col bg-white border-r border-hub-gelo">
+      <div id="sidebar" class="hidden lg:flex w-[20%] shrink-0 flex-col bg-white border-r border-hub-gelo">
 
-        <!-- Sidebar tabs -->
-        <div class="flex border-b border-hub-gelo shrink-0">
-          <button id="sidebar-tab-filtros"
-            class="sidebar-tab flex-1 py-3.5 font-head font-semibold uppercase tracking-wider text-[11px] text-center transition-colors bg-hub-pavao text-white">
-            Filtros
-          </button>
-          <button id="sidebar-tab-categorias"
-            class="sidebar-tab flex-1 py-3.5 font-head font-semibold uppercase tracking-wider text-[11px] text-center transition-colors text-hub-chumbo/50 hover:text-hub-pavao hover:bg-hub-gelo">
-            Categorias
-          </button>
-        </div>
+        <!-- Filtros -->
+        <div id="panel-filtros" class="flex-1 overflow-y-auto flex flex-col min-h-0">
 
-        <!-- Panel: Filtros -->
-        <div id="panel-filtros" class="flex-1 overflow-y-auto p-4 flex flex-col gap-5 min-h-0">
+          <div class="flex-1 p-4 flex flex-col gap-5">
 
-          <!-- Subcategorias -->
-          <div>
-            <p class="font-head font-semibold uppercase tracking-widest text-[10px] text-hub-chumbo/35 mb-2.5">Subcategorias</p>
-            <div id="subcat-list" class="flex flex-col gap-0.5">
-              <p class="font-body text-hub-chumbo/40 text-xs px-1 py-2">Selecione um tipo acima para filtrar subcategorias</p>
-            </div>
-          </div>
-
-          <!-- Avaliação -->
-          <div>
-            <p class="font-head font-semibold uppercase tracking-widest text-[10px] text-hub-chumbo/35 mb-2.5">Avaliação</p>
-            <div class="flex flex-col gap-0.5">
-              <button data-rating="0"   class="rating-btn active-rating text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">Qualquer avaliação</button>
-              <button data-rating="4.5" class="rating-btn text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">⭐ Excelente (4.5+)</button>
-              <button data-rating="4"   class="rating-btn text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">⭐ Muito bom (4.0+)</button>
-              <button data-rating="3.5" class="rating-btn text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">⭐ Bom (3.5+)</button>
-            </div>
-          </div>
-
-          <!-- Urgência (só LT3) -->
-          <div id="urgencia-section" class="hidden">
-            <p class="font-head font-semibold uppercase tracking-widest text-[10px] text-hub-chumbo/35 mb-2.5">Urgência</p>
-            <div class="flex flex-col gap-0.5">
-              <button data-urgencia=""             class="urgencia-btn active-urgencia text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">Todas</button>
-              <button data-urgencia="sim-24h"      class="urgencia-btn text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">⚡ Urgência 24h</button>
-              <button data-urgencia="sim-comercial" class="urgencia-btn text-left px-3 py-2 rounded-lg font-body text-sm text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao transition-colors">✓ Horário comercial</button>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Panel: Categorias -->
-        <div id="panel-categorias" class="hidden flex-1 overflow-y-auto p-4 flex flex-col gap-3 min-h-0">
-          {ltCategories.map(lt => (
-            <button
-              data-lt-type={lt.id}
-              class="lt-cat-card relative h-28 rounded-xl overflow-hidden text-left group cursor-pointer"
-            >
-              <img src={lt.cover} alt={lt.label} loading="lazy"
-                class="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-400" />
-              <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/95 via-hub-pavao-profundo/40 to-transparent" />
-              <div class="absolute bottom-0 left-0 right-0 p-3">
-                <span class="text-lg leading-none">{lt.icon}</span>
-                <p class="font-head font-bold text-white text-sm uppercase tracking-wide leading-tight mt-0.5">{lt.label}</p>
-                <p class="font-body text-white/50 text-[11px] mt-0.5">{lt.count} cadastrados</p>
+            <!-- O que você procura? -->
+            <div>
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">O que você procura?</p>
+              <div id="subcat-list" class="flex flex-wrap gap-1.5">
+                <p class="font-body text-hub-chumbo/40 text-base py-1">Selecione um tipo acima</p>
               </div>
+            </div>
+
+            <hr class="border-hub-gelo" />
+
+            <!-- Avaliação -->
+            <div>
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Avaliação</p>
+              <div class="grid grid-cols-2 gap-1.5">
+                <button data-rating="5"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★★★<br/><span class="text-sm text-hub-chumbo/40">5 estrelas</span></button>
+                <button data-rating="4"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★★<br/><span class="text-sm text-hub-chumbo/40">4+ estrelas</span></button>
+                <button data-rating="3"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★<br/><span class="text-sm text-hub-chumbo/40">3+ estrelas</span></button>
+                <button data-rating="2"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★<br/><span class="text-sm text-hub-chumbo/40">2+ estrelas</span></button>
+                <button data-rating="0"   class="rating-btn col-span-2 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base bg-hub-pavao text-white border-hub-pavao transition-colors">Qualquer nota</button>
+              </div>
+            </div>
+
+            <hr class="border-hub-gelo" />
+
+            <!-- Urgência (só LT3) -->
+            <div id="urgencia-section" class="hidden">
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Urgência</p>
+              <div class="flex flex-col gap-1.5">
+                <button data-urgencia=""             class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors bg-hub-pavao text-white border-hub-pavao">Todas</button>
+                <button data-urgencia="sim-24h"      class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors">⚡ Urgência 24h</button>
+                <button data-urgencia="sim-comercial" class="urgencia-btn text-left px-3 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors">✓ Horário comercial</button>
+              </div>
+              <hr class="border-hub-gelo mt-5" />
+            </div>
+
+          </div>
+
+          <!-- Botão Buscar (sticky bottom) -->
+          <div class="shrink-0 p-4 bg-white border-t border-hub-gelo">
+            <button id="apply-filters-btn" class="w-full bg-hub-pavao text-white font-head font-semibold uppercase tracking-wider text-base py-3 rounded-xl hover:bg-hub-pavao-profundo transition-colors flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              Buscar
             </button>
-          ))}
+          </div>
+
         </div>
 
       </div>
 
       <!-- ── Coluna 2: Cards ────────────────────────────────────────── -->
-      <div id="left-panel" class="w-full lg:flex-1 bg-hub-gelo min-w-0">
+      <div id="left-panel" class="w-full lg:w-[20%] shrink-0 bg-hub-gelo min-w-0">
 
         <!-- Compact bar: count + toggle -->
         <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center justify-between gap-3">
@@ -184,7 +211,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
         </div>
 
         <!-- Cards grid -->
-        <div id="listings-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 lg:p-5">
+        <div id="listings-container" class="grid grid-cols-1 gap-4 p-4 lg:p-5">
           {allBusinesses.map(b => {
             const url      = getBusinessUrl(b);
             const urgencia = b.atendeUrgencia && b.atendeUrgencia !== 'nao' ? urgenciaConfig[b.atendeUrgencia] : null;
@@ -288,7 +315,7 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       </div>
 
       <!-- ── Coluna 3: Mapa ─────────────────────────────────────────── -->
-      <div id="map-panel" class="hidden lg:block w-[35%] shrink-0 sticky">
+      <div id="map-panel" class="hidden lg:block w-[60%] shrink-0 sticky">
         <div id="map" class="w-full h-full"></div>
       </div>
 
@@ -327,14 +354,14 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     var subcatList    = document.getElementById('subcat-list');
     var urgenciaSection = document.getElementById('urgencia-section');
     var panelFiltros    = document.getElementById('panel-filtros');
-    var panelCategorias = document.getElementById('panel-categorias');
 
     /* ── offset dinâmico ────────────────────────────────────────── */
     function updateOffset() {
-      var header = document.querySelector('header');
-      var tabs   = document.getElementById('type-tabs');
-      var offset = (header ? header.offsetHeight : 64) + (tabs ? tabs.offsetHeight : 50);
-      document.documentElement.style.setProperty('--map-offset', offset + 'px');
+      var header  = document.querySelector('header');
+      var iconBar = document.querySelector('.type-icon-btn')?.closest('div[class*="sticky"]');
+      var h1 = header  ? header.offsetHeight  : 64;
+      var h2 = iconBar ? iconBar.offsetHeight : 72;
+      document.documentElement.style.setProperty('--map-offset', (h1 + h2) + 'px');
     }
     updateOffset();
     window.addEventListener('resize', updateOffset);
@@ -428,28 +455,14 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       }
     }
 
-    /* ── sidebar tabs ───────────────────────────────────────────── */
-    function switchSidebarTab(id) {
-      var tabFiltros    = document.getElementById('sidebar-tab-filtros');
-      var tabCategorias = document.getElementById('sidebar-tab-categorias');
-      var isFiltros = id === 'filtros';
 
-      if (tabFiltros)    tabFiltros.className    = 'sidebar-tab flex-1 py-3.5 font-head font-semibold uppercase tracking-wider text-[11px] text-center transition-colors ' + (isFiltros  ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/50 hover:text-hub-pavao hover:bg-hub-gelo');
-      if (tabCategorias) tabCategorias.className = 'sidebar-tab flex-1 py-3.5 font-head font-semibold uppercase tracking-wider text-[11px] text-center transition-colors ' + (!isFiltros ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/50 hover:text-hub-pavao hover:bg-hub-gelo');
-      if (panelFiltros)    panelFiltros.style.display    = isFiltros  ? '' : 'none';
-      if (panelCategorias) panelCategorias.style.display = !isFiltros ? '' : 'none';
-    }
-
-    document.getElementById('sidebar-tab-filtros')   ?.addEventListener('click', function () { switchSidebarTab('filtros'); });
-    document.getElementById('sidebar-tab-categorias')?.addEventListener('click', function () { switchSidebarTab('categorias'); });
-
-    /* ── subcategorias (lista vertical) ────────────────────────── */
+    /* ── subcategorias (chips) ──────────────────────────────────── */
     function setSubcat(cat) {
       state.subcategory = cat;
       document.querySelectorAll('.subcat-item').forEach(function (el) {
         var active = el.dataset.cat === cat;
-        el.className = 'subcat-item text-left px-3 py-2 rounded-lg font-body text-sm transition-colors ' +
-          (active ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao');
+        el.className = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer ' +
+          (active ? 'bg-hub-pavao text-white border-hub-pavao' : 'border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao');
       });
       applyFilters();
     }
@@ -459,18 +472,18 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       var cats = subcategoriesByType[type] || [];
       subcatList.innerHTML = '';
       if (cats.length === 0) {
-        subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs px-1 py-2">Selecione um tipo acima para filtrar subcategorias</p>';
+        subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs py-1 w-full">Selecione uma categoria acima</p>';
         return;
       }
       var allBtn = document.createElement('button');
-      allBtn.className   = 'subcat-item text-left px-3 py-2 rounded-lg font-body text-sm transition-colors bg-hub-pavao text-white';
+      allBtn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao';
       allBtn.dataset.cat = '';
       allBtn.textContent = 'Todas';
       allBtn.addEventListener('click', function () { setSubcat(''); });
       subcatList.appendChild(allBtn);
       cats.forEach(function (cat) {
         var btn = document.createElement('button');
-        btn.className   = 'subcat-item text-left px-3 py-2 rounded-lg font-body text-sm transition-colors text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao';
+        btn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao';
         btn.dataset.cat = cat;
         btn.textContent = cat;
         btn.addEventListener('click', function () { setSubcat(cat); });
@@ -482,9 +495,12 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     function setRating(minRating) {
       state.minRating = minRating;
       document.querySelectorAll('.rating-btn').forEach(function (btn) {
-        var active = parseFloat(btn.dataset.rating || '0') === minRating;
-        btn.className = 'rating-btn text-left px-3 py-2 rounded-lg font-body text-sm transition-colors ' +
-          (active ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao');
+        var val = parseFloat(btn.dataset.rating || '0');
+        var active = val === minRating;
+        var isQualquer = val === 0;
+        btn.className = 'rating-btn text-center px-2 py-2 rounded-lg border font-body text-base transition-colors leading-tight ' +
+          (isQualquer ? 'col-span-2 ' : 'col-span-1 ') +
+          (active ? 'bg-hub-pavao text-white border-hub-pavao' : 'border-hub-gelo text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao');
       });
       applyFilters();
     }
@@ -498,8 +514,8 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       state.urgencia = val;
       document.querySelectorAll('.urgencia-btn').forEach(function (btn) {
         var active = btn.dataset.urgencia === val;
-        btn.className = 'urgencia-btn text-left px-3 py-2 rounded-lg font-body text-sm transition-colors ' +
-          (active ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/70 hover:bg-hub-gelo hover:text-hub-pavao');
+        btn.className = 'urgencia-btn text-left px-3 py-2.5 rounded-lg border font-body text-base transition-colors ' +
+          (active ? 'bg-hub-pavao text-white border-hub-pavao' : 'border-hub-gelo text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao');
       });
       applyFilters();
     }
@@ -508,20 +524,14 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       btn.addEventListener('click', function () { setUrgencia(btn.dataset.urgencia || ''); });
     });
 
-    /* ── type tabs ──────────────────────────────────────────────── */
+    /* ── botão buscar (só aplica filtros, já reativo por default) ── */
+    var applyBtn = document.getElementById('apply-filters-btn');
+    if (applyBtn) applyBtn.addEventListener('click', applyFilters);
+
     function activateType(newType) {
       state.type        = newType;
       state.subcategory = '';
       state.urgencia    = '';
-
-      tabBtns.forEach(function (b) {
-        var active = b.dataset.tab === newType;
-        b.className = 'tab-btn shrink-0 inline-flex items-center gap-2 font-head font-semibold uppercase tracking-wider text-xs px-5 py-2.5 rounded-xl transition-all duration-200 ' +
-          (active ? 'bg-hub-pavao text-white' : 'text-hub-chumbo/60 hover:text-hub-pavao hover:bg-hub-pavao-soft');
-        var badge = b.querySelector('.tab-count');
-        if (badge) badge.className = 'tab-count inline-flex items-center justify-center min-w-[1.25rem] h-5 rounded-full text-[10px] font-bold px-1 ' +
-          (active ? 'bg-white/20 text-white' : 'bg-hub-gelo text-hub-chumbo/50');
-      });
 
       renderSubcatList(newType);
       if (urgenciaSection) urgenciaSection.style.display = newType === 'servicos-tecnicos' ? '' : 'none';
@@ -529,15 +539,20 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
       applyFilters();
     }
 
-    tabBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () { activateType(btn.dataset.tab || 'all'); });
-    });
+    /* ── top icon bar ───────────────────────────────────────────── */
+    function updateIconBar(newType) {
+      document.querySelectorAll('.type-icon-btn').forEach(function (btn) {
+        var active = btn.dataset.typeIcon === newType;
+        btn.className = 'type-icon-btn flex items-center gap-3 px-5 py-2.5 rounded-full border shrink-0 transition-all duration-200 ' +
+          (active ? 'bg-hub-pavao border-hub-pavao text-white' : 'bg-white border-hub-gelo text-hub-chumbo/60 hover:border-hub-pavao hover:text-hub-pavao');
+      });
+    }
 
-    /* ── category cards no sidebar ──────────────────────────────── */
-    document.querySelectorAll('.lt-cat-card').forEach(function (card) {
-      card.addEventListener('click', function () {
-        activateType(card.dataset.ltType || 'all');
-        switchSidebarTab('filtros');
+    document.querySelectorAll('.type-icon-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var t = btn.dataset.typeIcon || 'all';
+        updateIconBar(t);
+        activateType(t);
       });
     });
 
@@ -576,7 +591,10 @@ function getBusinessUrl(b: (typeof allBusinesses)[0]) {
     });
 
     /* ── init ───────────────────────────────────────────────────── */
+    updateIconBar('all');
     renderSubcatList('all');
+    setRating(0);
+    setUrgencia('');
     applyFilters();
   })();
   </script>
