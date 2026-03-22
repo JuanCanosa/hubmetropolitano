@@ -1,0 +1,197 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { getBusiness, mockBusinessesB2B } from '../../utils/mockBusinesses';
+
+export function getStaticPaths() {
+  return mockBusinessesB2B
+    .filter(b => b.type === 'servicos-profissionais')
+    .map(b => ({ params: { slug: b.slug } }));
+}
+
+const { slug } = Astro.params;
+const business = getBusiness(slug!);
+if (!business) return Astro.redirect('/servicos-profissionais');
+
+const hasCredenciais = business.registroProfissional || business.faixaHonorarios || business.clientesAtendidos;
+---
+
+<Layout
+  title={`${business.title} — Profissionais B2B · HUBMETROPOLITANO`}
+  description={business.tagline}
+>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <div class="relative h-[55vh] min-h-80 bg-hub-pavao-profundo overflow-hidden">
+      <img
+        src={business.cover}
+        alt={business.title}
+        class="w-full h-full object-cover opacity-30"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/95 via-hub-pavao-profundo/50 to-transparent" />
+
+      <div class="absolute top-6 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <a href="/servicos-profissionais" class="inline-flex items-center gap-2 font-body text-sm text-white/50 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          Profissionais B2B
+        </a>
+      </div>
+
+      <div class="absolute bottom-0 left-0 right-0 container mx-auto px-4 lg:px-8 lg:max-w-6xl pb-12">
+        <div class="flex items-end gap-5">
+          {business.logo ? (
+            <img src={business.logo} alt={`Logo ${business.title}`} class="w-16 h-16 rounded-full border-2 border-white object-cover bg-white shadow-lg shrink-0" />
+          ) : (
+            <div class="w-16 h-16 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow-lg shrink-0">
+              <span class="text-white font-head font-bold text-xl">{business.title.charAt(0)}</span>
+            </div>
+          )}
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-xs px-3 py-1 rounded-full">
+                {business.category}
+              </span>
+              {business.registroProfissional && (
+                <span class="bg-white/15 text-white font-body text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+                  {business.registroProfissional}
+                </span>
+              )}
+            </div>
+            <h1 class="text-white mb-2 normal-case tracking-normal" style="font-size: clamp(1.75rem, 4vw, 2.5rem);">
+              {business.title}
+            </h1>
+            <p class="font-body text-white/60 text-base leading-snug">{business.tagline}</p>
+            {business.location && (
+              <div class="flex items-center gap-1.5 text-white/40 text-sm font-body mt-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 shrink-0">
+                  <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                </svg>
+                {business.location}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credenciais (exclusivo B2B) -->
+    {hasCredenciais && (
+      <div class="bg-white border-b border-hub-gelo">
+        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+          <div class="flex flex-wrap gap-0 divide-x divide-hub-gelo">
+            {business.registroProfissional && (
+              <div class="flex items-center gap-3 py-5 pr-8">
+                <div class="w-9 h-9 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 0 0 0-5.304 3 3 0 0 0-3.75-3.751 3 3 0 0 0-5.305 0 3 3 0 0 0-3.751 3.75 3 3 0 0 0 0 5.305 3 3 0 0 0 3.75 3.751 3 3 0 0 0 5.305 0 3 3 0 0 0 3.751-3.75Zm-2.546-4.46a.75.75 0 0 0-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-xs text-hub-chumbo/40 uppercase tracking-wider">Registro</p>
+                  <p class="font-head font-bold text-hub-pavao text-sm uppercase tracking-wide">{business.registroProfissional}</p>
+                </div>
+              </div>
+            )}
+            {business.faixaHonorarios && (
+              <div class="flex items-center gap-3 py-5 px-8">
+                <div class="w-9 h-9 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path d="M10.75 10.818v2.614A3.13 3.13 0 0 0 11.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 0 0-1.138-.432ZM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.578a2.614 2.614 0 0 0-.921.403c-.482.315-.612.648-.612.875 0 .144.075.342.612.764Z" />
+                    <path fill-rule="evenodd" d="M9.99 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16ZM10 4a.75.75 0 0 1 .75.75v.518a3.7 3.7 0 0 1 1.763.62c.496.328.813.783.813 1.112a.75.75 0 1 1-1.5 0c0-.13-.09-.362-.54-.657a2.214 2.214 0 0 0-.536-.27v2.059l.026.006c.6.152 1.323.404 1.86.777.567.392.9.97.9 1.655 0 .686-.333 1.264-.9 1.656-.537.373-1.26.625-1.86.777v.518a.75.75 0 0 1-1.5 0v-.573a3.956 3.956 0 0 1-1.685-.687c-.517-.38-.81-.877-.81-1.19a.75.75 0 0 1 1.5 0c0 .1.14.33.559.622.203.143.455.25.726.323V9.571l-.027-.006c-.6-.152-1.323-.404-1.86-.777C7.333 8.396 7 7.818 7 7.132c0-.686.333-1.264.9-1.656.537-.373 1.26-.625 1.86-.777V4.75A.75.75 0 0 1 10 4Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-xs text-hub-chumbo/40 uppercase tracking-wider">Honorários</p>
+                  <p class="font-head font-bold text-hub-pavao text-sm uppercase tracking-wide">{business.faixaHonorarios}</p>
+                </div>
+              </div>
+            )}
+            {business.clientesAtendidos && (
+              <div class="flex items-center gap-3 py-5 px-8">
+                <div class="w-9 h-9 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 0 0-1.588-3.755 4.502 4.502 0 0 1 5.874 2.636.818.818 0 0 1-.36.98A7.465 7.465 0 0 1 14.5 16Z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-xs text-hub-chumbo/40 uppercase tracking-wider">Clientes</p>
+                  <p class="font-body text-hub-chumbo/80 text-sm">{business.clientesAtendidos}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- O que Fazemos -->
+    <section class="py-20 bg-white">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="mb-12">
+          <h5 class="mb-3">O que Fazemos</h5>
+          <h2 class="text-hub-pavao max-w-lg normal-case" style="font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: 0;">
+            Serviços oferecidos
+          </h2>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {business.services.map(service => <ServiceCard service={service} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre -->
+    <section class="py-20 bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="lg:col-span-2">
+            <h5 class="mb-4">Sobre</h5>
+            <h2 class="text-hub-pavao mb-6 normal-case" style="font-size: clamp(1.4rem, 2.5vw, 1.75rem); letter-spacing: 0;">
+              {business.title}
+            </h2>
+            <p class="font-body text-hub-chumbo/80 text-lg leading-relaxed">{business.description}</p>
+          </div>
+          <div class="space-y-8">
+            {business.clientSectors && (
+              <div>
+                <h5 class="mb-3 text-hub-chumbo">Setores Atendidos</h5>
+                <p class="font-body text-hub-chumbo/70 text-sm leading-relaxed">{business.clientSectors}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-hub-pavao py-16">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h5 class="text-hub-cobre mb-3">Entre em contato</h5>
+            <h2 class="text-white normal-case" style="font-size: clamp(1.25rem, 2.5vw, 1.75rem); letter-spacing: 0;">
+              Fale com {business.title}
+            </h2>
+          </div>
+          <a
+            href="#"
+            class="shrink-0 inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-colors"
+          >
+            Solicitar contato
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

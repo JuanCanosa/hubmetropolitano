@@ -7,7 +7,18 @@ interface Props {
 
 const { business } = Astro.props;
 const previewServices = business.services.slice(0, 3);
-const baseUrl = `/digital/${business.slug}`;
+
+const baseUrl = business.type === 'servicos-profissionais'
+  ? `/servicos-profissionais/${business.slug}`
+  : business.type === 'servicos-tecnicos'
+  ? `/servicos-tecnicos/${business.slug}`
+  : `/digital/${business.slug}`;
+
+const urgenciaLabel: Record<string, { label: string; color: string }> = {
+  'sim-24h':       { label: '⚡ Urgência 24h',        color: 'bg-red-500 text-white' },
+  'sim-comercial': { label: '✓ Atende urgências',     color: 'bg-amber-500 text-white' },
+};
+const urgencia = business.atendeUrgencia ? urgenciaLabel[business.atendeUrgencia] : null;
 ---
 
 <a
@@ -28,6 +39,13 @@ const baseUrl = `/digital/${business.slug}`;
     <span class="absolute top-3 right-3 bg-hub-cobre text-white text-xs font-head font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full">
       {business.category.split(' ')[0]}
     </span>
+
+    <!-- Urgência badge (LT3) -->
+    {urgencia && (
+      <span class={`absolute top-3 left-3 text-xs font-body font-semibold px-2.5 py-1 rounded-full ${urgencia.color}`}>
+        {urgencia.label}
+      </span>
+    )}
 
     <!-- Logo -->
     {business.logo ? (

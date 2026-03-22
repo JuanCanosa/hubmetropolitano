@@ -1,0 +1,159 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BusinessCard from '../../components/BusinessCard.astro';
+import { mockBusinessesTec } from '../../utils/mockBusinesses';
+
+const subcategories = [
+  { label: 'Todas',                       icon: '✦' },
+  { label: 'Reforma & Construção',        icon: '🏗️' },
+  { label: 'Eletricidade & Hidráulica',   icon: '⚡' },
+  { label: 'Ar-Condicionado',             icon: '❄️' },
+  { label: 'Pet Care & Veterinária',      icon: '🐾' },
+  { label: 'Transporte & Mudanças',       icon: '🚚' },
+];
+
+const businesses = mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos');
+---
+
+<Layout
+  title="Serviços Técnicos & Casa — HUBMETROPOLITANO"
+  description="Encontre eletricistas, técnicos de ar-condicionado, empresas de reforma e mais na Barra da Tijuca."
+>
+  <Header />
+
+  <main>
+    <!-- Page Hero -->
+    <div class="bg-hub-pavao-profundo py-20 lg:py-28">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <h5 class="text-hub-cobre mb-4">Serviços Técnicos & Casa</h5>
+        <h1 class="text-white mb-5 max-w-2xl">
+          Técnicos & Casa<br />
+          <span class="text-hub-cobre">na Barra</span>
+        </h1>
+        <p class="font-body text-white/60 text-lg max-w-xl leading-relaxed">
+          Eletricistas, técnicos de ar-condicionado, reforma e mais — profissionais presenciais verificados, com área de cobertura e atendimento de urgência.
+        </p>
+
+        <!-- Urgência legend -->
+        <div class="flex flex-wrap gap-3 mt-8">
+          <span class="inline-flex items-center gap-1.5 bg-red-500/20 text-red-300 text-xs font-body px-3 py-1.5 rounded-full border border-red-500/30">
+            <span>⚡</span> Urgência 24h
+          </span>
+          <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 text-xs font-body px-3 py-1.5 rounded-full border border-amber-500/30">
+            <span>✓</span> Atende urgências (horário comercial)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subcategory carousel -->
+    <div class="bg-white border-b border-hub-gelo sticky top-0 z-10 mt-[50px]">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="relative flex items-center">
+          <button
+            id="cat-prev"
+            aria-label="Categorias anteriores"
+            class="shrink-0 flex items-center justify-center w-8 h-14 text-hub-chumbo/40 hover:text-hub-pavao transition-colors bg-white z-10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          <div
+            id="cat-track"
+            class="flex gap-2 overflow-x-auto py-3 px-1 flex-1"
+            style="scrollbar-width: none; -ms-overflow-style: none;"
+          >
+            {subcategories.map((sub, i) => (
+              <button
+                data-cat={i}
+                class={`cat-btn shrink-0 inline-flex items-center gap-2 font-head font-semibold uppercase tracking-wider text-xs px-4 py-2.5 rounded-xl border transition-all duration-200 ${
+                  i === 0
+                    ? 'bg-hub-pavao text-white border-hub-pavao shadow-sm'
+                    : 'text-hub-chumbo/60 border-hub-gelo hover:border-hub-pavao hover:text-hub-pavao hover:bg-hub-pavao-soft'
+                }`}
+              >
+                <span class="text-base leading-none">{sub.icon}</span>
+                <span>{sub.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <button
+            id="cat-next"
+            aria-label="Próximas categorias"
+            class="shrink-0 flex items-center justify-center w-8 h-14 text-hub-chumbo/40 hover:text-hub-pavao transition-colors bg-white z-10"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+          <div class="pointer-events-none absolute left-8 top-0 bottom-0 w-6 bg-gradient-to-r from-white to-transparent z-10"></div>
+          <div class="pointer-events-none absolute right-8 top-0 bottom-0 w-6 bg-gradient-to-l from-white to-transparent z-10"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const track = document.getElementById('cat-track')!;
+      const prev  = document.getElementById('cat-prev')!;
+      const next  = document.getElementById('cat-next')!;
+      const btns  = document.querySelectorAll<HTMLButtonElement>('.cat-btn');
+      const STEP  = 220;
+      prev.addEventListener('click', () => track.scrollBy({ left: -STEP, behavior: 'smooth' }));
+      next.addEventListener('click', () => track.scrollBy({ left:  STEP, behavior: 'smooth' }));
+      btns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          btns.forEach(b => {
+            b.classList.remove('bg-hub-pavao', 'text-white', 'border-hub-pavao', 'shadow-sm');
+            b.classList.add('text-hub-chumbo/60', 'border-hub-gelo');
+          });
+          btn.classList.add('bg-hub-pavao', 'text-white', 'border-hub-pavao', 'shadow-sm');
+          btn.classList.remove('text-hub-chumbo/60', 'border-hub-gelo');
+        });
+      });
+    </script>
+
+    <!-- Listings -->
+    <section class="pt-10 pb-16 lg:pb-24 bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="flex items-center justify-between mb-10">
+          <p class="font-body text-hub-chumbo/50 text-sm">
+            {businesses.length} profissionais encontrados
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {businesses.map(b => <BusinessCard business={b} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA cadastro -->
+    <section class="bg-hub-pavao py-20">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl text-center">
+        <h5 class="text-hub-cobre mb-4">Seu serviço técnico</h5>
+        <h2 class="text-white mb-6 max-w-xl mx-auto">
+          Cadastre seu serviço e seja encontrado
+        </h2>
+        <p class="font-body text-white/60 max-w-md mx-auto mb-10 text-lg">
+          Moradores da Barra da Tijuca buscam profissionais técnicos de confiança. Mostre sua área de cobertura e disponibilidade.
+        </p>
+        <a
+          href="#"
+          class="inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-colors"
+        >
+          Cadastrar meu serviço
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

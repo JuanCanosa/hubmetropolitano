@@ -1,0 +1,151 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import BusinessCard from '../../components/BusinessCard.astro';
+import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec } from '../../utils/mockBusinesses';
+
+const listingTypes = [
+  {
+    icon: '💻',
+    eyebrow: 'Listing Type 1',
+    title: 'Agências & Serviços Digitais',
+    description: 'Marketing digital, desenvolvimento web, design, tráfego pago e automação. Negócios baseados em tecnologia e criatividade.',
+    href: '/digital',
+    count: mockBusinesses.filter(b => b.type === 'digital').length,
+    categories: ['Marketing Digital', 'Dev Web & Apps', 'Design Visual', 'Tráfego & Growth', 'Automação', 'Educação'],
+    color: 'bg-hub-pavao',
+    accent: 'border-hub-pavao',
+    featured: mockBusinesses.filter(b => b.type === 'digital').slice(0, 3),
+  },
+  {
+    icon: '🏛️',
+    eyebrow: 'Listing Type 2',
+    title: 'Profissionais B2B',
+    description: 'Contadores, corretores, consultores e especialistas com registro profissional. Credenciais verificadas e faixa de honorários transparente.',
+    href: '/servicos-profissionais',
+    count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length,
+    categories: ['Contabilidade', 'Imobiliária', 'Seguros', 'Consultoria', 'RH & Headhunting'],
+    color: 'bg-hub-pavao-profundo',
+    accent: 'border-hub-cobre',
+    featured: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').slice(0, 3),
+  },
+  {
+    icon: '🔧',
+    eyebrow: 'Listing Type 3',
+    title: 'Técnicos & Casa',
+    description: 'Eletricistas, técnicos de ar-condicionado, reforma e construção. Área de cobertura definida e badge de urgência visível no perfil.',
+    href: '/servicos-tecnicos',
+    count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,
+    categories: ['Reforma & Construção', 'Eletricidade', 'Ar-Condicionado', 'Pet Care', 'Transporte'],
+    color: 'bg-hub-chumbo',
+    accent: 'border-hub-cobre-luminoso',
+    featured: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').slice(0, 3),
+  },
+];
+---
+
+<Layout
+  title="Serviços — HUBMETROPOLITANO"
+  description="Agências digitais, profissionais B2B e técnicos especializados verificados na Barra da Tijuca."
+>
+  <Header />
+
+  <main>
+    <!-- Hero -->
+    <div class="bg-hub-pavao-profundo py-20 lg:py-28">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <h5 class="text-hub-cobre mb-4">Vitrine de Negócios</h5>
+        <h1 class="text-white mb-5 max-w-2xl">
+          Serviços<br />
+          <span class="text-hub-cobre">Verificados</span>
+        </h1>
+        <p class="font-body text-white/60 text-lg max-w-xl leading-relaxed">
+          3 tipos de negócios, cada um com campos e credenciais próprias. Encontre o profissional certo para o que você precisa.
+        </p>
+      </div>
+    </div>
+
+    <!-- Listing Types -->
+    {listingTypes.map((lt, i) => (
+      <section class={`py-20 lg:py-28 ${i % 2 === 0 ? 'bg-hub-gelo' : 'bg-white'}`}>
+        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+            <!-- Info lateral -->
+            <div class={`lg:sticky lg:top-24 ${i % 2 !== 0 ? 'lg:order-2' : ''}`}>
+              <div class={`inline-flex items-center gap-3 ${lt.color} text-white rounded-2xl px-5 py-3 mb-8`}>
+                <span class="text-2xl">{lt.icon}</span>
+                <span class="font-head font-semibold uppercase tracking-widest text-xs">{lt.eyebrow}</span>
+              </div>
+
+              <h2 class="text-hub-pavao mb-5">{lt.title}</h2>
+
+              <p class="font-body text-hub-chumbo/70 text-lg leading-relaxed mb-8">
+                {lt.description}
+              </p>
+
+              <!-- Categorias -->
+              <div class="flex flex-wrap gap-2 mb-10">
+                {lt.categories.map(cat => (
+                  <span class="font-body text-xs text-hub-chumbo/60 bg-hub-gelo border border-hub-gelo px-3 py-1.5 rounded-full">
+                    {cat}
+                  </span>
+                ))}
+              </div>
+
+              <!-- Stats + CTA -->
+              <div class="flex items-center gap-6">
+                <div>
+                  <p class="font-head font-bold text-hub-pavao text-3xl uppercase">{lt.count}</p>
+                  <p class="font-body text-hub-chumbo/40 text-xs uppercase tracking-wider">cadastrados</p>
+                </div>
+                <div class="w-px h-10 bg-hub-gelo"></div>
+                <a
+                  href={lt.href}
+                  class="inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-xs px-6 py-3 rounded-full transition-colors"
+                >
+                  Ver todos
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- Cards preview -->
+            <div class={`flex flex-col gap-4 ${i % 2 !== 0 ? 'lg:order-1' : ''}`}>
+              {lt.featured.map(b => <BusinessCard business={b} />)}
+            </div>
+
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <!-- CTA final -->
+    <section class="bg-hub-pavao py-20">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl text-center">
+        <h5 class="text-hub-cobre mb-4">Cadastre seu negócio</h5>
+        <h2 class="text-white mb-6 max-w-xl mx-auto">
+          Seu negócio merece ser encontrado
+        </h2>
+        <p class="font-body text-white/60 max-w-md mx-auto mb-10 text-lg">
+          Escolha o tipo certo para o seu perfil e mostre exatamente o que você oferece.
+        </p>
+        <a
+          href="#"
+          class="inline-flex items-center gap-2 bg-hub-cobre hover:bg-hub-cobre-luminoso text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-full transition-colors"
+        >
+          Quero cadastrar meu negócio
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
