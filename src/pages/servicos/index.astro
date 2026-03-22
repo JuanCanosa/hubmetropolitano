@@ -128,6 +128,44 @@ function getEspecialidadeKey(b: (typeof allBusinesses)[0]): string {
   return '';
 }
 
+// Mapeia categoria do negócio → label da subcategoria, para filtro exato
+// TODO: WP — virá de acf.subcategoria (taxonomy field no CPT listing)
+function getSubcatKey(b: (typeof allBusinesses)[0]): string {
+  const cat = b.category.toLowerCase();
+  // Digital
+  if (cat.includes('marketing'))                                                    return 'Marketing Digital';
+  if (cat.includes('desenvolvimento') || cat.includes('web') || cat.includes('mobile')) return 'Dev Web & Apps';
+  if (cat.includes('design') || cat.includes('branding'))                          return 'Design Visual';
+  if (cat.includes('tráfego') || cat.includes('trafego') || cat.includes('growth')) return 'Tráfego & Growth';
+  if (cat.includes('automação') || cat.includes('automacao'))                      return 'Automação';
+  // Profissionais B2B
+  if (cat.includes('contab'))                                                       return 'Contabilidade';
+  if (cat.includes('imob'))                                                         return 'Imobiliária';
+  if (cat.includes('seguro'))                                                       return 'Seguros';
+  if (cat.includes('consultoria'))                                                  return 'Consultoria';
+  if (cat.includes('rh') || cat.includes('talentos') || cat.includes('recursos'))  return 'RH';
+  // Técnicos & Casa
+  if (cat.includes('reforma') || cat.includes('construção') || cat.includes('construcao')) return 'Reforma & Construção';
+  if (cat.includes('elétric') || cat.includes('eletric'))                          return 'Eletricidade';
+  if (cat.includes('climatiz') || cat.includes('refrigeração') || cat.includes('ar-condicionado')) return 'Ar-Condicionado';
+  if (cat.includes('pet') || cat.includes('veterinár'))                            return 'Pet Care';
+  if (cat.includes('transport') || cat.includes('mudança'))                        return 'Transporte';
+  // Gastronomia
+  if (cat.includes('restaurante') || cat.includes('grill') || cat.includes('churrasco')) return 'Restaurantes';
+  if (cat.includes('cafe') || cat.includes('café') || cat.includes('padaria'))     return 'Cafeterias';
+  if (cat.includes('delivery') || cat.includes('marmita'))                         return 'Delivery';
+  if (cat.includes('evento') || cat.includes('buffet'))                            return 'Eventos & Buffet';
+  if (cat.includes('bar') || cat.includes('drink') || cat.includes('cocktail'))    return 'Bares & Drinks';
+  // Saúde
+  if (cat.includes('odonto') || cat.includes('dental'))                            return 'Odontologia';
+  if (cat.includes('derma'))                                                        return 'Dermatologia';
+  if (cat.includes('psico') || cat.includes('mental'))                             return 'Psicologia';
+  if (cat.includes('fisio'))                                                        return 'Fisioterapia';
+  if (cat.includes('nutri'))                                                        return 'Nutrição';
+  if (cat.includes('clínica geral') || cat.includes('clinica') || cat.includes('família')) return 'Clínica Geral';
+  return '';
+}
+
 // TODO: WP — este array virá de uma Custom Taxonomy 'empreendimento' do WordPress
 // Substituir por: await fetch(`${WP_API}/wp-json/wp/v2/empreendimento`)
 const empreendimentos = [
@@ -224,11 +262,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       </div>
     </div>
 
-    <!-- Subcategorias mobile — chips horizontais rolável (só mobile) -->
-    <div id="mobile-subcat-bar" class="lg:hidden hidden bg-white border-b border-hub-gelo/60 sticky top-[64px] z-19">
-      <div id="mobile-subcat-list" class="flex items-center gap-2 overflow-x-auto px-4 py-2.5" style="scrollbar-width: none; -ms-overflow-style: none;"></div>
-    </div>
-
     <!-- Layout: sidebar + grid de resultados -->
     <div class="flex items-start pt-[30px]">
 
@@ -238,14 +271,18 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       <!-- ── Sidebar de Filtros ─────────────────────────────────────── -->
       <aside id="sidebar" class="bg-white border-r border-hub-gelo shrink-0">
 
-        <!-- Cabeçalho do drawer (só mobile) -->
-        <div class="flex items-center justify-between px-4 py-4 border-b border-hub-gelo lg:hidden">
-          <span class="font-head font-bold text-hub-pavao uppercase tracking-wider text-sm">Filtros</span>
-          <button id="close-drawer-btn" class="p-2 rounded-full hover:bg-hub-gelo transition-colors text-hub-chumbo" aria-label="Fechar filtros">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
+        <!-- Cabeçalho do bottom sheet (só mobile) -->
+        <div class="lg:hidden flex flex-col items-center pt-3 pb-0">
+          <!-- Drag handle -->
+          <div class="w-10 h-1 rounded-full bg-hub-gelo mb-3"></div>
+          <div class="flex items-center justify-between w-full px-5 pb-3 border-b border-hub-gelo">
+            <span class="font-head font-bold text-hub-pavao uppercase tracking-wider text-sm">Todos os Filtros</span>
+            <button id="close-drawer-btn" class="p-2 -mr-1 rounded-full hover:bg-hub-gelo transition-colors text-hub-chumbo/60" aria-label="Fechar filtros">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         <!-- Filtros -->
@@ -402,6 +439,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
                 data-empreendimento={empreendimento}
                 data-cozinha={getCozinhaKey(b)}
                 data-especialidade={getEspecialidadeKey(b)}
+                data-subcat={getSubcatKey(b)}
                 class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
               >
                 {/* Cover + logo wrapper */}
@@ -548,8 +586,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     var viewListBtn     = document.getElementById('view-list');
     var cards           = document.querySelectorAll('.biz-card');
     var subcatList        = document.getElementById('subcat-list');
-    var mobileSubcatBar   = document.getElementById('mobile-subcat-bar');
-    var mobileSubcatList  = document.getElementById('mobile-subcat-list');
     var urgenciaSection   = document.getElementById('urgencia-section');
     var cozinhaSection    = document.getElementById('cozinha-section');
 
@@ -567,12 +603,13 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         var ct   = card.dataset.type           || '';
         var ccat = card.dataset.category       || '';
         var ctit = card.dataset.title          || '';
+        var csub = card.dataset.subcat         || '';
         var crat = parseFloat(card.dataset.rating || '0');
         var curg = card.dataset.urgencia       || '';
         var cemp = card.dataset.empreendimento || '';
         var ccoz = card.dataset.cozinha        || '';
         var show = (t === 'all' || ct === t) &&
-                   (!sub           || ccat.includes(sub)) &&
+                   (!sub           || csub === sub) &&
                    (!q             || ctit.includes(q) || ccat.includes(q)) &&
                    (!minRating     || crat >= minRating) &&
                    (!urg           || curg === urg) &&
@@ -602,45 +639,28 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       applyFilters();
     }
 
-    function makeSubcatChips(container, cats) {
-      container.innerHTML = '';
+    function renderSubcatList(type) {
+      if (!subcatList) return;
+      var cats = subcategoriesByType[type] || [];
+      subcatList.innerHTML = '';
+      if (cats.length === 0) {
+        subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs py-1 w-full">Selecione uma categoria acima</p>';
+        return;
+      }
       var allBtn = document.createElement('button');
-      allBtn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-sm transition-colors cursor-pointer whitespace-nowrap bg-hub-pavao text-white border-hub-pavao shrink-0';
+      allBtn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao';
       allBtn.dataset.cat = '';
       allBtn.textContent = 'Todas';
       allBtn.addEventListener('click', function () { setSubcat(''); });
-      container.appendChild(allBtn);
+      subcatList.appendChild(allBtn);
       cats.forEach(function (cat) {
         var btn = document.createElement('button');
-        btn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-sm transition-colors cursor-pointer whitespace-nowrap shrink-0 border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao';
+        btn.className   = 'subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao';
         btn.dataset.cat = cat;
         btn.textContent = cat;
         btn.addEventListener('click', function () { setSubcat(cat); });
-        container.appendChild(btn);
+        subcatList.appendChild(btn);
       });
-    }
-
-    function renderSubcatList(type) {
-      var cats = subcategoriesByType[type] || [];
-
-      // sidebar desktop
-      if (subcatList) {
-        if (cats.length === 0) {
-          subcatList.innerHTML = '<p class="font-body text-hub-chumbo/40 text-xs py-1 w-full">Selecione uma categoria acima</p>';
-        } else {
-          makeSubcatChips(subcatList, cats);
-        }
-      }
-
-      // barra mobile (só aparece quando há subcategorias)
-      if (mobileSubcatBar && mobileSubcatList) {
-        if (cats.length === 0) {
-          mobileSubcatBar.classList.add('hidden');
-        } else {
-          makeSubcatChips(mobileSubcatList, cats);
-          mobileSubcatBar.classList.remove('hidden');
-        }
-      }
     }
 
     /* ── rating ─────────────────────────────────────────────────── */
@@ -691,9 +711,12 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       btn.addEventListener('click', function () { setCozinha(btn.dataset.cozinha || ''); });
     });
 
-    /* ── botão buscar (só aplica filtros, já reativo por default) ── */
+    /* ── botão buscar — aplica e fecha o drawer no mobile ──────── */
     var applyBtn = document.getElementById('apply-filters-btn');
-    if (applyBtn) applyBtn.addEventListener('click', applyFilters);
+    if (applyBtn) applyBtn.addEventListener('click', function () {
+      applyFilters();
+      if (window.innerWidth < 1024) closeDrawer();
+    });
 
     function activateType(newType) {
       state.type        = newType;
@@ -1009,24 +1032,28 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     opacity: 1;
   }
 
-  /* Sidebar mobile drawer — só abaixo de 1024px */
+  /* Sidebar bottom sheet — só abaixo de 1024px */
   @media (max-width: 1023px) {
     #sidebar {
       position: fixed;
-      top: 0;
-      left: 0;
       bottom: 0;
-      width: 85vw;
-      max-width: 320px;
+      left: 0;
+      right: 0;
+      top: auto;
+      width: 100%;
+      max-width: none;
+      max-height: 88vh;
+      border-radius: 20px 20px 0 0;
+      box-shadow: 0 -4px 32px rgba(0,0,0,0.18);
       z-index: 40;
       display: flex;
       flex-direction: column;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
       overflow-y: auto;
     }
     #sidebar.drawer-open {
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 </style>
