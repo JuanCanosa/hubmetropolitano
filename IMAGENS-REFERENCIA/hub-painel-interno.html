@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HUB CM — Painel Interno · Telas A–G</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --w:#FFF;--ice:#F5F7FA;--ice2:#EBEEF5;--ice3:#D8DEEA;--ice4:#BCC6D8;
+  --pv:#004445;--pvd:#002C2D;--pvm:#005F61;--pvg:rgba(0,68,69,.06);--pvg2:rgba(0,68,69,.12);
+  --co:#B87333;--cob:#D4924F;--cod:#8C551A;--cog:rgba(184,115,51,.1);--cogl:rgba(184,115,51,.24);
+  --k:#141414;--k2:#363636;--k3:#646464;--k4:#A2A2A2;--k5:#D4D4D4;--k6:#F0F0F0;
+  --green:#16A34A;--glight:rgba(22,163,74,.1);
+  --orange:#EA580C;--olight:rgba(234,88,12,.08);
+  --blue:#2563EB;--blight:rgba(37,99,235,.08);
+  --red:#DC2626;--rlight:rgba(220,38,38,.08);
+  --purple:#7C3AED;--plight:rgba(124,58,237,.08);
+  --sf:'Cormorant Garamond',Georgia,serif;
+  --ss:'Barlow Condensed','Arial Narrow',sans-serif;
+  --bd:'Barlow',sans-serif;--mn:'IBM Plex Mono',monospace;
+  --r:10px;--rl:16px;--rxl:24px;
+  --s0:0 1px 4px rgba(0,0,0,.06);--s1:0 2px 12px rgba(0,0,0,.08);
+  --s2:0 8px 28px rgba(0,0,0,.1);--sc:0 6px 24px rgba(184,115,51,.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--bd);background:#080C0C;color:var(--k);-webkit-font-smoothing:antialiased;margin:0}
+*{cursor:none!important}
+a{text-decoration:none;color:inherit}
+#cur{width:9px;height:9px;background:var(--co);border-radius:50%;position:fixed;top:-20px;left:-20px;pointer-events:none;z-index:99999;transition:transform .12s,opacity .2s;mix-blend-mode:multiply}
+#cur.big{transform:scale(3.2);opacity:.2}
+
+/* ═══ SCOPE BAR ═══ */
+.scopebar{background:#050A0A;border-bottom:1px solid rgba(255,255,255,.06);height:44px;display:flex;align-items:stretch;padding:0 16px;position:sticky;top:0;z-index:900;overflow-x:auto;scrollbar-width:none}
+.scopebar::-webkit-scrollbar{display:none}
+.sb-brand{display:flex;align-items:center;gap:8px;padding:0 16px 0 0;border-right:1px solid rgba(255,255,255,.07);flex-shrink:0}
+.sb-name{font-family:var(--ss);font-weight:900;font-size:.76rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.85)}
+.sb-name span{color:var(--co)}
+.sb-badge{background:rgba(184,115,51,.13);border:1px solid rgba(184,115,51,.26);border-radius:99px;padding:2px 8px;font-family:var(--mn);font-size:.46rem;letter-spacing:.1em;text-transform:uppercase;color:var(--co);margin-left:6px}
+.stab{display:flex;align-items:center;gap:6px;padding:0 14px;font-family:var(--ss);font-weight:600;font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.28);border-bottom:2px solid transparent;border-top:2px solid transparent;background:none;border-left:none;border-right:none;height:100%;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.stab:hover{color:rgba(255,255,255,.6)}.stab.on{color:var(--co);border-bottom-color:var(--co)}
+.stab .d{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.15);flex-shrink:0}.stab.on .d{background:var(--co)}
+.sb-mode{margin-left:auto;display:flex;align-items:center;gap:6px;padding-left:12px;flex-shrink:0}
+.mode-btn{padding:4px 11px;border-radius:99px;font-family:var(--mn);font-size:.5rem;letter-spacing:.09em;text-transform:uppercase;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);transition:all .18s}
+.mode-btn.on{background:rgba(184,115,51,.15);border-color:rgba(184,115,51,.3);color:var(--co)}
+.mode-btn:hover:not(.on){color:rgba(255,255,255,.65)}
+
+/* ═══ BROWSER CHROME ═══ */
+.bwrap{padding:16px 20px 48px}
+.browser{background:var(--ice);border-radius:11px;overflow:hidden;box-shadow:0 36px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.05)}
+.bbar{background:#141E1E;height:32px;display:flex;align-items:center;padding:0 12px;gap:5px;border-bottom:1px solid rgba(255,255,255,.06)}
+.bdot{width:9px;height:9px;border-radius:50%}
+.burl{flex:1;background:rgba(255,255,255,.07);border-radius:5px;height:18px;margin:0 10px;display:flex;align-items:center;padding:0 9px;gap:5px;font-family:var(--mn);font-size:.54rem;color:rgba(255,255,255,.32)}
+
+/* ═══ APP SHELL ═══ */
+.app{display:grid;grid-template-columns:228px 1fr;min-height:calc(100vh - 108px)}
+
+/* SIDEBAR */
+.sidebar{background:var(--pvd);display:flex;flex-direction:column;position:sticky;top:0;height:calc(100vh - 108px);overflow-y:auto;scrollbar-width:none}
+.sidebar::-webkit-scrollbar{display:none}
+.sb-top{padding:18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-brand-app{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.sb-logo{font-family:var(--ss);font-weight:900;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+.sb-logo span{color:var(--co)}
+.sb-biz{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:var(--rl);padding:10px 12px;display:flex;align-items:center;gap:9px}
+.sb-biz-ico{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--pvd),var(--pvm));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;border:1px solid rgba(255,255,255,.1)}
+.sb-biz-name{font-family:var(--ss);font-weight:700;font-size:.79rem;text-transform:uppercase;letter-spacing:.03em;color:#fff;line-height:1.2}
+.sb-biz-plan{font-family:var(--mn);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.plan-free-badge{color:var(--k4)}.plan-free-badge span{color:var(--co)}
+.plan-prem-badge{color:var(--co)}.plan-prem-badge span{color:#FFD700}
+/* Nav */
+.sb-nav{padding:12px 8px;flex:1}
+.nav-group{margin-bottom:18px}
+.ng-lbl{font-family:var(--mn);font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.2);padding:0 8px;margin-bottom:4px}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);font-family:var(--ss);font-weight:600;font-size:.74rem;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.36);transition:all .18s;position:relative}
+.ni:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.75)}
+.ni.on{background:rgba(184,115,51,.12);color:#fff;border:1px solid rgba(184,115,51,.18)}
+.ni .ico{font-size:.95rem;flex-shrink:0;width:19px;text-align:center}
+.ni .badge{font-family:var(--mn);font-size:.46rem;margin-left:auto;padding:1px 6px;border-radius:4px}
+.ni .nb-free{background:rgba(255,255,255,.08);color:rgba(255,255,255,.3)}
+.ni .nb-prem{background:rgba(184,115,51,.15);color:var(--co)}
+.ni.locked{opacity:.4}
+.ni.locked:hover{background:transparent;color:rgba(255,255,255,.36)}
+/* Upgrade box */
+.sb-up{margin:8px;border-radius:var(--rl);background:linear-gradient(135deg,rgba(184,115,51,.18),rgba(184,115,51,.06));border:1px solid rgba(184,115,51,.28);padding:14px 13px}
+.sb-up-t{font-family:var(--ss);font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:#fff;margin-bottom:3px}
+.sb-up-d{font-size:.72rem;color:rgba(255,255,255,.35);line-height:1.55;margin-bottom:11px}
+.sb-up-btn{width:100%;padding:8px;border-radius:var(--r);background:var(--co);color:#fff;font-family:var(--ss);font-weight:800;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;border:none;transition:all .2s}
+.sb-up-btn:hover{background:var(--cob);box-shadow:var(--sc)}
+.sb-up.hidden{display:none}
+
+/* ═══ MAIN AREA ═══ */
+.main{display:flex;flex-direction:column;background:var(--ice)}
+
+/* TOPBAR */
+.topbar{background:var(--w);border-bottom:1px solid var(--ice3);padding:0 28px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:20;box-shadow:0 1px 5px rgba(0,0,0,.04)}
+.tb-title{font-family:var(--ss);font-weight:800;font-size:.92rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv)}
+.tb-plan-badge{font-family:var(--mn);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px}
+.tpb-free{background:var(--ice2);border:1px solid var(--ice3);color:var(--k4)}
+.tpb-prem{background:rgba(184,115,51,.1);border:1px solid rgba(184,115,51,.25);color:var(--co)}
+.tb-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tb-btn{font-family:var(--ss);font-weight:700;font-size:.66rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 14px;border-radius:var(--r);transition:all .2s;border:none;display:flex;align-items:center;gap:5px}
+.tbb-sec{background:var(--ice2);border:1px solid var(--ice3)!important;color:var(--k3)}.tbb-sec:hover{border-color:var(--pv)!important;color:var(--pv)}
+.tbb-pri{background:var(--pv);color:#fff}.tbb-pri:hover{background:var(--pvm)}
+.tbb-co{background:var(--co);color:#fff}.tbb-co:hover{background:var(--cob);box-shadow:var(--sc)}
+.tbb-grn{background:var(--green);color:#fff}.tbb-grn:hover{background:#15803D}
+
+/* CONTENT */
+.content{padding:24px 28px 48px;flex:1}
+
+/* ═══ REUSABLE COMPONENTS ═══ */
+.card{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rxl);box-shadow:var(--s0)}
+.card-head{padding:16px 20px;border-bottom:1px solid var(--ice2);display:flex;align-items:center;justify-content:space-between}
+.ch-title{font-family:var(--ss);font-weight:800;font-size:.88rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv);display:flex;align-items:center;gap:8px}
+.ch-actions{display:flex;gap:8px}
+.card-body{padding:20px}
+.sec{margin-bottom:20px}
+/* Fields */
+.frow{display:grid;gap:14px;margin-bottom:14px}
+.frow.c2{grid-template-columns:1fr 1fr}
+.frow.c3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-family:var(--ss);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--pv)}
+.req{color:var(--co);font-size:.66rem;margin-left:2px}
+.inp{padding:10px 13px;background:var(--ice2);border:1.5px solid var(--ice3);border-radius:var(--rl);font-family:var(--bd);font-size:.86rem;color:var(--k);outline:none;transition:all .2s;width:100%}
+.inp:focus{border-color:var(--co);background:var(--w);box-shadow:0 0 0 3px var(--cog)}
+.inp.filled{border-color:rgba(22,163,74,.35);background:rgba(22,163,74,.02)}
+.inp::placeholder{color:var(--k5)}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A2A2A2' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+textarea.inp{resize:vertical;min-height:90px;line-height:1.65}
+.hint{font-family:var(--mn);font-size:.54rem;letter-spacing:.06em;color:var(--k4);line-height:1.55}
+.hint.ok{color:var(--green)}.hint.warn{color:var(--orange)}
+.char-count{font-family:var(--mn);font-size:.52rem;color:var(--k4);text-align:right;margin-top:2px}
+/* Status badges */
+.badge{font-family:var(--mn);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:99px;display:inline-flex;align-items:center;gap:4px}
+.b-ok{background:var(--glight);color:var(--green);border:1px solid rgba(22,163,74,.2)}
+.b-warn{background:var(--olight);color:var(--orange);border:1px solid rgba(234,88,12,.2)}
+.b-info{background:var(--blight);color:var(--blue);border:1px solid rgba(37,99,235,.18)}
+.b-lock{background:var(--ice2);color:var(--k4);border:1px solid var(--ice3)}
+.b-prem{background:var(--cog);color:var(--co);border:1px solid rgba(184,115,51,.25)}
+/* Toggle */
+.tog{width:36px;height:20px;background:var(--ice3);border-radius:99px;position:relative;transition:background .2s;flex-shrink:0}
+.tog.on{background:var(--pv)}.tog.on.green{background:var(--green)}
+.tog::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tog.on::after{left:18px}
+.tog-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--ice2);font-size:.82rem;color:var(--k2)}
+.tog-row:last-child{border-bottom:none}
+.tr-sub{font-size:.74rem;color:var(--k4);margin-top:1px}
+/* Lock overlay */
+.locked-overlay{position:absolute;inset:0;background:rgba(255,255,255,.86);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:var(--rxl)}
+.lo-ico{font-size:1.6rem}
+.lo-title{font-family:var(--ss);font-weight:800;font-size:.92rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv)}
+.lo-desc{font-size:.78rem;color:var(--k3);text-align:center;max-width:280px;line-height:1.65}
+.lo-btn{padding:9px 22px;border-radius:var(--rl);background:var(--co);color:#fff;font-family:var(--ss);font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;border:none;transition:all .2s}
+.lo-btn:hover{background:var(--cob);box-shadow:var(--sc)}
+.lo-note{font-family:var(--mn);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--k4)}
+
+/* ═══ SCREENS ═══ */
+.sw{display:none}.sw.on{display:block}
+
+/* ══════════════════════
+   TELA A — EDITAR PERFIL
+══════════════════════ */
+.edit-tabs{display:flex;gap:0;border-bottom:2px solid var(--ice3);margin-bottom:22px}
+.et{padding:9px 18px;font-family:var(--ss);font-weight:700;font-size:.74rem;letter-spacing:.07em;text-transform:uppercase;color:var(--k3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
+.et:hover{color:var(--pv)}.et.on{color:var(--pv);border-bottom-color:var(--co)}
+/* Category chips */
+.cat-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:5px}
+.cc{padding:5px 13px;border-radius:99px;border:1.5px solid var(--ice3);background:var(--ice2);font-size:.78rem;color:var(--k2);transition:all .18s}
+.cc:hover{border-color:var(--pv);color:var(--pv)}.cc.on{background:var(--pv);border-color:var(--pv);color:#fff}
+/* Inline preview */
+.profile-preview-mini{background:var(--pvd);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden}
+.ppm-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 0%,rgba(184,115,51,.1),transparent 55%)}
+.ppm-label{font-family:var(--mn);font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px;position:relative;z-index:1}
+.ppm-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:var(--r);overflow:hidden;position:relative;z-index:1}
+.ppm-img{height:56px;background:linear-gradient(135deg,var(--pv),var(--pvm));display:flex;align-items:flex-end;padding:6px 8px}
+.ppm-badge{font-family:var(--mn);font-size:.46rem;letter-spacing:.09em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);color:#fff;padding:1px 6px;border-radius:3px}
+.ppm-body{padding:10px 10px 8px}
+.ppm-name{font-family:var(--ss);font-weight:800;font-size:.86rem;text-transform:uppercase;color:#fff;margin-bottom:3px}
+.ppm-sub{font-family:var(--mn);font-size:.5rem;color:rgba(255,255,255,.35);line-height:1.6}
+/* Verify row */
+.verify-row{display:flex;gap:9px;align-items:flex-end}
+.verify-btn{padding:10px 16px;border-radius:var(--rl);background:var(--rg2,#3D6B1E);color:#fff;font-family:var(--ss);font-weight:700;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;border:none;flex-shrink:0;transition:all .2s;background:var(--pv)}
+.verify-btn:hover{background:var(--pvm)}
+.verify-ok{font-family:var(--mn);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:3px}
+
+/* ══════════════════════
+   TELA B — FOTOS
+══════════════════════ */
+.photos-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.photos-quota{display:flex;align-items:center;gap:10px}
+.pq-bar{width:140px;height:6px;background:var(--ice3);border-radius:99px;overflow:hidden}
+.pq-fill{height:100%;border-radius:99px;transition:width .4s}
+.pq-fill.low{background:var(--green)}
+.pq-fill.mid{background:var(--orange)}
+.pq-fill.full{background:var(--red)}
+.pq-lbl{font-family:var(--mn);font-size:.58rem;letter-spacing:.08em;text-transform:uppercase;color:var(--k4)}
+/* Photo grid */
+.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.pg-slot{aspect-ratio:4/3;border-radius:var(--rl);overflow:hidden;position:relative}
+.pg-slot.filled{background:var(--ice3)}
+.pg-slot.empty{background:var(--ice2);border:2px dashed var(--ice4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:all .2s}
+.pg-slot.empty:hover{border-color:var(--co);background:var(--cog)}
+.pg-slot.locked{background:var(--ice2);border:2px dashed var(--ice3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:.45}
+.pg-bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .35s}
+.pg-slot.filled:hover .pg-bg{transform:scale(1.04)}
+.pg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);opacity:0;transition:opacity .2s;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center}
+.pg-slot.filled:hover .pg-overlay{opacity:1}
+.pg-action{font-family:var(--mn);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(255,255,255,.15);border-radius:4px;padding:3px 9px;border:1px solid rgba(255,255,255,.25);transition:all .18s}
+.pg-action:hover{background:rgba(255,255,255,.25)}
+.pg-action.del{background:rgba(220,38,38,.7);border-color:rgba(220,38,38,.4)}
+.pg-main{position:absolute;top:7px;left:7px;background:var(--co);color:#fff;font-family:var(--mn);font-size:.46rem;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:4px;z-index:2}
+.pg-add-ico{font-size:1.3rem;color:var(--k4)}
+.pg-add-lbl{font-family:var(--mn);font-size:.52rem;letter-spacing:.07em;text-transform:uppercase;color:var(--k4)}
+.pg-lock-ico{font-size:.9rem;color:var(--k5)}
+.pg-lock-lbl{font-family:var(--mn);font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;color:var(--k5)}
+/* Tips */
+.photo-tips{background:var(--ice2);border-radius:var(--rl);padding:14px 16px;border:1px solid var(--ice3)}
+.pt-title{font-family:var(--ss);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.pt-list{display:flex;flex-direction:column;gap:6px}
+.pt-item{display:flex;gap:8px;font-size:.78rem;color:var(--k2);line-height:1.5}
+.pt-item::before{content:'💡';font-size:.8rem;flex-shrink:0}
+/* Upgrade banner */
+.upgrade-banner{background:linear-gradient(135deg,var(--pvd),var(--pv));border-radius:var(--rxl);padding:20px 22px;display:flex;gap:16px;align-items:center;margin-top:16px}
+.ub-body{flex:1}
+.ub-title{font-family:var(--ss);font-weight:800;font-size:.92rem;text-transform:uppercase;letter-spacing:.05em;color:#fff;margin-bottom:4px}
+.ub-desc{font-size:.8rem;color:rgba(255,255,255,.42);line-height:1.65}
+.ub-btn{padding:11px 22px;border-radius:var(--rl);background:var(--co);color:#fff;font-family:var(--ss);font-weight:800;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;border:none;transition:all .2s;flex-shrink:0}
+.ub-btn:hover{background:var(--cob);box-shadow:var(--sc)}
+
+/* ══════════════════════
+   TELA C — SERVIÇOS
+══════════════════════ */
+.svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+.svc-card{background:var(--w);border:1.5px solid var(--ice3);border-radius:var(--rl);padding:14px 16px;transition:all .2s;box-shadow:var(--s0);position:relative}
+.svc-card:hover{border-color:rgba(184,115,51,.25);box-shadow:var(--sc)}
+.sc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.sc-name{font-family:var(--ss);font-weight:800;font-size:.88rem;text-transform:uppercase;letter-spacing:.04em;color:var(--pv)}
+.sc-price{font-family:var(--ss);font-weight:900;font-size:1rem;color:var(--co)}
+.sc-desc{font-size:.78rem;color:var(--k3);line-height:1.6;margin-bottom:8px}
+.sc-tags{display:flex;gap:5px;flex-wrap:wrap}
+.sc-tag{font-size:.7rem;background:var(--ice2);border-radius:99px;padding:2px 8px;border:1px solid var(--ice3);color:var(--k3)}
+.sc-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--ice2)}
+.sca{font-family:var(--mn);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r);border:1px solid var(--ice3);background:transparent;color:var(--k3);transition:all .15s}
+.sca:hover{border-color:var(--pv);color:var(--pv)}
+.sca.del:hover{border-color:var(--red);color:var(--red)}
+/* Add service form */
+.add-svc-form{background:var(--ice2);border:2px dashed var(--ice3);border-radius:var(--rl);padding:20px;transition:all .2s}
+.add-svc-form:hover{border-color:var(--co);background:var(--cog)}
+.asf-title{font-family:var(--ss);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:var(--k3);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+
+/* ══════════════════════
+   TELA D — AVALIAÇÕES
+══════════════════════ */
+.reviews-header{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:18px 20px;margin-bottom:18px;box-shadow:var(--s0)}
+.rh-score{text-align:center}
+.rh-big{font-family:var(--ss);font-weight:900;font-size:2.6rem;color:var(--pv);line-height:1}
+.rh-stars{display:flex;gap:3px;justify-content:center;margin:4px 0;font-size:.82rem;color:var(--co)}
+.rh-count{font-family:var(--mn);font-size:.54rem;letter-spacing:.09em;text-transform:uppercase;color:var(--k4)}
+.rh-div{width:1px;background:var(--ice3)}
+.rh-bars{flex:1}
+.rbar{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rbar-l{font-family:var(--mn);font-size:.54rem;color:var(--k4);min-width:13px;text-align:right;flex-shrink:0}
+.rbar-t{flex:1;height:5px;background:var(--ice3);border-radius:99px;overflow:hidden}
+.rbar-f{height:100%;background:var(--co);border-radius:99px}
+.rbar-n{font-family:var(--mn);font-size:.52rem;color:var(--k4);min-width:20px;flex-shrink:0}
+.rh-aspects{}
+.ra-row{display:flex;justify-content:space-between;gap:12px;font-size:.76rem;color:var(--k2);margin-bottom:5px}
+.ra-row:last-child{margin-bottom:0}
+.ra-score{font-family:var(--mn);font-size:.64rem;color:var(--green)}
+/* Review cards */
+.review-card{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:16px 18px;margin-bottom:11px;box-shadow:var(--s0);transition:all .2s}
+.review-card:hover{border-color:rgba(184,115,51,.2);box-shadow:var(--sc)}
+.rc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px}
+.rc-auth{display:flex;gap:9px;align-items:center}
+.rc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ss);font-weight:800;font-size:.76rem;color:#fff;flex-shrink:0}
+.rc-name{font-weight:700;font-size:.82rem;color:var(--k)}
+.rc-verified{font-family:var(--mn);font-size:.5rem;color:var(--green);display:flex;align-items:center;gap:3px}
+.rc-date{font-family:var(--mn);font-size:.52rem;color:var(--k4)}
+.rc-stars{display:flex;gap:2px;margin-top:1px;font-size:.7rem;color:var(--co)}
+.rc-text{font-size:.83rem;color:var(--k2);line-height:1.7;margin-bottom:10px}
+.rc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.rc-tag{font-family:var(--mn);font-size:.5rem;background:var(--ice2);border-radius:4px;padding:2px 7px;border:1px solid var(--ice3);color:var(--k4)}
+/* Reply area */
+.reply-area{background:var(--ice2);border-radius:var(--r);padding:13px;border-left:3px solid var(--pv)}
+.reply-area.pending{border-left-color:var(--orange);background:var(--olight)}
+.reply-label{font-family:var(--mn);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--pv);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.reply-label.pending{color:var(--orange)}
+.reply-text{font-size:.8rem;color:var(--k2);line-height:1.65}
+.reply-input{width:100%;padding:9px 12px;background:var(--w);border:1.5px solid var(--ice3);border-radius:var(--r);font-family:var(--bd);font-size:.82rem;color:var(--k);outline:none;resize:none;min-height:72px;transition:all .2s;line-height:1.6}
+.reply-input:focus{border-color:var(--co);box-shadow:0 0 0 3px var(--cog)}
+.reply-actions{display:flex;gap:7px;margin-top:8px;justify-content:flex-end}
+.ra-btn{font-family:var(--ss);font-weight:700;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;padding:7px 14px;border-radius:var(--r);border:none;transition:all .2s}
+.ra-cancel{background:var(--ice2);border:1px solid var(--ice3)!important;color:var(--k3)}.ra-cancel:hover{border-color:var(--k3)!important}
+.ra-send{background:var(--pv);color:#fff}.ra-send:hover{background:var(--pvm)}
+/* No reply yet */
+.no-reply{display:flex;align-items:center;gap:9px;font-size:.78rem;color:var(--k4);padding:9px 0;border-top:1px solid var(--ice2);margin-top:8px}
+.nr-btn{font-family:var(--ss);font-weight:700;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--co);padding:5px 12px;border-radius:var(--r);background:var(--cog);border:1px solid rgba(184,115,51,.25)!important;transition:all .18s;margin-left:auto}
+.nr-btn:hover{background:var(--co);color:#fff;border-color:var(--co)!important}
+
+/* ══════════════════════
+   TELA E — ANALYTICS
+══════════════════════ */
+.analytics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.an-card{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:16px 16px 13px;box-shadow:var(--s0);position:relative;overflow:hidden;transition:all .2s}
+.an-card:hover{transform:translateY(-2px);box-shadow:var(--s1)}
+.an-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;border-radius:0}
+.an-card.blue::after{background:var(--blue)}
+.an-card.green::after{background:var(--green)}
+.an-card.orange::after{background:var(--orange)}
+.an-card.purple::after{background:var(--purple)}
+.an-label{font-family:var(--mn);font-size:.52rem;letter-spacing:.12em;text-transform:uppercase;color:var(--k4);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.an-val{font-family:var(--ss);font-weight:900;font-size:2rem;color:var(--pv);line-height:1;margin-bottom:3px}
+.an-change{font-size:.74rem;display:flex;align-items:center;gap:4px}
+.an-change.up{color:var(--green)}.an-change.dn{color:var(--red)}.an-change.neu{color:var(--k4)}
+/* Chart */
+.chart-container{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rxl);padding:20px;margin-bottom:20px;box-shadow:var(--s0)}
+.cc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.cc-title{font-family:var(--ss);font-weight:800;font-size:.88rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv)}
+.cc-range-btns{display:flex;gap:5px}
+.crb{font-family:var(--mn);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:var(--r);border:1px solid var(--ice3);background:var(--ice2);color:var(--k3);transition:all .15s}
+.crb.on{background:var(--pv);border-color:var(--pv);color:#fff}
+.crb:hover:not(.on){border-color:var(--pv);color:var(--pv)}
+/* SVG chart area */
+.chart-svg{width:100%;height:140px}
+/* Traffic sources */
+.traffic-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.traf-card{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:17px;box-shadow:var(--s0)}
+.tc-title{font-family:var(--ss);font-weight:800;font-size:.84rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv);margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--ice2)}
+.ts-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ts-row:last-child{margin-bottom:0}
+.ts-ico{font-size:.9rem;flex-shrink:0;width:20px}
+.ts-bar-wrap{flex:1}
+.ts-label{font-size:.78rem;color:var(--k2);margin-bottom:3px;display:flex;justify-content:space-between}
+.ts-pct{font-family:var(--mn);font-size:.64rem;color:var(--k3);font-weight:600}
+.ts-bar{height:5px;background:var(--ice3);border-radius:99px;overflow:hidden}
+.ts-fill{height:100%;border-radius:99px}
+/* Funnel */
+.funnel-steps{display:flex;flex-direction:column;gap:0}
+.fs-step{display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--ice2);border-radius:var(--r);margin-bottom:3px;position:relative;transition:all .2s}
+.fs-step:hover{background:var(--ice3)}
+.fs-num{font-family:var(--ss);font-weight:900;font-size:1.05rem;color:var(--pv);min-width:52px}
+.fs-label{font-size:.82rem;color:var(--k2);flex:1}
+.fs-pct{font-family:var(--mn);font-size:.58rem;color:var(--k4)}
+.fs-bar{position:absolute;left:0;top:0;bottom:0;border-radius:var(--r);z-index:0}
+.fs-step .fs-num,.fs-step .fs-label,.fs-step .fs-pct{position:relative;z-index:1}
+/* Premium analytics lock */
+.prem-lock{background:var(--pvd);border-radius:var(--rxl);padding:22px;text-align:center;position:relative;overflow:hidden;margin-top:4px}
+.pl-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(184,115,51,.1),transparent 55%)}
+.pl-ico{font-size:1.8rem;margin-bottom:9px;position:relative;z-index:1}
+.pl-title{font-family:var(--ss);font-weight:800;font-size:.96rem;text-transform:uppercase;letter-spacing:.05em;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.pl-desc{font-size:.8rem;color:rgba(255,255,255,.38);line-height:1.65;margin-bottom:14px;max-width:360px;margin-left:auto;margin-right:auto;position:relative;z-index:1}
+.pl-btn{padding:11px 24px;border-radius:var(--rl);background:var(--co);color:#fff;font-family:var(--ss);font-weight:800;font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;border:none;transition:all .2s;position:relative;z-index:1}
+.pl-btn:hover{background:var(--cob);box-shadow:var(--sc)}
+
+/* ══════════════════════
+   TELA F — CONCORRENTES
+══════════════════════ */
+.comp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.comp-card{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:16px;box-shadow:var(--s0);transition:all .2s;position:relative}
+.comp-card:hover{border-color:rgba(184,115,51,.2);box-shadow:var(--sc)}
+.comp-card.yours{border-color:rgba(184,115,51,.3);background:rgba(184,115,51,.02)}
+.comp-yours-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--co);color:#fff;font-family:var(--mn);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 12px;border-radius:0 0 var(--r) var(--r)}
+.cc-top{display:flex;gap:11px;align-items:center;margin-bottom:12px}
+.cc-rank{width:28px;height:28px;border-radius:50%;background:var(--ice2);display:flex;align-items:center;justify-content:center;font-family:var(--ss);font-weight:900;font-size:.82rem;color:var(--k3);flex-shrink:0;border:1px solid var(--ice3)}
+.comp-card.yours .cc-rank{background:var(--co);color:#fff;border-color:var(--co)}
+.cc-ico{font-size:1.1rem}
+.cc-name{font-family:var(--ss);font-weight:800;font-size:.86rem;text-transform:uppercase;letter-spacing:.04em;color:var(--pv);line-height:1.2}
+.cc-plan{font-family:var(--mn);font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--k4);margin-top:1px}
+.comp-metrics{display:flex;flex-direction:column;gap:6px}
+.cm-row{display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--k2)}
+.cm-bar-wrap{width:80px}
+.cm-bar{height:4px;background:var(--ice3);border-radius:99px;overflow:hidden}
+.cm-fill{height:100%;border-radius:99px;background:var(--co)}
+.comp-card.yours .cm-fill{background:var(--co)}
+/* Insights */
+.insight-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ic{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rl);padding:16px;box-shadow:var(--s0)}
+.ic-ico{font-size:1.4rem;margin-bottom:8px}
+.ic-title{font-family:var(--ss);font-weight:800;font-size:.84rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:5px}
+.ic-text{font-size:.78rem;color:var(--k3);line-height:1.65}
+.ic-action{display:inline-flex;align-items:center;gap:4px;font-family:var(--mn);font-size:.54rem;letter-spacing:.08em;text-transform:uppercase;color:var(--co);margin-top:8px}
+
+/* ══════════════════════
+   TELA G — PLANO & FATURAMENTO
+══════════════════════ */
+.current-plan-card{background:linear-gradient(135deg,var(--pvd),var(--pv));border-radius:var(--rxl);padding:26px 28px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;margin-bottom:20px;position:relative;overflow:hidden}
+.cpc-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(184,115,51,.1),transparent 55%)}
+.cpc-label{font-family:var(--mn);font-size:.54rem;letter-spacing:.14em;text-transform:uppercase;color:var(--co);margin-bottom:6px;position:relative;z-index:1}
+.cpc-plan{font-family:var(--sf);font-size:2rem;font-weight:600;color:#fff;line-height:1.1;margin-bottom:4px;position:relative;z-index:1}
+.cpc-plan em{font-style:italic;color:var(--co)}
+.cpc-desc{font-size:.82rem;color:rgba(255,255,255,.42);line-height:1.65;max-width:380px;position:relative;z-index:1}
+.cpc-actions{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1;flex-shrink:0}
+.cpc-btn{padding:10px 20px;border-radius:var(--rl);font-family:var(--ss);font-weight:800;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;border:none;white-space:nowrap;transition:all .2s}
+.cpc-upgrade{background:var(--co);color:#fff}.cpc-upgrade:hover{background:var(--cob);box-shadow:var(--sc)}
+.cpc-cancel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)!important;color:rgba(255,255,255,.5);font-size:.64rem}.cpc-cancel:hover{background:rgba(255,255,255,.13)}
+/* Features of current plan */
+.plan-features{background:var(--w);border:1px solid var(--ice3);border-radius:var(--rxl);padding:20px;margin-bottom:20px;box-shadow:var(--s0)}
+.pf-title{font-family:var(--ss);font-weight:800;font-size:.86rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv);margin-bottom:14px;padding-bottom:9px;border-bottom:1px solid var(--ice2)}
+.pf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.pf-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--ice2);font-size:.82rem;color:var(--k2)}
+.pf-row:nth-last-child(-n+2){border-bottom:none}
+.pf-ico{font-size:.78rem;flex-shrink:0}
+.pf-ico.ok{color:var(--green)}.pf-ico.no{color:var(--k5)}
+/* Plans comparison mini */
+.plans-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.pm-card{background:var(--w);border:2px solid var(--ice3);border-radius:var(--rl);padding:16px;transition:all .22s;position:relative}
+.pm-card:hover{border-color:rgba(184,115,51,.25);transform:translateY(-3px);box-shadow:var(--sc)}
+.pm-card.current{border-color:var(--pv);background:var(--pvg)}
+.pm-current-tag{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--pv);color:#fff;font-family:var(--mn);font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 12px;border-radius:0 0 var(--r) var(--r)}
+.pm-name{font-family:var(--ss);font-weight:900;font-size:.9rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv);margin-bottom:3px;margin-top:6px}
+.pm-price{font-family:var(--ss);font-weight:900;font-size:1.5rem;color:var(--k);line-height:1;margin-bottom:2px}
+.pm-price span{font-size:.8rem;font-weight:400;color:var(--k4);font-family:var(--bd)}
+.pm-period{font-family:var(--mn);font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--k4);margin-bottom:12px}
+.pm-feats{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.pmf{display:flex;gap:6px;font-size:.74rem;color:var(--k2)}
+.pmf::before{content:'✓';color:var(--green);font-size:.68rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.pmf.no{color:var(--k4)}.pmf.no::before{content:'–';color:var(--k4)}
+.pm-cta{width:100%;padding:9px;border-radius:var(--r);font-family:var(--ss);font-weight:800;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;border:none;transition:all .2s}
+.pm-cta-current{background:var(--ice3);color:var(--k3)}
+.pm-cta-up{background:var(--pv);color:#fff}.pm-cta-up:hover{background:var(--pvm)}
+.pm-cta-prem{background:var(--co);color:#fff}.pm-cta-prem:hover{background:var(--cob)}
+/* Billing history */
+.billing-table{width:100%;border-collapse:collapse}
+.bt-head th{padding:10px 14px;font-family:var(--ss);font-weight:800;font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--k4);text-align:left;border-bottom:2px solid var(--ice3);background:var(--ice2)}
+.bt-row td{padding:12px 14px;font-size:.82rem;color:var(--k2);border-bottom:1px solid var(--ice2)}
+.bt-row:last-child td{border-bottom:none}
+.bt-row:hover td{background:var(--ice)}
+.bt-status{font-family:var(--mn);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px}
+.bts-paid{background:var(--glight);color:var(--green)}
+.bt-dl{font-family:var(--mn);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+
+<!-- SCOPE BAR -->
+<div class="scopebar">
+  <div class="sb-brand">
+    <svg width="16" height="16" viewBox="0 0 48 48" fill="none"><rect width="21" height="21" rx="4" fill="#B87333"/><rect x="27" y="27" width="21" height="21" rx="4" fill="rgba(184,115,51,.4)"/><circle cx="24" cy="24" r="3" fill="#B87333"/></svg>
+    <div class="sb-name">HUB <span>CM</span></div>
+    <div class="sb-badge">Painel Interno · Telas A–G</div>
+  </div>
+  <button class="stab on" onclick="goScreen('A',this)"><span class="d"></span>A · Editar Perfil</button>
+  <button class="stab" onclick="goScreen('B',this)"><span class="d"></span>B · Fotos</button>
+  <button class="stab" onclick="goScreen('C',this)"><span class="d"></span>C · Serviços</button>
+  <button class="stab" onclick="goScreen('D',this)"><span class="d"></span>D · Avaliações</button>
+  <button class="stab" onclick="goScreen('E',this)"><span class="d"></span>E · Analytics</button>
+  <button class="stab" onclick="goScreen('F',this)"><span class="d"></span>F · Concorrentes</button>
+  <button class="stab" onclick="goScreen('G',this)"><span class="d"></span>G · Plano & Fat.</button>
+  <div class="sb-mode">
+    <button class="mode-btn on" id="mode-free" onclick="setMode('free')">🔒 Gratuito</button>
+    <button class="mode-btn" id="mode-prem" onclick="setMode('prem')">⭐ Premium</button>
+  </div>
+</div>
+
+<div class="bwrap">
+<div class="browser">
+  <div class="bbar">
+    <div class="bdot" style="background:#FF5F57"></div>
+    <div class="bdot" style="background:#FEBC2E"></div>
+    <div class="bdot" style="background:#28C840"></div>
+    <div class="burl" id="burl-url"><span style="color:var(--co)">🔒</span>hubcentrometropolitano.com.br/painel/editar-perfil</div>
+  </div>
+
+  <!-- APP SHELL -->
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-top">
+        <div class="sb-brand-app">
+          <svg width="18" height="18" viewBox="0 0 48 48" fill="none"><rect width="21" height="21" rx="4" fill="#004445"/><rect x="27" y="27" width="21" height="21" rx="4" fill="#B87333"/><circle cx="24" cy="24" r="3" fill="#B87333"/></svg>
+          <div class="sb-logo">HUB <span>CM</span></div>
+        </div>
+        <div class="sb-biz">
+          <div class="sb-biz-ico">🦷</div>
+          <div>
+            <div class="sb-biz-name">Sorriso Barra</div>
+            <div class="sb-biz-plan plan-free-badge free-only">Plano <span>Gratuito</span></div>
+            <div class="sb-biz-plan plan-prem-badge prem-only" style="display:none">Plano <span>Premium ⭐</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sb-nav">
+        <div class="nav-group">
+          <div class="ng-lbl">Principal</div>
+          <div class="ni" onclick="goScreen('A',null)"><span class="ico">📊</span>Visão Geral</div>
+          <div class="ni on" id="ni-A" onclick="goScreen('A',null)"><span class="ico">✏️</span>Editar Perfil</div>
+        </div>
+        <div class="nav-group">
+          <div class="ng-lbl">Conteúdo</div>
+          <div class="ni" id="ni-B" onclick="goScreen('B',null)"><span class="ico">📷</span>Fotos <span class="badge nb-free free-only">1/3</span><span class="badge nb-prem prem-only" style="display:none">8/20</span></div>
+          <div class="ni free-locked" id="ni-C" onclick="goScreen('C',null)"><span class="ico">📋</span>Serviços<span class="badge nb-prem" style="color:var(--co)">🔒</span></div>
+          <div class="ni free-locked" id="ni-D" onclick="goScreen('D',null)"><span class="ico">⭐</span>Avaliações<span class="badge nb-prem" style="color:var(--co)">🔒</span></div>
+        </div>
+        <div class="nav-group">
+          <div class="ng-lbl">Dados</div>
+          <div class="ni free-locked" id="ni-E" onclick="goScreen('E',null)"><span class="ico">📈</span>Analytics<span class="badge nb-prem" style="color:var(--co)">🔒</span></div>
+          <div class="ni free-locked" id="ni-F" onclick="goScreen('F',null)"><span class="ico">🏆</span>Concorrentes<span class="badge nb-prem" style="color:var(--co)">🔒</span></div>
+        </div>
+        <div class="nav-group">
+          <div class="ng-lbl">Conta</div>
+          <div class="ni" id="ni-G" onclick="goScreen('G',null)"><span class="ico">💳</span>Plano & Fat.</div>
+          <div class="ni"><span class="ico">⚙️</span>Configurações</div>
+        </div>
+      </div>
+      <div class="sb-up free-only">
+        <div class="sb-up-t">Desbloquear tudo</div>
+        <div class="sb-up-d">Analytics, cardápio, destaque. A partir de R$ 89/mês.</div>
+        <button class="sb-up-btn">⭐ Ver planos →</button>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- ══════ TELA A — EDITAR PERFIL ══════ -->
+      <div class="sw on" id="sw-A">
+        <div class="topbar">
+          <div class="tb-title">Editar Perfil</div>
+          <div class="tb-plan-badge tpb-free free-only">Plano Gratuito</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">Plano Premium ⭐</div>
+          <div class="tb-actions">
+            <a class="tb-btn tbb-sec" href="#">👁️ Ver perfil</a>
+            <button class="tb-btn tbb-pri">💾 Salvar alterações</button>
+          </div>
+        </div>
+        <div class="content">
+          <div style="display:grid;grid-template-columns:1fr 280px;gap:20px">
+            <div>
+              <!-- Tabs -->
+              <div class="edit-tabs">
+                <div class="et on" onclick="setEditTab(this,'info')">Informações</div>
+                <div class="et" onclick="setEditTab(this,'contato')">Contato & Links</div>
+                <div class="et" onclick="setEditTab(this,'horarios')">Horários</div>
+                <div class="et" onclick="setEditTab(this,'planos')">Planos de Saúde</div>
+              </div>
+
+              <!-- TAB: Informações -->
+              <div id="etab-info">
+                <div class="card" style="margin-bottom:14px">
+                  <div class="card-head"><div class="ch-title">📋 Dados principais</div><div class="badge b-ok">✓ Completo</div></div>
+                  <div class="card-body">
+                    <div class="frow"><div class="field"><label>Nome do negócio<span class="req">*</span></label><input class="inp filled" value="Sorriso Barra Odontologia" readonly></div></div>
+                    <div class="frow c2">
+                      <div class="field">
+                        <label>Categoria principal<span class="req">*</span></label>
+                        <select class="inp filled"><option>Odontologia</option></select>
+                      </div>
+                      <div class="field"><label>Subcategorias</label><div class="cat-chips"><div class="cc on">Urgências</div><div class="cc on">Estética</div><div class="cc">Implantes</div><div class="cc">Ortodontia</div><div class="cc">+ add</div></div></div>
+                    </div>
+                    <div class="frow">
+                      <div class="field">
+                        <label>Descrição<span class="req">*</span></label>
+                        <textarea class="inp filled" rows="4" readonly>Clínica odontológica completa com 12 anos de atuação na Barra da Tijuca. Equipe multidisciplinar, urgências no mesmo dia e teleconsulta disponível. CRO-RJ 51.203 ativo.</textarea>
+                        <div style="display:flex;justify-content:space-between;margin-top:3px"><div class="hint ok">✓ SEO otimizado</div><div class="char-count">188/300</div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card" style="margin-bottom:14px">
+                  <div class="card-head"><div class="ch-title">📍 Endereço & Localização</div><div class="badge b-ok">✓ Verificado</div></div>
+                  <div class="card-body">
+                    <div class="frow"><div class="field"><label>Endereço completo<span class="req">*</span></label><input class="inp filled" value="Av. das Américas, 4.200 — Barra da Tijuca" readonly></div></div>
+                    <div class="frow c3">
+                      <div class="field"><label>CEP</label><input class="inp filled" value="22631-003" readonly></div>
+                      <div class="field"><label>Bairro</label><input class="inp filled" value="Barra da Tijuca" readonly></div>
+                      <div class="field"><label>Complemento</label><input class="inp" placeholder="Sala, andar…" readonly></div>
+                    </div>
+                    <div class="frow c2">
+                      <div class="field"><label>Conselho Profissional</label><div class="verify-row"><input class="inp filled" value="CRO-RJ 51.203" readonly style="flex:1"><button class="verify-btn">Verificar</button></div><div class="verify-ok">✓ Registro ativo · Mai 2026</div></div>
+                      <div class="field"><label>Número de registro</label><select class="inp filled"><option>CRO — Odontologia</option></select></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- LOCKED: Cardápio/Serviços inline hint -->
+                <div class="card free-only" style="border:1.5px dashed var(--ice3);background:var(--ice);position:relative;overflow:hidden;margin-bottom:14px">
+                  <div class="card-head" style="opacity:.4"><div class="ch-title">📋 Serviços & Procedimentos</div><div class="badge b-lock">🔒 Básico</div></div>
+                  <div class="card-body" style="opacity:.3;pointer-events:none">
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <div style="height:36px;background:var(--ice3);border-radius:var(--r)"></div>
+                      <div style="height:36px;background:var(--ice3);border-radius:var(--r)"></div>
+                    </div>
+                  </div>
+                  <div class="locked-overlay">
+                    <div class="lo-ico">📋</div>
+                    <div class="lo-title">Serviços bloqueados</div>
+                    <div class="lo-desc">Liste implantes, clareamento, ortodontia e mais. Cada serviço é uma keyword indexada pelo Google.</div>
+                    <button class="lo-btn">Desbloquear · Básico</button>
+                    <div class="lo-note">a partir de R$ 89/mês · 7 dias grátis</div>
+                  </div>
+                </div>
+                <!-- UNLOCKED version -->
+                <div class="prem-only" style="display:none;margin-bottom:14px">
+                  <div class="card">
+                    <div class="card-head"><div class="ch-title">📋 Serviços & Procedimentos</div><button class="tb-btn tbb-sec" onclick="goScreen('C',null)">Gerenciar →</button></div>
+                    <div class="card-body"><div style="font-size:.82rem;color:var(--k3)">8 serviços cadastrados · clique em Gerenciar para editar</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB: Contato -->
+              <div id="etab-contato" style="display:none">
+                <div class="card" style="margin-bottom:14px">
+                  <div class="card-head"><div class="ch-title">📱 Canais de Contato</div><div class="badge b-ok">✓ Configurado</div></div>
+                  <div class="card-body">
+                    <div class="frow c2">
+                      <div class="field"><label>WhatsApp<span class="req">*</span></label><input class="inp filled" value="(21) 9 8765-4321" readonly><div class="hint ok">✓ CTA principal do perfil</div></div>
+                      <div class="field"><label>Telefone fixo</label><input class="inp" placeholder="(21) 3322-0000" readonly></div>
+                    </div>
+                    <div class="frow c2">
+                      <div class="field"><label>Site oficial</label><input class="inp" placeholder="www.seusite.com.br" readonly></div>
+                      <div class="field"><label>Instagram</label><input class="inp" placeholder="@seunegocio" readonly></div>
+                    </div>
+                    <div class="frow c2">
+                      <div class="field"><label>E-mail de contato</label><input class="inp" placeholder="contato@clinica.com.br" readonly></div>
+                      <div class="field"><label>TikTok</label><input class="inp" placeholder="@seunegocio" readonly></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB: Horários -->
+              <div id="etab-horarios" style="display:none">
+                <div class="card">
+                  <div class="card-head"><div class="ch-title">⏰ Horários de Funcionamento</div><div class="badge b-ok">✓ Configurado</div></div>
+                  <div class="card-body">
+                    <div style="display:flex;flex-direction:column;gap:0">
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-weight:600;font-size:.84rem">Segunda</span><input class="inp filled" type="time" value="07:00" readonly style="padding:8px 10px"><input class="inp filled" type="time" value="19:00" readonly style="padding:8px 10px"><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2);background:rgba(0,68,69,.03);border-radius:var(--r);padding-left:6px"><span style="font-weight:700;font-size:.84rem;color:var(--pv)">Terça (hoje)</span><input class="inp filled" type="time" value="07:00" readonly style="padding:8px 10px"><input class="inp filled" type="time" value="19:00" readonly style="padding:8px 10px"><div class="tog on green" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-weight:600;font-size:.84rem">Quarta</span><input class="inp" type="time" value="07:00" readonly style="padding:8px 10px"><input class="inp" type="time" value="19:00" readonly style="padding:8px 10px"><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-weight:600;font-size:.84rem">Quinta</span><input class="inp" type="time" value="07:00" readonly style="padding:8px 10px"><input class="inp" type="time" value="19:00" readonly style="padding:8px 10px"><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-weight:600;font-size:.84rem">Sexta</span><input class="inp" type="time" value="07:00" readonly style="padding:8px 10px"><input class="inp" type="time" value="19:00" readonly style="padding:8px 10px"><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-weight:600;font-size:.84rem">Sábado</span><input class="inp filled" type="time" value="08:00" readonly style="padding:8px 10px"><input class="inp filled" type="time" value="13:00" readonly style="padding:8px 10px"><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div style="display:grid;grid-template-columns:110px 1fr 1fr auto;gap:10px;align-items:center;padding:10px 0"><span style="font-weight:600;font-size:.84rem">Domingo</span><input class="inp" type="time" value="09:00" readonly style="padding:8px 10px;opacity:.4"><input class="inp" type="time" value="17:00" readonly style="padding:8px 10px;opacity:.4"><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TAB: Planos de Saúde -->
+              <div id="etab-planos" style="display:none">
+                <div class="card">
+                  <div class="card-head"><div class="ch-title">🏥 Planos de Saúde Aceitos</div><div class="badge b-info">Verificado Mai 2026</div></div>
+                  <div class="card-body">
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                      <div class="tog-row" style="padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-size:.82rem;color:var(--k2)">Unimed</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div class="tog-row" style="padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-size:.82rem;color:var(--k2)">Bradesco Saúde</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div class="tog-row" style="padding:10px 0;border-bottom:1px solid var(--ice2)"><span style="font-size:.82rem;color:var(--k2)">SulAmérica</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div class="tog-row" style="padding:10px 0"><span style="font-size:.82rem;color:var(--k2)">Amil</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                      <div class="tog-row" style="padding:10px 0"><span style="font-size:.82rem;color:var(--k2)">Porto Seguro</span><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+                      <div class="tog-row" style="padding:10px 0"><span style="font-size:.82rem;color:var(--k2)">Particular</span><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Preview -->
+            <div>
+              <div class="profile-preview-mini" style="margin-bottom:14px">
+                <div class="ppm-bg"></div>
+                <div class="ppm-label">Preview em tempo real</div>
+                <div class="ppm-card">
+                  <div class="ppm-img"><div class="ppm-badge free-only">Gratuito</div><div class="ppm-badge prem-only" style="display:none;background:rgba(184,115,51,.4)">Premium ⭐</div></div>
+                  <div class="ppm-body">
+                    <div class="ppm-name">Sorriso Barra Odontologia</div>
+                    <div class="ppm-sub">Odontologia · CRO-RJ 51.203<br>⭐ 4.9 · 📍 Barra da Tijuca<br>⏰ Aberto agora · fecha 19h</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-head"><div class="ch-title" style="font-size:.78rem">📊 Completude</div></div>
+                <div class="card-body">
+                  <div style="font-family:var(--ss);font-weight:900;font-size:1.4rem;color:var(--co);margin-bottom:3px">62%</div>
+                  <div style="height:6px;background:var(--ice3);border-radius:99px;overflow:hidden;margin-bottom:10px"><div style="width:62%;height:100%;background:linear-gradient(90deg,var(--pv),var(--co));border-radius:99px"></div></div>
+                  <div style="display:flex;flex-direction:column;gap:5px">
+                    <div style="display:flex;gap:6px;align-items:center;font-size:.74rem;color:var(--green)"><span>✓</span>Nome e categoria</div>
+                    <div style="display:flex;gap:6px;align-items:center;font-size:.74rem;color:var(--green)"><span>✓</span>Endereço verificado</div>
+                    <div style="display:flex;gap:6px;align-items:center;font-size:.74rem;color:var(--green)"><span>✓</span>WhatsApp</div>
+                    <div style="display:flex;gap:6px;align-items:center;font-size:.74rem;color:var(--orange)"><span>!</span>Adicionar descrição</div>
+                    <div style="display:flex;gap:6px;align-items:center;font-size:.74rem;color:var(--orange)"><span>!</span>2 fotos faltando</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA B — FOTOS ══════ -->
+      <div class="sw" id="sw-B">
+        <div class="topbar">
+          <div class="tb-title">Gerenciar Fotos</div>
+          <div class="tb-plan-badge tpb-free free-only">1 de 3 fotos</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">8 de 20 fotos</div>
+          <div class="tb-actions">
+            <button class="tb-btn tbb-sec">📋 Reordenar</button>
+            <button class="tb-btn tbb-pri free-only">+ Adicionar foto</button>
+            <button class="tb-btn tbb-grn prem-only" style="display:none">+ Adicionar foto</button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="photos-header">
+            <div>
+              <div style="font-family:var(--ss);font-weight:800;font-size:.96rem;text-transform:uppercase;letter-spacing:.06em;color:var(--pv);margin-bottom:4px">Galeria de Fotos</div>
+              <div style="font-size:.8rem;color:var(--k3)">A primeira foto é o banner principal do seu perfil</div>
+            </div>
+            <div class="photos-quota">
+              <div class="pq-lbl free-only">1 / 3 usadas</div>
+              <div class="pq-lbl prem-only" style="display:none">8 / 20 usadas</div>
+              <div class="pq-bar"><div class="pq-fill low free-only" style="width:33%"></div><div class="pq-fill low prem-only" style="display:none;width:40%"></div></div>
+            </div>
+          </div>
+          <!-- Free: 1 filled + 2 empty + 3 locked -->
+          <div class="free-only">
+            <div class="photo-grid">
+              <div class="pg-slot filled">
+                <div class="pg-bg" style="background:linear-gradient(155deg,var(--pvd),var(--pv),#005F61)"></div>
+                <div class="pg-main">Banner principal</div>
+                <div class="pg-overlay">
+                  <button class="pg-action">✦ Definir como principal</button>
+                  <button class="pg-action del">✕ Remover</button>
+                </div>
+              </div>
+              <div class="pg-slot empty"><div class="pg-add-ico">+</div><div class="pg-add-lbl">Adicionar foto</div></div>
+              <div class="pg-slot empty"><div class="pg-add-ico">+</div><div class="pg-add-lbl">Adicionar foto</div></div>
+              <div class="pg-slot locked"><div class="pg-lock-ico">🔒</div><div class="pg-lock-lbl">Básico</div></div>
+              <div class="pg-slot locked"><div class="pg-lock-ico">🔒</div><div class="pg-lock-lbl">Básico</div></div>
+              <div class="pg-slot locked"><div class="pg-lock-ico">🔒</div><div class="pg-lock-lbl">Básico</div></div>
+              <div class="pg-slot locked"><div class="pg-lock-ico">🔒</div><div class="pg-lock-lbl">Premium</div></div>
+              <div class="pg-slot locked"><div class="pg-lock-ico">🔒</div><div class="pg-lock-lbl">Premium</div></div>
+            </div>
+          </div>
+          <!-- Premium: 8 filled + empties -->
+          <div class="prem-only" style="display:none">
+            <div class="photo-grid">
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(155deg,var(--pvd),var(--pv))"></div><div class="pg-main">Banner</div><div class="pg-overlay"><button class="pg-action del">✕ Remover</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#2C1810,#8C5530)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#1A3A2A,#2A6A4A)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#1A2A4A,#2A4A8A)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#3A1A2A,#7A3A5A)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#2A2A1A,#5A5A2A)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,#1A3A3A,#2A6A6A)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot filled"><div class="pg-bg" style="background:linear-gradient(135deg,var(--pvd),#005F61)"></div><div class="pg-overlay"><button class="pg-action del">✕</button></div></div>
+              <div class="pg-slot empty"><div class="pg-add-ico">+</div><div class="pg-add-lbl">Adicionar</div></div>
+              <div class="pg-slot empty"><div class="pg-add-ico">+</div><div class="pg-add-lbl">Adicionar</div></div>
+            </div>
+          </div>
+          <div class="photo-tips" style="margin-bottom:14px">
+            <div class="pt-title">💡 Dicas para fotos que convertem</div>
+            <div class="pt-list">
+              <div class="pt-item">Use a fachada bem iluminada como foto principal — é o que aparece nos resultados de busca</div>
+              <div class="pt-item">Fotos do ambiente interno e da equipe aumentam confiança antes do primeiro contato</div>
+              <div class="pt-item">Formato horizontal, mínimo 1200×800px, fundo limpo e bem iluminado</div>
+            </div>
+          </div>
+          <div class="upgrade-banner free-only">
+            <div style="font-size:1.6rem;flex-shrink:0">📷</div>
+            <div class="ub-body">
+              <div class="ub-title">Desbloqueie 10 fotos com o Básico</div>
+              <div class="ub-desc">Perfis com 6+ fotos recebem 80% mais cliques. Você está usando apenas 1 de 3 disponíveis.</div>
+            </div>
+            <button class="ub-btn">Fazer upgrade →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA C — SERVIÇOS ══════ -->
+      <div class="sw" id="sw-C">
+        <div class="topbar">
+          <div class="tb-title">Serviços & Procedimentos</div>
+          <div class="tb-plan-badge tpb-free free-only">🔒 Plano Básico</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">8 serviços</div>
+          <div class="tb-actions prem-only" style="display:none">
+            <button class="tb-btn tbb-sec">📋 Reordenar</button>
+            <button class="tb-btn tbb-pri">+ Novo serviço</button>
+          </div>
+        </div>
+        <div class="content" style="position:relative">
+          <!-- Free lock -->
+          <div class="free-only" style="text-align:center;padding:60px 32px">
+            <div style="font-size:2.5rem;margin-bottom:14px">📋</div>
+            <div style="font-family:var(--ss);font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:8px">Serviços bloqueados no plano gratuito</div>
+            <div style="font-size:.86rem;color:var(--k3);line-height:1.72;max-width:460px;margin:0 auto 24px">Liste seus procedimentos com descrição e preços. Cada serviço vira uma keyword indexada pelo Google — "implante dentário Barra da Tijuca" — e aparece no seu perfil.</div>
+            <button class="lo-btn">Desbloquear com Básico · R$ 89/mês</button>
+            <div style="font-family:var(--mn);font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:var(--k4);margin-top:12px">7 dias de teste grátis · sem cartão de crédito</div>
+          </div>
+          <!-- Premium unlocked -->
+          <div class="prem-only" style="display:none">
+            <div class="svc-grid">
+              <div class="svc-card">
+                <div class="sc-head"><div class="sc-name">Implante Dentário</div><div class="sc-price">R$ 2.800</div></div>
+                <div class="sc-desc">Implante osseointegrado com coroa de cerâmica. Inclui consulta de planejamento e exames de imagem digital.</div>
+                <div class="sc-tags"><span class="sc-tag">Implantodontia</span><span class="sc-tag">Sem glúten 😄</span><span class="sc-tag">CRO verificado</span></div>
+                <div class="sc-actions"><button class="sca">✏️ Editar</button><button class="sca del">🗑 Remover</button></div>
+              </div>
+              <div class="svc-card">
+                <div class="sc-head"><div class="sc-name">Clareamento Dental</div><div class="sc-price">R$ 890</div></div>
+                <div class="sc-desc">Clareamento a laser com moldeiras personalizadas. Resultado em sessão única, 6 a 8 tons mais claro.</div>
+                <div class="sc-tags"><span class="sc-tag">Estética</span><span class="sc-tag">1 sessão</span></div>
+                <div class="sc-actions"><button class="sca">✏️ Editar</button><button class="sca del">🗑 Remover</button></div>
+              </div>
+              <div class="svc-card">
+                <div class="sc-head"><div class="sc-name">Urgência Odontológica</div><div class="sc-price">R$ 180</div></div>
+                <div class="sc-desc">Atendimento imediato para dor de dente, quebras, perdas de prótese. Sem agendamento prévio.</div>
+                <div class="sc-tags"><span class="sc-tag">Urgência</span><span class="sc-tag">Mesmo dia</span><span class="sc-tag">Sem agendamento</span></div>
+                <div class="sc-actions"><button class="sca">✏️ Editar</button><button class="sca del">🗑 Remover</button></div>
+              </div>
+              <div class="svc-card">
+                <div class="sc-head"><div class="sc-name">Consulta + Limpeza</div><div class="sc-price">R$ 220</div></div>
+                <div class="sc-desc">Consulta de avaliação completa com limpeza profissional e instrução de higiene oral.</div>
+                <div class="sc-tags"><span class="sc-tag">Planos aceitos</span><span class="sc-tag">Particular</span></div>
+                <div class="sc-actions"><button class="sca">✏️ Editar</button><button class="sca del">🗑 Remover</button></div>
+              </div>
+            </div>
+            <div class="add-svc-form">
+              <div class="asf-title">➕ Adicionar novo serviço</div>
+              <div class="frow c2"><div class="field"><label>Nome do serviço</label><input class="inp" placeholder="Ex: Ortodontia" readonly></div><div class="field"><label>Preço (opcional)</label><input class="inp" placeholder="R$ 0,00 ou 'a consultar'" readonly></div></div>
+              <div class="frow"><div class="field"><label>Descrição breve</label><textarea class="inp" rows="2" placeholder="Descreva o serviço para aparecer nos resultados de busca…" readonly></textarea></div></div>
+              <button class="tb-btn tbb-pri" style="margin-top:4px">💾 Salvar serviço</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA D — AVALIAÇÕES ══════ -->
+      <div class="sw" id="sw-D">
+        <div class="topbar">
+          <div class="tb-title">Avaliações</div>
+          <div class="tb-plan-badge tpb-free free-only">🔒 Plano Básico</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">8 avaliações · 4.9★</div>
+          <div class="tb-actions prem-only" style="display:none">
+            <div style="font-family:var(--mn);font-size:.56rem;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);padding:6px 12px;background:var(--olight);border-radius:99px;border:1px solid rgba(234,88,12,.2)">3 aguardando resposta</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="free-only" style="text-align:center;padding:60px 32px">
+            <div style="font-size:2.5rem;margin-bottom:14px">⭐</div>
+            <div style="font-family:var(--ss);font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:8px">8 avaliações aguardando resposta</div>
+            <div style="font-size:.86rem;color:var(--k3);line-height:1.72;max-width:460px;margin:0 auto 24px">Negócios que respondem avaliações publicamente têm <strong>40% mais conversões</strong>. No plano Básico você vê todas as avaliações, responde e acompanha sua reputação.</div>
+            <button class="lo-btn">Desbloquear com Básico · R$ 89/mês</button>
+          </div>
+          <div class="prem-only" style="display:none">
+            <div class="reviews-header">
+              <div class="rh-score"><div class="rh-big">4.9</div><div class="rh-stars">★★★★★</div><div class="rh-count">8 avaliações</div></div>
+              <div class="rh-div"></div>
+              <div class="rh-bars">
+                <div class="rbar"><span class="rbar-l">5★</span><div class="rbar-t"><div class="rbar-f" style="width:87%"></div></div><span class="rbar-n">7</span></div>
+                <div class="rbar"><span class="rbar-l">4★</span><div class="rbar-t"><div class="rbar-f" style="width:12%"></div></div><span class="rbar-n">1</span></div>
+                <div class="rbar"><span class="rbar-l">3★</span><div class="rbar-t"></div><span class="rbar-n">0</span></div>
+                <div class="rbar"><span class="rbar-l">2★</span><div class="rbar-t"></div><span class="rbar-n">0</span></div>
+                <div class="rbar"><span class="rbar-l">1★</span><div class="rbar-t"></div><span class="rbar-n">0</span></div>
+              </div>
+              <div class="rh-div"></div>
+              <div class="rh-aspects">
+                <div class="ra-row"><span>Atendimento</span><span class="ra-score">★ 5.0</span></div>
+                <div class="ra-row"><span>Estrutura</span><span class="ra-score">★ 4.9</span></div>
+                <div class="ra-row"><span>Pontualidade</span><span class="ra-score">★ 4.8</span></div>
+                <div class="ra-row"><span>Custo-benefício</span><span class="ra-score">★ 4.7</span></div>
+              </div>
+            </div>
+            <!-- Review 1: no reply -->
+            <div class="review-card">
+              <div class="rc-head"><div class="rc-auth"><div class="rc-av" style="background:linear-gradient(135deg,#004445,#005F61)">MS</div><div><div class="rc-name">Maria Silva</div><div class="rc-verified">✓ Verificado pelo HUB</div></div></div><div style="text-align:right"><div class="rc-date">15 Mai 2026</div><div class="rc-stars">★★★★★</div></div></div>
+              <div class="rc-text">Atendimento impecável! O Dr. Rafael foi muito detalhista e paciente ao explicar o tratamento. Resultado dos exames entregue digitalmente no mesmo dia.</div>
+              <div class="rc-tags"><span class="rc-tag">Implante</span><span class="rc-tag">Unimed</span></div>
+              <div class="no-reply"><span>💬 Você ainda não respondeu esta avaliação</span><button class="nr-btn" onclick="showReply(this)">Responder →</button></div>
+              <div class="reply-area pending" style="display:none;margin-top:8px">
+                <div class="reply-label pending">✏️ Escrever resposta pública</div>
+                <textarea class="reply-input" placeholder="Obrigado pela avaliação, Maria! Foi um prazer atendê-la…" readonly></textarea>
+                <div class="reply-actions"><button class="ra-btn ra-cancel" onclick="hideReply(this)">Cancelar</button><button class="ra-btn ra-send">Publicar resposta</button></div>
+              </div>
+            </div>
+            <!-- Review 2: with reply -->
+            <div class="review-card">
+              <div class="rc-head"><div class="rc-auth"><div class="rc-av" style="background:linear-gradient(135deg,#2C1810,#B87333)">CM</div><div><div class="rc-name">Carlos Mendes</div><div class="rc-verified">✓ Verificado pelo HUB</div></div></div><div style="text-align:right"><div class="rc-date">02 Mai 2026</div><div class="rc-stars">★★★★★</div></div></div>
+              <div class="rc-text">Fui por urgência num sábado com dor de dente. Atenderam sem agendamento, resolveram o problema na hora. Estrutura moderna e equipe super atenciosa.</div>
+              <div class="rc-tags"><span class="rc-tag">Urgência</span><span class="rc-tag">Canal</span></div>
+              <div class="reply-area" style="margin-top:8px">
+                <div class="reply-label" style="display:flex;align-items:center;justify-content:space-between"><span>💬 Sua resposta pública</span><span style="font-family:var(--mn);font-size:.5rem;color:var(--k4)">02 Mai 2026</span></div>
+                <div class="reply-text">Fico muito feliz que pudemos ajudar, Carlos! Urgências são nossa prioridade — qualquer problema, pode vir sem agendamento de segunda a sábado. Até a próxima!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA E — ANALYTICS ══════ -->
+      <div class="sw" id="sw-E">
+        <div class="topbar">
+          <div class="tb-title">Analytics</div>
+          <div class="tb-plan-badge tpb-free free-only">🔒 Plano Básico</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">Premium · Últimos 30 dias</div>
+          <div class="tb-actions prem-only" style="display:none">
+            <button class="tb-btn tbb-sec">📥 Exportar CSV</button>
+          </div>
+        </div>
+        <div class="content">
+          <div class="free-only" style="text-align:center;padding:60px 32px">
+            <div style="font-size:2.5rem;margin-bottom:14px">📊</div>
+            <div style="font-family:var(--ss);font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:8px">Analytics disponível no Básico</div>
+            <div style="font-size:.86rem;color:var(--k3);line-height:1.72;max-width:460px;margin:0 auto 24px">Veja exatamente quantas pessoas viram seu perfil, de onde vieram, o que clicaram e como melhorar sua taxa de conversão.</div>
+            <button class="lo-btn">Desbloquear com Básico · R$ 89/mês</button>
+          </div>
+          <div class="prem-only" style="display:none">
+            <div class="analytics-grid">
+              <div class="an-card blue"><div class="an-label">Visitas ao perfil</div><div class="an-val">847</div><div class="an-change up">↑ +24% vs mês ant.</div></div>
+              <div class="an-card green"><div class="an-label">Cliques WhatsApp</div><div class="an-val">134</div><div class="an-change up">↑ +18%</div></div>
+              <div class="an-card orange"><div class="an-label">Taxa de conversão</div><div class="an-val">15.8%</div><div class="an-change up">↑ +2.3pp</div></div>
+              <div class="an-card purple"><div class="an-label">Posição média busca</div><div class="an-val">#3</div><div class="an-change up">↑ +5 pos.</div></div>
+            </div>
+            <div class="chart-container">
+              <div class="cc-head">
+                <div class="cc-title">Visitas diárias — últimos 30 dias</div>
+                <div class="cc-range-btns">
+                  <div class="crb">7d</div><div class="crb on">30d</div><div class="crb">90d</div>
+                </div>
+              </div>
+              <svg class="chart-svg" viewBox="0 0 700 140" preserveAspectRatio="none">
+                <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#004445" stop-opacity=".3"/><stop offset="100%" stop-color="#004445" stop-opacity=".03"/></linearGradient></defs>
+                <path d="M0,120 L25,100 L50,110 L75,85 L100,90 L125,70 L150,80 L175,60 L200,65 L225,50 L250,55 L275,40 L300,45 L325,30 L350,35 L375,25 L400,30 L425,20 L450,22 L475,15 L500,18 L525,12 L550,10 L575,14 L600,8 L625,10 L650,6 L675,8 L700,5 L700,140 L0,140 Z" fill="url(#cg)"/>
+                <path d="M0,120 L25,100 L50,110 L75,85 L100,90 L125,70 L150,80 L175,60 L200,65 L225,50 L250,55 L275,40 L300,45 L325,30 L350,35 L375,25 L400,30 L425,20 L450,22 L475,15 L500,18 L525,12 L550,10 L575,14 L600,8 L625,10 L650,6 L675,8 L700,5" fill="none" stroke="#004445" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="traffic-grid">
+              <div class="traf-card">
+                <div class="tc-title">Origem do Tráfego</div>
+                <div class="ts-row"><span class="ts-ico">🔍</span><div class="ts-bar-wrap"><div class="ts-label"><span>Busca HUB</span><span class="ts-pct">58%</span></div><div class="ts-bar"><div class="ts-fill" style="width:58%;background:var(--blue)"></div></div></div></div>
+                <div class="ts-row"><span class="ts-ico">🌐</span><div class="ts-bar-wrap"><div class="ts-label"><span>Google orgânico</span><span class="ts-pct">28%</span></div><div class="ts-bar"><div class="ts-fill" style="width:28%;background:var(--green)"></div></div></div></div>
+                <div class="ts-row"><span class="ts-ico">📱</span><div class="ts-bar-wrap"><div class="ts-label"><span>Direto / WhatsApp</span><span class="ts-pct">14%</span></div><div class="ts-bar"><div class="ts-fill" style="width:14%;background:var(--orange)"></div></div></div></div>
+              </div>
+              <div class="traf-card">
+                <div class="tc-title">Funil de Conversão</div>
+                <div class="funnel-steps">
+                  <div class="fs-step"><div class="fs-bar" style="width:100%;background:rgba(37,99,235,.1)"></div><div class="fs-num">847</div><div class="fs-label">Viram o perfil</div><div class="fs-pct">100%</div></div>
+                  <div class="fs-step"><div class="fs-bar" style="width:62%;background:rgba(22,163,74,.1)"></div><div class="fs-num">524</div><div class="fs-label">Viram o WhatsApp</div><div class="fs-pct">62%</div></div>
+                  <div class="fs-step"><div class="fs-bar" style="width:15%;background:rgba(184,115,51,.12)"></div><div class="fs-num">134</div><div class="fs-label">Clicaram no WhatsApp</div><div class="fs-pct">15.8%</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="prem-lock">
+              <div class="pl-bg"></div>
+              <div class="pl-ico">🏆</div>
+              <div class="pl-title">Análise de concorrentes</div>
+              <div class="pl-desc">Compare suas métricas com os outros dentistas da Barra e descubra onde você pode melhorar.</div>
+              <button class="pl-btn" onclick="goScreen('F',null)">Ver análise de concorrentes →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA F — CONCORRENTES ══════ -->
+      <div class="sw" id="sw-F">
+        <div class="topbar">
+          <div class="tb-title">Análise de Concorrentes</div>
+          <div class="tb-plan-badge tpb-free free-only">🔒 Plano Premium</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">Premium · Odontologia · Barra</div>
+        </div>
+        <div class="content">
+          <div class="free-only" style="text-align:center;padding:60px 32px">
+            <div style="font-size:2.5rem;margin-bottom:14px">🏆</div>
+            <div style="font-family:var(--ss);font-weight:800;font-size:1.2rem;text-transform:uppercase;letter-spacing:.05em;color:var(--pv);margin-bottom:8px">Análise exclusiva do Plano Premium</div>
+            <div style="font-size:.86rem;color:var(--k3);line-height:1.72;max-width:460px;margin:0 auto 24px">Veja como seus concorrentes diretos se saem em visitas, conversão e posição de busca. Identifique gaps e oportunidades reais.</div>
+            <button class="lo-btn" style="background:var(--co)">Desbloquear com Premium · R$ 189/mês</button>
+          </div>
+          <div class="prem-only" style="display:none">
+            <div style="font-size:.84rem;color:var(--k3);margin-bottom:18px;background:var(--pvg2);border-radius:var(--r);padding:11px 14px;border:1px solid var(--pvg2);line-height:1.65">Comparando com os <strong>5 concorrentes mais próximos</strong> na categoria Odontologia · Barra da Tijuca · Últimos 30 dias</div>
+            <div class="comp-grid">
+              <div class="comp-card"><div class="cc-top"><div class="cc-rank">#1</div><span class="cc-ico">🦷</span><div><div class="cc-name">Sorriso Barra Pro</div><div class="cc-plan">Premium</div></div></div><div class="comp-metrics"><div class="cm-row"><span>Visitas</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:95%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">1.102</span></div><div class="cm-row"><span>Conversão</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:80%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">18.2%</span></div></div></div>
+              <div class="comp-card"><div class="cc-top"><div class="cc-rank">#2</div><span class="cc-ico">🦷</span><div><div class="cc-name">Odonto Excellence</div><div class="cc-plan">Premium</div></div></div><div class="comp-metrics"><div class="cm-row"><span>Visitas</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:82%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">954</span></div><div class="cm-row"><span>Conversão</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:72%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">16.4%</span></div></div></div>
+              <div class="comp-card yours"><div class="comp-yours-tag">Você</div><div class="cc-top"><div class="cc-rank">#3</div><span class="cc-ico">🦷</span><div><div class="cc-name">Sorriso Barra</div><div class="cc-plan">Premium</div></div></div><div class="comp-metrics"><div class="cm-row"><span>Visitas</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:73%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">847</span></div><div class="cm-row"><span>Conversão</span><div class="cm-bar-wrap"><div class="cm-bar"><div class="cm-fill" style="width:68%"></div></div></div><span style="font-family:var(--mn);font-size:.6rem;color:var(--k3)">15.8%</span></div></div></div>
+            </div>
+            <div class="insight-cards">
+              <div class="ic"><div class="ic-ico">📷</div><div class="ic-title">Mais fotos = mais visitas</div><div class="ic-text">Os 2 concorrentes à sua frente têm em média 14 fotos. Você tem 8. Adicionar mais 5 fotos pode aumentar suas visitas em ~30%.</div><div class="ic-action">Adicionar fotos →</div></div>
+              <div class="ic"><div class="ic-ico">⭐</div><div class="ic-title">Responda avaliações pendentes</div><div class="ic-text">Você tem 3 avaliações sem resposta. O #1 responde 100% das avaliações em menos de 24h — o que impacta o rankeamento do HUB.</div><div class="ic-action">Ver avaliações →</div></div>
+              <div class="ic"><div class="ic-ico">📋</div><div class="ic-title">Adicione mais serviços</div><div class="ic-text">Você tem 4 serviços listados. A média dos seus concorrentes é 9. Cada serviço adicional aumenta suas chances de aparecer em buscas específicas.</div><div class="ic-action">Adicionar serviços →</div></div>
+              <div class="ic"><div class="ic-ico">🚀</div><div class="ic-title">Sua trajetória é positiva</div><div class="ic-text">+24% de visitas no último mês e +5 posições na busca. Continue no ritmo e você pode alcançar o #1 em 60 dias.</div><div class="ic-action" style="color:var(--green)">Ver projeção →</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════ TELA G — PLANO & FATURAMENTO ══════ -->
+      <div class="sw" id="sw-G">
+        <div class="topbar">
+          <div class="tb-title">Plano & Faturamento</div>
+          <div class="tb-plan-badge tpb-free free-only">Plano Gratuito</div>
+          <div class="tb-plan-badge tpb-prem prem-only" style="display:none">Plano Premium ⭐</div>
+        </div>
+        <div class="content">
+          <!-- Plano atual -->
+          <div class="current-plan-card free-only">
+            <div class="cpc-bg"></div>
+            <div>
+              <div class="cpc-label">Seu plano atual</div>
+              <div class="cpc-plan">Plano <em>Gratuito</em></div>
+              <div class="cpc-desc">Você está aproveitando o básico do HUB. Faça upgrade para desbloquear analytics, cardápio, avaliações, destaque nos resultados e muito mais.</div>
+            </div>
+            <div class="cpc-actions">
+              <button class="cpc-btn cpc-upgrade">⭐ Fazer upgrade</button>
+            </div>
+          </div>
+          <div class="current-plan-card prem-only" style="display:none">
+            <div class="cpc-bg"></div>
+            <div>
+              <div class="cpc-label">Seu plano atual · próxima cobrança 15 Jun</div>
+              <div class="cpc-plan">Plano <em>Premium</em> ⭐</div>
+              <div class="cpc-desc">Você está aproveitando todos os recursos do HUB. Analytics completo, destaque nos resultados, cardápio interativo e post mensal no Instagram.</div>
+            </div>
+            <div class="cpc-actions">
+              <button class="cpc-btn cpc-upgrade" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2)!important">Gerenciar plano</button>
+              <button class="cpc-btn cpc-cancel">Cancelar plano</button>
+            </div>
+          </div>
+
+          <!-- Comparativo mini -->
+          <div class="plans-mini">
+            <div class="pm-card current free-only"><div class="pm-current-tag">Atual</div><div class="pm-name">Gratuito</div><div class="pm-price"><span style="color:var(--green)">R$ 0</span></div><div class="pm-period">Para sempre</div><div class="pm-feats"><div class="pmf">Perfil básico</div><div class="pmf">3 fotos</div><div class="pmf no">Analytics</div><div class="pmf no">Destaque</div></div><button class="pm-cta pm-cta-current">Plano atual</button></div>
+            <div class="pm-card current prem-only" style="display:none"><div class="pm-name">Básico</div><div class="pm-price">R$ 89 <span>/mês</span></div><div class="pm-period">Você já tem mais</div><div class="pm-feats"><div class="pmf">Badge verificado</div><div class="pmf">10 fotos</div><div class="pmf">Analytics básico</div><div class="pmf no">Destaque</div></div><button class="pm-cta pm-cta-current">Downgrade</button></div>
+            <div class="pm-card"><div class="pm-name">Básico</div><div class="pm-price">R$ 89 <span>/mês</span></div><div class="pm-period">Cancele quando quiser</div><div class="pm-feats"><div class="pmf">Badge verificado</div><div class="pmf">10 fotos</div><div class="pmf">Analytics básico</div><div class="pmf no">Destaque homepage</div></div><button class="pm-cta pm-cta-up free-only">Assinar Básico</button><button class="pm-cta pm-cta-current prem-only" style="display:none">Downgrade</button></div>
+            <div class="pm-card"><div class="pm-name">Premium</div><div class="pm-price">R$ 189 <span>/mês</span></div><div class="pm-period">Cancele quando quiser</div><div class="pm-feats"><div class="pmf">Tudo do Básico</div><div class="pmf">Destaque no topo</div><div class="pmf">Analytics completo</div><div class="pmf">Post Instagram</div></div><button class="pm-cta pm-cta-prem free-only">Assinar Premium</button><div class="pm-current-tag prem-only" style="display:block">Atual</div><button class="pm-cta pm-cta-current prem-only" style="display:none">Plano atual</button></div>
+          </div>
+
+          <!-- Histórico free: sem histórico -->
+          <div class="card free-only">
+            <div class="card-head"><div class="ch-title">🧾 Histórico de Faturas</div></div>
+            <div class="card-body" style="text-align:center;padding:32px">
+              <div style="font-size:1.6rem;margin-bottom:8px">📄</div>
+              <div style="font-family:var(--ss);font-weight:700;font-size:.88rem;text-transform:uppercase;letter-spacing:.05em;color:var(--k3)">Nenhuma fatura ainda</div>
+              <div style="font-size:.8rem;color:var(--k4);margin-top:4px">Faturas aparecerão aqui após assinar um plano pago</div>
+            </div>
+          </div>
+
+          <!-- Histórico premium: com registros -->
+          <div class="card prem-only" style="display:none">
+            <div class="card-head"><div class="ch-title">🧾 Histórico de Faturas</div><button class="tb-btn tbb-sec">📥 Exportar tudo</button></div>
+            <div class="card-body" style="padding:0">
+              <table class="billing-table">
+                <thead class="bt-head"><tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Status</th><th>NF</th></tr></thead>
+                <tbody>
+                  <tr class="bt-row"><td>15 Mai 2026</td><td>HUB CM · Plano Premium</td><td style="font-family:var(--mn);font-weight:600">R$ 189,00</td><td><span class="bt-status bts-paid">Pago</span></td><td><a class="bt-dl">↓ NF</a></td></tr>
+                  <tr class="bt-row"><td>15 Abr 2026</td><td>HUB CM · Plano Premium</td><td style="font-family:var(--mn);font-weight:600">R$ 189,00</td><td><span class="bt-status bts-paid">Pago</span></td><td><a class="bt-dl">↓ NF</a></td></tr>
+                  <tr class="bt-row"><td>15 Mar 2026</td><td>HUB CM · Plano Básico</td><td style="font-family:var(--mn);font-weight:600">R$ 89,00</td><td><span class="bt-status bts-paid">Pago</span></td><td><a class="bt-dl">↓ NF</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /app -->
+</div><!-- /browser -->
+</div><!-- /bwrap -->
+
+<script>
+// CURSOR
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=(e.clientX-4.5)+'px';cur.style.top=(e.clientY-4.5)+'px'});
+document.addEventListener('mouseover',e=>{
+  const t=e.target.closest('button,a,.ni,.plan-card,.pm-card,.pg-slot,.comp-card,.ic,.svc-card,.review-card,.tog,.mode-btn,.stab,.et,.cc,.crb');
+  cur.classList.toggle('big',!!t);
+});
+
+// SCREEN NAV
+let cs='A';
+const urls={A:'editar-perfil',B:'fotos',C:'servicos',D:'avaliacoes',E:'analytics',F:'concorrentes',G:'plano-faturamento'};
+function goScreen(id,btn){
+  document.getElementById('sw-'+cs)?.classList.remove('on');
+  document.querySelector('.stab.on')?.classList.remove('on');
+  document.querySelectorAll('.ni.on').forEach(n=>n.classList.remove('on'));
+  cs=id;
+  document.getElementById('sw-'+id)?.classList.add('on');
+  if(btn) btn.classList.add('on');
+  else document.querySelectorAll('.stab').forEach((s,i)=>{if(s.textContent.includes(id)) s.classList.add('on')});
+  const ni=document.getElementById('ni-'+id);
+  if(ni) ni.classList.add('on');
+  const urlEl=document.getElementById('burl-url');
+  if(urlEl) urlEl.innerHTML=`<span style="color:var(--co)">🔒</span>hubcentrometropolitano.com.br/painel/${urls[id]||id.toLowerCase()}`;
+  window.scrollTo({top:56,behavior:'smooth'});
+}
+// Init stab
+document.querySelectorAll('.stab').forEach((s,i)=>{
+  s.addEventListener('click',function(){
+    document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+
+// MODE SWITCH (free/prem)
+let mode='free';
+function setMode(m){
+  mode=m;
+  document.getElementById('mode-free').classList.toggle('on',m==='free');
+  document.getElementById('mode-prem').classList.toggle('on',m==='prem');
+  document.querySelectorAll('.free-only').forEach(el=>el.style.display=m==='free'?'':'none');
+  document.querySelectorAll('.prem-only').forEach(el=>el.style.display=m==='prem'?'':'none');
+  document.querySelectorAll('.free-locked').forEach(el=>el.classList.toggle('locked',m==='free'));
+}
+
+// EDIT TABS
+function setEditTab(btn,id){
+  document.querySelectorAll('.et').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  ['info','contato','horarios','planos'].forEach(t=>{
+    const el=document.getElementById('etab-'+t);
+    if(el) el.style.display=t===id?'block':'none';
+  });
+}
+
+// REVIEW REPLY
+function showReply(btn){
+  const rc=btn.closest('.review-card');
+  rc.querySelector('.no-reply').style.display='none';
+  rc.querySelector('.reply-area').style.display='block';
+}
+function hideReply(btn){
+  const rc=btn.closest('.review-card');
+  rc.querySelector('.no-reply').style.display='flex';
+  rc.querySelector('.reply-area').style.display='none';
+}
+
+// CHART RANGE BTNS
+document.querySelectorAll('.crb').forEach(b=>{
+  b.addEventListener('click',function(){
+    this.closest('.cc-range-btns').querySelectorAll('.crb').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+</script>
+</body>
+</html>
+HTMLEOF

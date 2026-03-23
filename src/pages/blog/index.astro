@@ -28,14 +28,14 @@ const totalPages = Math.ceil(totalCount / perPage);
       <div class="absolute top-0 right-0 font-display text-[16rem] font-bold leading-none text-white/5 pointer-events-none select-none">Blog</div>
       <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl relative z-10 text-center">
         <span class="font-head text-hub-cobre uppercase tracking-widest font-bold text-sm mb-3 block">Conteúdo & Novidades</span>
-        <h1 class="font-display text-5xl md:text-6xl font-bold mb-4">Blog</h1>
+        <h1 class="font-display text-5xl md:text-6xl font-bold mb-4 text-hub-gelo">Blog</h1>
         <p class="font-body text-hub-gelo/70 text-lg mx-auto max-w-xl">Dicas, tendências e novidades da Barra da Tijuca.</p>
       </div>
     </section>
 
     <!-- Search bar -->
     <div class="bg-white border-b border-hub-gelo shadow-sm sticky top-[72px] z-40">
-      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-4 flex justify-center">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-4 flex justify-start">
         <form action="/blog/busca" method="get" class="flex gap-3 w-full max-w-xl">
           <div class="relative flex-1">
             <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-hub-chumbo/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,7 +51,7 @@ const totalPages = Math.ceil(totalCount / perPage);
     </div>
 
     <!-- Content -->
-    <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-16">
+    <div class="container mx-auto px-4 lg:px-8 py-16">
       <div class="flex gap-12">
 
         <!-- Posts grid -->
