@@ -9,6 +9,9 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  security: {
+    checkOrigin: false,
+  },
   image: {
     remotePatterns: [{ protocol: 'https', hostname: 'cms.hubcentrometropolitano.com.br' }],
   },
