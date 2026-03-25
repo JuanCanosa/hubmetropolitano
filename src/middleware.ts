@@ -9,8 +9,8 @@ export const onRequest = defineMiddleware(async ({ request, cookies, locals, red
 
   // Cria o client Supabase com acesso aos cookies da requisição
   const supabase = createServerClient(
-    import.meta.env.PUBLIC_SUPABASE_URL,
-    import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+    import.meta.env.PUBLIC_SUPABASE_URL  ?? process.env.PUBLIC_SUPABASE_URL  ?? '',
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? process.env.PUBLIC_SUPABASE_ANON_KEY ?? '',
     {
       cookies: {
         getAll() {

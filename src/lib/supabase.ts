@@ -2,8 +2,8 @@ import { createServerClient, parseCookieHeader } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 import type { AstroGlobal } from 'astro';
 
-const supabaseUrl  = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnon = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl  = import.meta.env.PUBLIC_SUPABASE_URL  ?? (typeof process !== 'undefined' ? process.env.PUBLIC_SUPABASE_URL  : '');
+const supabaseAnon = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? (typeof process !== 'undefined' ? process.env.PUBLIC_SUPABASE_ANON_KEY : '');
 
 /**
  * Client-side Supabase client.
