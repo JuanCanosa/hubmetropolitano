@@ -11,7 +11,8 @@
       "mcp__supabase__list_tables",
       "mcp__supabase__list_migrations",
       "mcp__supabase__get_project_url",
-      "mcp__supabase__get_publishable_keys"
+      "mcp__supabase__get_publishable_keys",
+      "WebFetch(domain:hubcentrometropolitano.com.br)"
     ]
   }
 }
