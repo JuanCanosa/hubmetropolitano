@@ -20,6 +20,14 @@ try {
   locations  = locs.data ?? [];
 } catch { /* Supabase ainda não configurado */ }
 
+// ── Taxonomias disponíveis ────────────────────────────────────────────────
+const TAXONOMIES = [
+  { group: 'Serviços',     items: ['Aceita reservas', 'Delivery disponível', 'Atendimento domiciliar', 'Agendamento online'] },
+  { group: 'Comodidades',  items: ['Estacionamento', 'Wi-Fi gratuito', 'Acessibilidade', 'Pet friendly'] },
+  { group: 'Ambiente',     items: ['Sofisticado', 'Executivo', 'Romântico', 'Familiar', 'Casual'] },
+  { group: 'Pagamento',    items: ['Aceita cartão', 'Aceita PIX', 'Parcelamento disponível'] },
+];
+
 // ── Utilitário: gera slug ─────────────────────────────────────────────────
 function toSlug(text: string): string {
   return text
@@ -50,12 +58,17 @@ if (Astro.request.method === 'POST') {
   const websiteRaw  = form.get('website')?.toString().trim()     ?? '';
   const website     = websiteRaw && !/^https?:\/\//i.test(websiteRaw) ? `https://${websiteRaw}` : websiteRaw;
   const address     = form.get('address')?.toString().trim()     ?? '';
+  const cover_url   = form.get('cover_url')?.toString().trim()   ?? '';
+  const logo_url    = form.get('logo_url')?.toString().trim()    ?? '';
+
+  // Taxonomias selecionadas (checkboxes com name="tags")
+  const tags = form.getAll('tags').map(t => t.toString());
+  const features_json = tags.length > 0 ? { tags } : {};
 
   // Validação
   if (!title) fieldErrors.title = 'O nome do negócio é obrigatório.';
 
   if (Object.keys(fieldErrors).length === 0) {
-    // Gera slug base + sufixo aleatório para garantir unicidade
     const slugBase   = toSlug(title);
     const slugSuffix = Math.random().toString(36).slice(2, 6);
     const slug       = `${slugBase}-${slugSuffix}`;
@@ -64,20 +77,23 @@ if (Astro.request.method === 'POST') {
       const { error: insertError } = await supabase
         .from('businesses')
         .insert({
-          owner_id:    user.id,
+          owner_id:      user.id,
           title,
           slug,
-          slogan:      slogan      || null,
-          description: description || null,
-          category_id: categoryId  ? parseInt(categoryId)  : null,
-          location_id: locationId  ? parseInt(locationId)  : null,
-          phone:       phone       || null,
-          whatsapp:    whatsapp    || null,
-          email:       email       || null,
-          website:     website     || null,
-          address:     address     || null,
-          plan_type:   'free',
-          is_active:   true,
+          slogan:        slogan      || null,
+          description:   description || null,
+          category_id:   categoryId  ? parseInt(categoryId)  : null,
+          location_id:   locationId  ? parseInt(locationId)  : null,
+          phone:         phone       || null,
+          whatsapp:      whatsapp    || null,
+          email:         email       || null,
+          website:       website     || null,
+          address:       address     || null,
+          cover_url:     cover_url   || null,
+          logo_url:      logo_url    || null,
+          features_json,
+          plan_type:     'free',
+          is_active:     true,
         });
 
       if (insertError) {
@@ -91,6 +107,9 @@ if (Astro.request.method === 'POST') {
     }
   }
 }
+
+const supabaseUrl  = import.meta.env.PUBLIC_SUPABASE_URL  ?? process.env.PUBLIC_SUPABASE_URL  ?? '';
+const supabaseAnon = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? process.env.PUBLIC_SUPABASE_ANON_KEY ?? '';
 ---
 
 <Layout
@@ -127,7 +146,87 @@ if (Astro.request.method === 'POST') {
         </div>
       )}
 
-      <form method="POST" class="flex flex-col gap-6">
+      <form method="POST" id="business-form" class="flex flex-col gap-6">
+
+        <!-- Hidden inputs para URLs das imagens (preenchidos via JS) -->
+        <input type="hidden" name="cover_url" id="cover_url_input" />
+        <input type="hidden" name="logo_url"  id="logo_url_input"  />
+
+        <!-- ── Imagens ────────────────────────────────────────────── -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <div class="px-6 lg:px-8 pt-6 pb-2">
+            <h3 class="text-hub-pavao text-base mb-1">Imagens</h3>
+            <p class="font-body text-hub-chumbo/40 text-xs mb-5">Formatos aceitos: JPG, PNG, WEBP · Máx. 5 MB por imagem</p>
+          </div>
+
+          <!-- Cover -->
+          <div class="px-6 lg:px-8 mb-5">
+            <label class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-2 block">
+              Foto de capa
+            </label>
+            <div
+              id="cover-drop"
+              class="relative w-full h-44 rounded-2xl border-2 border-dashed border-hub-gelo bg-hub-gelo/40 flex flex-col items-center justify-center cursor-pointer hover:border-hub-cobre/40 hover:bg-hub-cobre/5 transition-colors overflow-hidden group"
+            >
+              <img id="cover-preview" src="" alt="" class="absolute inset-0 w-full h-full object-cover hidden" />
+              <div id="cover-placeholder" class="flex flex-col items-center gap-2 text-center px-4">
+                <div class="w-10 h-10 rounded-xl bg-hub-pavao-soft flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-hub-pavao/50">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                  </svg>
+                </div>
+                <span class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/40">Clique para adicionar capa</span>
+                <span class="font-body text-hub-chumbo/30 text-xs">Recomendado: 1200 × 400 px</span>
+              </div>
+              <button
+                type="button"
+                id="cover-remove"
+                class="absolute top-2 right-2 hidden w-7 h-7 rounded-full bg-black/50 text-white items-center justify-center hover:bg-black/70 transition-colors z-10"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <input type="file" id="cover-file" accept="image/jpeg,image/jpg,image/png,image/webp" class="absolute inset-0 opacity-0 cursor-pointer" />
+            </div>
+            <p id="cover-error" class="font-body text-red-500 text-xs mt-1 hidden"></p>
+          </div>
+
+          <!-- Logo -->
+          <div class="px-6 lg:px-8 pb-6">
+            <label class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-2 block">
+              Logo <span class="font-body normal-case font-normal tracking-normal text-hub-chumbo/30">(opcional)</span>
+            </label>
+            <div class="flex items-center gap-4">
+              <div
+                id="logo-drop"
+                class="relative w-24 h-24 rounded-2xl border-2 border-dashed border-hub-gelo bg-hub-gelo/40 flex flex-col items-center justify-center cursor-pointer hover:border-hub-cobre/40 hover:bg-hub-cobre/5 transition-colors overflow-hidden shrink-0"
+              >
+                <img id="logo-preview" src="" alt="" class="absolute inset-0 w-full h-full object-cover hidden rounded-xl" />
+                <div id="logo-placeholder" class="flex flex-col items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-hub-pavao/30">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                </div>
+                <button
+                  type="button"
+                  id="logo-remove"
+                  class="absolute top-1 right-1 hidden w-5 h-5 rounded-full bg-black/50 text-white items-center justify-center hover:bg-black/70 transition-colors z-10"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-2.5 h-2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <input type="file" id="logo-file" accept="image/jpeg,image/jpg,image/png,image/webp" class="absolute inset-0 opacity-0 cursor-pointer" />
+              </div>
+              <div>
+                <p class="font-body text-hub-chumbo/50 text-sm">Clique para adicionar o logo</p>
+                <p class="font-body text-hub-chumbo/30 text-xs mt-0.5">Recomendado: 400 × 400 px</p>
+              </div>
+            </div>
+            <p id="logo-error" class="font-body text-red-500 text-xs mt-1 hidden"></p>
+          </div>
+        </div>
 
         <!-- ── Identificação ─────────────────────────────────────── -->
         <div class="bg-white rounded-2xl shadow-sm p-6 lg:p-8">
@@ -220,6 +319,28 @@ if (Astro.request.method === 'POST') {
               placeholder="Descreva seu negócio, diferenciais, especialidades..."
               class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40 resize-none"
             ></textarea>
+          </div>
+        </div>
+
+        <!-- ── Taxonomias ─────────────────────────────────────────── -->
+        <div class="bg-white rounded-2xl shadow-sm p-6 lg:p-8">
+          <h3 class="text-hub-pavao text-base mb-1">Características</h3>
+          <p class="font-body text-hub-chumbo/40 text-xs mb-5">Selecione os atributos que descrevem seu negócio</p>
+
+          <div class="flex flex-col gap-5">
+            {TAXONOMIES.map(({ group, items }) => (
+              <div>
+                <p class="font-head font-semibold uppercase tracking-widest text-[11px] text-hub-chumbo/30 mb-2.5">{group}</p>
+                <div class="flex flex-wrap gap-2">
+                  {items.map((item) => (
+                    <label class="taxonomy-tag flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-hub-gelo bg-hub-gelo/50 cursor-pointer hover:border-hub-cobre/40 transition-colors has-[:checked]:bg-hub-cobre/10 has-[:checked]:border-hub-cobre has-[:checked]:text-hub-cobre">
+                      <input type="checkbox" name="tags" value={item} class="sr-only" />
+                      <span class="font-body text-sm text-hub-chumbo/70 has-checked:text-hub-cobre select-none">{item}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -321,12 +442,12 @@ if (Astro.request.method === 'POST') {
           </div>
           <div>
             <p class="font-head font-semibold uppercase tracking-wider text-xs text-hub-cobre mb-1">Plano Gratuito</p>
-            <p class="font-body text-hub-gelo/70 text-sm">Seu negócio será cadastrado gratuitamente. Você poderá fazer upgrade para o plano Premium para adicionar fotos, destaque nos resultados e muito mais.</p>
+            <p class="font-body text-hub-gelo/70 text-sm">Seu negócio será cadastrado gratuitamente. Você poderá fazer upgrade para o plano Premium para galeria de fotos, destaque nos resultados e muito mais.</p>
           </div>
         </div>
 
         <!-- ── Ações ───────────────────────────────────────────────── -->
-        <div class="flex items-center gap-3 justify-end">
+        <div class="flex items-center gap-3 justify-end pb-6">
           <a
             href="/dashboard"
             class="inline-flex items-center gap-2 border border-hub-chumbo/20 text-hub-chumbo/50 font-head font-semibold uppercase tracking-wide text-sm px-5 py-3 rounded-xl hover:bg-hub-chumbo/5 transition-colors"
@@ -335,12 +456,17 @@ if (Astro.request.method === 'POST') {
           </a>
           <button
             type="submit"
-            class="inline-flex items-center gap-2 bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm px-6 py-3 rounded-xl hover:bg-hub-cobre-luminoso transition-colors"
+            id="submit-btn"
+            class="inline-flex items-center gap-2 bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm px-6 py-3 rounded-xl hover:bg-hub-cobre-luminoso transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <svg id="submit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            Salvar negócio
+            <svg id="submit-spinner" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 animate-spin hidden">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            <span id="submit-label">Salvar negócio</span>
           </button>
         </div>
 
@@ -351,19 +477,109 @@ if (Astro.request.method === 'POST') {
   <Footer />
 </Layout>
 
-<script>
-  // Máscara de telefone: (XX) XXXX-XXXX ou (XX) 9 XXXX-XXXX
-  function applyPhoneMask(input: HTMLInputElement) {
+<script define:vars={{ supabaseUrl, supabaseAnon, userId: user.id }}>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(supabaseUrl, supabaseAnon);
+
+  // ── Máscara de telefone ───────────────────────────────────────────────────
+  function applyPhoneMask(input) {
     input.addEventListener('input', () => {
       let v = input.value.replace(/\D/g, '').slice(0, 11);
       if (v.length === 0) { input.value = ''; return; }
       if (v.length <= 2)  { input.value = `(${v}`; return; }
       if (v.length <= 6)  { input.value = `(${v.slice(0,2)}) ${v.slice(2)}`; return; }
       if (v.length <= 10) { input.value = `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`; return; }
-      // 11 dígitos: celular com 9
       input.value = `(${v.slice(0,2)}) ${v.slice(2,3)} ${v.slice(3,7)}-${v.slice(7)}`;
     });
   }
+  document.querySelectorAll('[data-mask="phone"]').forEach(applyPhoneMask);
 
-  document.querySelectorAll<HTMLInputElement>('[data-mask="phone"]').forEach(applyPhoneMask);
+  // ── Upload de imagem ──────────────────────────────────────────────────────
+  function setupImageUpload({ fileInputId, previewId, placeholderId, removeId, errorId, hiddenInputId, folder }) {
+    const fileInput   = document.getElementById(fileInputId);
+    const preview     = document.getElementById(previewId);
+    const placeholder = document.getElementById(placeholderId);
+    const removeBtn   = document.getElementById(removeId);
+    const errorEl     = document.getElementById(errorId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      if (file.size > 5 * 1024 * 1024) {
+        errorEl.textContent = 'Arquivo muito grande. Máximo 5 MB.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      errorEl.classList.add('hidden');
+
+      // Preview local imediato
+      const objectUrl = URL.createObjectURL(file);
+      preview.src = objectUrl;
+      preview.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      removeBtn.classList.remove('hidden');
+      removeBtn.classList.add('flex');
+
+      // Upload para Supabase Storage
+      const ext      = file.name.split('.').pop();
+      const path     = `${userId}/${folder}-${Date.now()}.${ext}`;
+      const { data, error } = await supabase.storage.from('businesses').upload(path, file, { upsert: true });
+
+      if (error) {
+        errorEl.textContent = 'Erro ao fazer upload. Tente novamente.';
+        errorEl.classList.remove('hidden');
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage.from('businesses').getPublicUrl(data.path);
+      hiddenInput.value = publicUrl;
+    });
+
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      preview.src = '';
+      preview.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+      removeBtn.classList.add('hidden');
+      removeBtn.classList.remove('flex');
+      hiddenInput.value = '';
+      fileInput.value = '';
+    });
+  }
+
+  setupImageUpload({
+    fileInputId:   'cover-file',
+    previewId:     'cover-preview',
+    placeholderId: 'cover-placeholder',
+    removeId:      'cover-remove',
+    errorId:       'cover-error',
+    hiddenInputId: 'cover_url_input',
+    folder:        'cover',
+  });
+
+  setupImageUpload({
+    fileInputId:   'logo-file',
+    previewId:     'logo-preview',
+    placeholderId: 'logo-placeholder',
+    removeId:      'logo-remove',
+    errorId:       'logo-error',
+    hiddenInputId: 'logo_url_input',
+    folder:        'logo',
+  });
+
+  // ── Feedback visual no submit ─────────────────────────────────────────────
+  document.getElementById('business-form').addEventListener('submit', () => {
+    const btn     = document.getElementById('submit-btn');
+    const icon    = document.getElementById('submit-icon');
+    const spinner = document.getElementById('submit-spinner');
+    const label   = document.getElementById('submit-label');
+    btn.disabled  = true;
+    icon.classList.add('hidden');
+    spinner.classList.remove('hidden');
+    label.textContent = 'Salvando...';
+  });
 </script>
