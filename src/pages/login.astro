@@ -1,0 +1,142 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { createSupabaseServerClient } from '../lib/supabase';
+
+// Redireciona se já estiver logado (middleware também faz isso, mas garante)
+if (Astro.locals.user) {
+  return Astro.redirect('/dashboard');
+}
+
+const registered = Astro.url.searchParams.get('registered');
+const nextPath   = Astro.url.searchParams.get('next') ?? '/dashboard';
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form     = await Astro.request.formData();
+  const email    = form.get('email')?.toString().trim() ?? '';
+  const password = form.get('password')?.toString() ?? '';
+
+  if (!email || !password) {
+    error = 'Preencha todos os campos.';
+  } else {
+    const supabase = createSupabaseServerClient(Astro);
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (signInError) {
+      error = 'E-mail ou senha incorretos. Verifique os dados e tente novamente.';
+    } else {
+      return Astro.redirect(nextPath);
+    }
+  }
+}
+---
+
+<Layout
+  title="Entrar — HUBMETROPOLITANO"
+  description="Acesse sua conta no HubMetropolitano e gerencie seus negócios e favoritos."
+>
+  <Header />
+
+  <main class="min-h-[calc(100vh-64px)] bg-hub-gelo flex flex-col">
+
+    <!-- Topo decorativo -->
+    <div class="bg-hub-pavao-profundo py-10">
+      <div class="container mx-auto px-4 text-center">
+        <h5 class="text-hub-cobre mb-2">Bem-vindo de volta</h5>
+        <h1 class="text-hub-gelo text-3xl">Entrar na sua conta</h1>
+      </div>
+    </div>
+
+    <!-- Card de Login -->
+    <div class="flex-1 flex items-start justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+
+        {registered && (
+          <div class="mb-6 bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-green-600 shrink-0 mt-0.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            <p class="font-body text-green-700 text-sm">Cadastro realizado! Verifique seu e-mail para confirmar a conta e depois faça login.</p>
+          </div>
+        )}
+
+        {error && (
+          <div class="mb-6 bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-500 shrink-0 mt-0.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            <p class="font-body text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        <div class="bg-white rounded-2xl shadow-sm p-8">
+          <h2 class="text-hub-pavao text-2xl mb-1 normal-case tracking-normal font-head font-bold">Acesse sua conta</h2>
+          <p class="font-body text-hub-chumbo/50 text-sm mb-7">Digite seu e-mail e senha para continuar.</p>
+
+          <form method="POST" class="flex flex-col gap-5">
+            <!-- E-mail -->
+            <div>
+              <label for="email" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                E-mail
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                placeholder="seu@email.com"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- Senha -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label for="password" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50">
+                  Senha
+                </label>
+                <a href="/auth/esqueci-senha" class="font-body text-xs text-hub-cobre hover:underline">Esqueceu a senha?</a>
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                placeholder="••••••••"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="w-full bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm py-3.5 rounded-xl hover:bg-hub-cobre-luminoso transition-colors mt-1 flex items-center justify-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+              </svg>
+              Entrar
+            </button>
+          </form>
+
+          <p class="font-body text-hub-chumbo/50 text-sm text-center mt-6">
+            Não tem uma conta?
+            <a href="/register" class="text-hub-cobre font-semibold hover:underline ml-1">Cadastre-se grátis</a>
+          </p>
+        </div>
+
+        <p class="font-body text-hub-chumbo/30 text-xs text-center mt-5">
+          Ao entrar, você concorda com nossos
+          <a href="#" class="hover:text-hub-chumbo/60 underline">Termos de Uso</a> e
+          <a href="#" class="hover:text-hub-chumbo/60 underline">Política de Privacidade</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

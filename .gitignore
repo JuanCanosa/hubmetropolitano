@@ -13,9 +13,14 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variabl.env
+# environment variables
+.env
 .env.*
 !.env.example
+
+# MCP config (contém tokens/segredos)
+.mcp.json
+!.mcp.json.example
 
 # Configurações do MCP
 wordpress-mcp/build/roduction

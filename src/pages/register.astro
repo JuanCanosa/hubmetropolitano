@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { createSupabaseServerClient } from '../lib/supabase';
+
+if (Astro.locals.user) {
+  return Astro.redirect('/dashboard');
+}
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form            = await Astro.request.formData();
+  const fullName        = form.get('full_name')?.toString().trim() ?? '';
+  const email           = form.get('email')?.toString().trim() ?? '';
+  const password        = form.get('password')?.toString() ?? '';
+  const passwordConfirm = form.get('password_confirm')?.toString() ?? '';
+
+  if (!fullName || !email || !password || !passwordConfirm) {
+    error = 'Preencha todos os campos obrigatórios.';
+  } else if (password.length < 8) {
+    error = 'A senha deve ter pelo menos 8 caracteres.';
+  } else if (password !== passwordConfirm) {
+    error = 'As senhas não coincidem.';
+  } else {
+    const supabase = createSupabaseServerClient(Astro);
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+      },
+    });
+
+    if (signUpError) {
+      if (signUpError.message.includes('already registered')) {
+        error = 'Este e-mail já está cadastrado. Tente fazer login.';
+      } else {
+        error = 'Erro ao criar conta. Tente novamente.';
+      }
+    } else {
+      return Astro.redirect('/login?registered=1');
+    }
+  }
+}
+---
+
+<Layout
+  title="Criar Conta — HUBMETROPOLITANO"
+  description="Crie sua conta gratuita no HubMetropolitano e cadastre seu negócio na Barra da Tijuca."
+>
+  <Header />
+
+  <main class="min-h-[calc(100vh-64px)] bg-hub-gelo flex flex-col">
+
+    <!-- Topo decorativo -->
+    <div class="bg-hub-pavao-profundo py-10">
+      <div class="container mx-auto px-4 text-center">
+        <h5 class="text-hub-cobre mb-2">Plano gratuito disponível</h5>
+        <h1 class="text-hub-gelo text-3xl">Crie sua conta</h1>
+      </div>
+    </div>
+
+    <!-- Card de Cadastro -->
+    <div class="flex-1 flex items-start justify-center px-4 py-12">
+      <div class="w-full max-w-md">
+
+        {error && (
+          <div class="mb-6 bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 text-red-500 shrink-0 mt-0.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+            <p class="font-body text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        <div class="bg-white rounded-2xl shadow-sm p-8">
+          <h2 class="text-hub-pavao text-2xl mb-1 normal-case tracking-normal font-head font-bold">Cadastro gratuito</h2>
+          <p class="font-body text-hub-chumbo/50 text-sm mb-7">Crie sua conta e comece a gerenciar seus negócios.</p>
+
+          <form method="POST" class="flex flex-col gap-5">
+            <!-- Nome completo -->
+            <div>
+              <label for="full_name" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                Nome completo
+              </label>
+              <input
+                id="full_name"
+                name="full_name"
+                type="text"
+                autocomplete="name"
+                required
+                placeholder="Seu nome completo"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- E-mail -->
+            <div>
+              <label for="email" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                E-mail
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                placeholder="seu@email.com"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- Senha -->
+            <div>
+              <label for="password" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                Senha <span class="normal-case font-body font-normal tracking-normal text-hub-chumbo/30">(mín. 8 caracteres)</span>
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                required
+                minlength="8"
+                placeholder="••••••••"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- Confirmar senha -->
+            <div>
+              <label for="password_confirm" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                Confirmar senha
+              </label>
+              <input
+                id="password_confirm"
+                name="password_confirm"
+                type="password"
+                autocomplete="new-password"
+                required
+                placeholder="••••••••"
+                class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+              />
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="w-full bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm py-3.5 rounded-xl hover:bg-hub-cobre-luminoso transition-colors mt-1 flex items-center justify-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+              </svg>
+              Criar conta grátis
+            </button>
+          </form>
+
+          <p class="font-body text-hub-chumbo/50 text-sm text-center mt-6">
+            Já tem uma conta?
+            <a href="/login" class="text-hub-cobre font-semibold hover:underline ml-1">Faça login</a>
+          </p>
+        </div>
+
+        <p class="font-body text-hub-chumbo/30 text-xs text-center mt-5">
+          Ao criar uma conta, você concorda com nossos
+          <a href="#" class="hover:text-hub-chumbo/60 underline">Termos de Uso</a> e
+          <a href="#" class="hover:text-hub-chumbo/60 underline">Política de Privacidade</a>.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</Layout>
