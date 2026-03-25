@@ -2,7 +2,8 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro, mockBusinessesSaude, mockBusinessesEsporte } from '../../utils/mockBusinesses';
+import BusinessCard from '../../components/BusinessCard.astro';
+import { mockBusinesses, mockBusinessesB2B, mockBusinessesTec, mockBusinessesGastro, mockBusinessesSaude, mockBusinessesEsporte, mockBusinessesBeleza } from '../../utils/mockBusinesses';
 
 const allBusinesses = [
   ...mockBusinesses.filter(b => b.type === 'digital'),
@@ -11,7 +12,8 @@ const allBusinesses = [
   ...mockBusinessesGastro.filter(b => b.type === 'gastronomia'),
   ...mockBusinessesSaude.filter(b => b.type === 'saude'),
   ...mockBusinessesEsporte.filter(b => b.type === 'esporte'),
-];
+  ...mockBusinessesBeleza.filter(b => b.type === 'beleza'),
+].sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
 
 const typeTabs = [
   { id: 'all',                    label: 'Todos',             count: allBusinesses.length },
@@ -21,6 +23,7 @@ const typeTabs = [
   { id: 'gastronomia',            label: 'Gastronomia',        count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
   { id: 'saude',                  label: 'Saúde & Bem-Estar',  count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
   { id: 'esporte',                label: 'Esporte & Lazer',    count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length },
+  { id: 'beleza',                 label: 'Beleza & Estética',  count: mockBusinessesBeleza.filter(b => b.type === 'beleza').length },
 ];
 
 const ltCategories = [
@@ -30,6 +33,18 @@ const ltCategories = [
   { id: 'gastronomia',            label: 'Gastronomia',        icon: '🍽️', count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length,         cover: mockBusinessesGastro[0].cover },
   { id: 'saude',                  label: 'Saúde & Bem-Estar',  icon: '🏥', count: mockBusinessesSaude.filter(b => b.type === 'saude').length,                cover: mockBusinessesSaude[0].cover },
   { id: 'esporte',                label: 'Esporte & Lazer',    icon: '🏋️', count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length,            cover: mockBusinessesEsporte[0].cover },
+  { id: 'beleza',                 label: 'Beleza & Estética',  icon: '✨', count: mockBusinessesBeleza.filter(b => b.type === 'beleza').length,               cover: mockBusinessesBeleza[0].cover },
+];
+
+const carouselTabs = [
+  { id: 'all',                    label: 'Todos',              count: allBusinesses.length,                                                              cover: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=400&auto=format&fit=crop' },
+  { id: 'digital',                label: 'Agências Digitais',  count: mockBusinesses.filter(b => b.type === 'digital').length,                            cover: mockBusinesses[0].cover },
+  { id: 'servicos-profissionais', label: 'Profissionais B2B',  count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length,           cover: mockBusinessesB2B[0].cover },
+  { id: 'servicos-tecnicos',      label: 'Técnicos & Casa',    count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length,                cover: mockBusinessesTec[0].cover },
+  { id: 'gastronomia',            label: 'Gastronomia',         count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length,                  cover: mockBusinessesGastro[0].cover },
+  { id: 'saude',                  label: 'Saúde & Bem-Estar',   count: mockBusinessesSaude.filter(b => b.type === 'saude').length,                        cover: mockBusinessesSaude[0].cover },
+  { id: 'esporte',                label: 'Esporte & Lazer',     count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length,                    cover: mockBusinessesEsporte[0].cover },
+  { id: 'beleza',                 label: 'Beleza & Estética',   count: mockBusinessesBeleza.filter(b => b.type === 'beleza').length,                      cover: mockBusinessesBeleza[0].cover },
 ];
 
 const subcatGroups = [
@@ -186,6 +201,13 @@ function getSubcatKey(b: (typeof allBusinesses)[0]): string {
   if (cat.includes('yoga') || cat.includes('pilates'))                             return 'Yoga & Pilates';
   if (cat.includes('artes marciais') || cat.includes('luta') || cat.includes('jiu'))       return 'Artes Marciais';
   if (cat.includes('natação') || cat.includes('natacao'))                          return 'Natação';
+  // Beleza & Estética
+  if (cat.includes('barbearia') || cat.includes('barba') || cat.includes('corte masculino')) return 'Cabelo & Barbearia';
+  if (cat.includes('salão') || cat.includes('salao') || cat.includes('cabele'))   return 'Cabelo & Barbearia';
+  if (cat.includes('manicure') || cat.includes('pedicure') || cat.includes('nail')) return 'Manicure & Pedicure';
+  if (cat.includes('depilação') || cat.includes('depilacao'))                      return 'Depilação';
+  if (cat.includes('estétic') || cat.includes('estet') || cat.includes('spa') || cat.includes('sobrancelha')) return 'Estética Facial';
+  if (cat.includes('maquiagem') || cat.includes('makeup'))                         return 'Maquiagem';
   return '';
 }
 
@@ -226,21 +248,22 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
 
   <main>
     <!-- Hero -->
-    <div class="relative bg-hub-pavao-profundo py-24 lg:py-32 overflow-hidden">
+    <section class="text-hub-gelo py-14 relative overflow-hidden bg-hub-pavao-profundo">
       <!-- Imagem de fundo: arquitetura corporativa moderna -->
       <img
         src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1920&auto=format&fit=crop"
         alt=""
         aria-hidden="true"
-        class="absolute inset-0 w-full h-full object-cover object-center opacity-40"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-35"
+        loading="eager"
       />
       <!-- Overlay gradiente para legibilidade -->
-      <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/70 to-slate-950/30"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-hub-pavao-profundo/90 via-hub-pavao-profundo/60 to-hub-pavao-profundo/30"></div>
 
       <!-- Conteúdo -->
-      <div class="relative container mx-auto px-4 lg:px-8">
+      <div class="container mx-auto px-4 lg:px-8 relative z-10">
         <h5 class="text-hub-cobre mb-3">Vitrine de Negócios</h5>
-        <h1 class="mb-6 max-w-2xl font-black">
+        <h1 class="mb-6 max-w-2xl font-black text-hub-gelo">
           <span class="text-hub-cobre">Serviços</span><br />
           <span class="text-white">Verificados</span>
         </h1>
@@ -256,33 +279,34 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
           />
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Top icon bar: listing types -->
+    <!-- Category Carousel -->
     <div class="bg-white border-b border-hub-gelo sticky top-[64px] z-20 shadow-sm">
-      <div class="flex items-center gap-3 overflow-x-auto px-6 py-4" style="scrollbar-width: none; -ms-overflow-style: none;">
-        {[
-          { id: 'all',                    icon: '🏢', label: 'Todos',              count: allBusinesses.length },
-          { id: 'digital',                icon: '💻', label: 'Agências Digitais',   count: mockBusinesses.filter(b => b.type === 'digital').length },
-          { id: 'servicos-profissionais', icon: '🏛️', label: 'Profissionais B2B',   count: mockBusinessesB2B.filter(b => b.type === 'servicos-profissionais').length },
-          { id: 'servicos-tecnicos',      icon: '🔧', label: 'Técnicos & Casa',     count: mockBusinessesTec.filter(b => b.type === 'servicos-tecnicos').length },
-          { id: 'gastronomia',            icon: '🍽️', label: 'Gastronomia',          count: mockBusinessesGastro.filter(b => b.type === 'gastronomia').length },
-          { id: 'saude',                  icon: '🏥', label: 'Saúde & Bem-Estar',    count: mockBusinessesSaude.filter(b => b.type === 'saude').length },
-          { id: 'esporte',                icon: '🏋️', label: 'Esporte & Lazer',      count: mockBusinessesEsporte.filter(b => b.type === 'esporte').length },
-        ].map((t, i) => (
-          <button
-            data-type-icon={t.id}
-            class={`type-icon-btn flex items-center gap-3 px-5 py-2.5 rounded-full border shrink-0 transition-all duration-200 ${
-              i === 0
-                ? 'bg-hub-pavao border-hub-pavao text-white'
-                : 'bg-white border-hub-gelo text-hub-chumbo/60 hover:border-hub-pavao hover:text-hub-pavao'
-            }`}
-          >
-            <span class="text-lg leading-none">{t.icon}</span>
-            <span class="font-head font-semibold uppercase tracking-wide text-base whitespace-nowrap">{t.label}</span>
-            <span class="font-body text-sm opacity-60">({t.count})</span>
-          </button>
-        ))}
+      <div class="overflow-x-auto py-5" style="scrollbar-width: none; -ms-overflow-style: none;">
+        <div class="container mx-auto px-4 lg:px-8">
+        <div class="flex gap-3">
+          {carouselTabs.map((t, i) => (
+            <button
+              data-type-icon={t.id}
+              class={`type-icon-btn relative flex-1 min-w-[110px] h-[68px] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300${i === 0 ? ' is-active' : ''}`}
+            >
+              <img
+                src={t.cover}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+              <div class="type-overlay absolute inset-0 bg-hub-pavao-profundo"></div>
+              <div class="relative z-10 flex flex-col items-center justify-center h-full gap-0.5 px-2">
+                <span class="font-head font-bold text-white uppercase tracking-wide text-sm leading-tight text-center">{t.label}</span>
+                <span class="font-body text-white/60 text-[11px]">{t.count} negócios</span>
+              </div>
+            </button>
+          ))}
+        </div>
+        </div>
       </div>
       <!-- Mobile search — aparece quando o hero sai da viewport (só mobile) -->
       <div id="mobile-top-search" class="lg:hidden hidden px-4 pb-3 pt-1">
@@ -301,7 +325,8 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     </div>
 
     <!-- Layout: sidebar + grid de resultados -->
-    <div class="flex items-start pt-[30px]">
+    <div class="bg-hub-gelo min-h-screen">
+    <div class="container mx-auto flex items-start">
 
       <!-- Backdrop mobile drawer -->
       <div id="drawer-backdrop" class="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden" style="display:none" aria-hidden="true"></div>
@@ -326,7 +351,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         <!-- Filtros -->
         <div id="panel-filtros" class="flex-1 overflow-y-auto flex flex-col min-h-0">
 
-          <div class="flex-1 p-4 flex flex-col gap-5">
+          <div class="flex-1 pl-4 lg:pl-8 pr-4 py-4 flex flex-col gap-5">
 
             <!--
               Localização / Empreendimento
@@ -374,20 +399,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
               </div>
             </div>
 
-            <!-- Avaliação -->
-            <div>
-              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Avaliação</p>
-              <div class="grid grid-cols-2 gap-1.5">
-                <button data-rating="5"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★★★<br/><span class="text-sm text-hub-chumbo/40">5 estrelas</span></button>
-                <button data-rating="4"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★★<br/><span class="text-sm text-hub-chumbo/40">4+ estrelas</span></button>
-                <button data-rating="3"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★★<br/><span class="text-sm text-hub-chumbo/40">3+ estrelas</span></button>
-                <button data-rating="2"   class="rating-btn col-span-1 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao transition-colors leading-tight">★★<br/><span class="text-sm text-hub-chumbo/40">2+ estrelas</span></button>
-                <button data-rating="0"   class="rating-btn col-span-2 text-center px-2 py-2.5 rounded-lg border border-hub-gelo font-body text-base bg-hub-pavao text-white border-hub-pavao transition-colors">Qualquer nota</button>
-              </div>
-            </div>
-
-            <hr class="border-hub-gelo" />
-
             <!-- Urgência (só LT3) — oculto por padrão -->
             <div id="urgencia-section" class="filter-collapsible">
               <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Urgência</p>
@@ -398,10 +409,23 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
               </div>
             </div>
 
+            <!-- Especialidades de Beleza (só Beleza & Estética) — oculto por padrão -->
+            <div id="beleza-section" class="filter-collapsible">
+              <p class="font-head font-semibold uppercase tracking-widest text-base text-hub-chumbo/35 mb-3">Especialidades de Beleza</p>
+              <div class="flex flex-wrap gap-1.5">
+                <button data-cat="" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer bg-hub-pavao text-white border-hub-pavao">Todas</button>
+                <button data-cat="Cabelo & Barbearia" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">✂️ Cabelo & Barbearia</button>
+                <button data-cat="Manicure & Pedicure" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">💅 Manicure & Pedicure</button>
+                <button data-cat="Depilação" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">🌿 Depilação</button>
+                <button data-cat="Estética Facial" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">✨ Estética Facial</button>
+                <button data-cat="Maquiagem" class="subcat-item px-3 py-1.5 rounded-full border font-body text-base transition-colors cursor-pointer border-hub-gelo text-hub-chumbo/60 hover:border-hub-cobre hover:text-hub-pavao">💄 Maquiagem</button>
+              </div>
+            </div>
+
           </div>
 
           <!-- Botão Buscar (sticky bottom) -->
-          <div class="shrink-0 p-4 bg-white border-t border-hub-gelo">
+          <div class="shrink-0 pl-4 lg:pl-8 pr-4 py-4 bg-white border-t border-hub-gelo">
             <button id="apply-filters-btn" class="w-full bg-hub-pavao text-white font-head font-semibold uppercase tracking-wider text-base py-3 rounded-xl hover:bg-hub-pavao-profundo transition-colors flex items-center justify-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
@@ -419,7 +443,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       <div id="results-panel" class="flex-1 min-w-0 bg-hub-gelo">
 
         <!-- Compact bar: count + toggle -->
-        <div class="sticky top-0 z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center gap-3">
+        <div class="sticky top-[176px] z-10 bg-hub-gelo/95 backdrop-blur-sm border-b border-hub-gelo/60 px-4 lg:px-5 py-3 flex items-center gap-3">
           <!-- Botão Filtros (só mobile) -->
           <button id="open-drawer-btn" class="lg:hidden flex items-center gap-1.5 min-h-[44px] px-3 bg-white border border-hub-gelo rounded-lg text-hub-chumbo/70 font-body text-sm hover:border-hub-pavao hover:text-hub-pavao transition-colors shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -445,141 +469,22 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         </div>
 
         <!-- Cards grid — responsivo: 1 col mobile / 2 tablet / 3 desktop -->
-        <div id="listings-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 lg:p-6">
-          {/* TODO: WP — substituir allBusinesses por posts vindos do WP REST API */}
-          {/* GET /wp-json/wp/v2/listing?per_page=12&_embed&empreendimento=<id> */}
-          {allBusinesses.map(b => {
-            const url           = getBusinessUrl(b);
-            const hasUrgencia   = b.atendeUrgencia === 'sim-24h';
-            const stars         = b.rating ? '★'.repeat(Math.round(b.rating)) + '☆'.repeat(5 - Math.round(b.rating)) : null;
-            // TODO: WP — virá de b.acf.empreendimento ou taxonomy term
-            const empreendimento = bizEmpreendimento[b.slug];
-            return (
-              <a
-                href={url}
-                data-slug={b.slug}
-                data-type={b.type}
-                data-category={b.category.toLowerCase()}
-                data-title={b.title.toLowerCase()}
-                data-lat={b.lat}
-                data-lng={b.lng}
-                data-rating={b.rating ?? 0}
-                data-urgencia={b.atendeUrgencia ?? ''}
-                data-cover={b.cover}
-                data-logo={b.logo ?? ''}
-                data-tagline={b.tagline}
-                data-description={b.description}
-                data-location={b.location ?? ''}
-                data-faixa={b.faixaHonorarios ?? ''}
-                data-cat-label={b.category}
-                data-empreendimento={empreendimento}
-                data-cozinha={getCozinhaKey(b)}
-                data-especialidade={getEspecialidadeKey(b)}
-                data-modalidade={getModalidadeKey(b)}
-                data-subcat={getSubcatKey(b)}
-                class="biz-card group flex flex-col bg-white rounded-2xl border border-hub-gelo shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-visible"
-              >
-                {/* Cover + logo wrapper */}
-                <div class="relative">
-                  {/* Image (clipped) */}
-                  <div class="card-cover relative h-44 overflow-hidden rounded-t-2xl bg-hub-pavao-profundo shrink-0">
-                    <img src={b.cover} alt={b.title} loading="lazy"
-                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-
-                    {/* Badge row at top of image */}
-                    <div class="absolute top-0 left-0 right-0 flex items-center gap-1 p-2">
-                      {hasUrgencia && (
-                        <span class="flex items-center justify-center w-7 h-7 rounded bg-amber-500 text-white text-sm shrink-0" title="Urgência 24h">⚡</span>
-                      )}
-                      {b.faixaHonorarios && (
-                        <span class="bg-black/65 backdrop-blur-sm text-white text-[11px] font-body px-2 py-1 rounded">$$</span>
-                      )}
-                      {stars && (
-                        <span class="bg-black/65 backdrop-blur-sm text-amber-400 text-[11px] font-body px-2 py-1 rounded tracking-tight">{stars}</span>
-                      )}
-                      {b.rating && (
-                        <span class="bg-black/65 backdrop-blur-sm text-white text-[11px] font-body font-semibold px-2 py-1 rounded">{b.rating.toFixed(1)}</span>
-                      )}
-                      <span class="ml-auto bg-white text-hub-chumbo text-[11px] font-body font-semibold px-2.5 py-1 rounded shadow">Ver Perfil</span>
-                    </div>
-                  </div>
-
-                  {/* Logo overlapping image bottom */}
-                  {b.logo ? (
-                    <img src={b.logo} alt={b.title}
-                      class="absolute bottom-0 translate-y-1/2 left-3 w-14 h-14 rounded-full border-2 border-white object-cover bg-white shadow-md z-10" />
-                  ) : (
-                    <div class="absolute bottom-0 translate-y-1/2 left-3 w-14 h-14 rounded-full border-2 border-white bg-hub-pavao flex items-center justify-center shadow-md z-10">
-                      <span class="text-white font-head font-bold text-xl">{b.title.charAt(0)}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card body */}
-                <div class="card-body pt-9 px-4 pb-2">
-                  <div class="flex items-center gap-1.5 flex-wrap">
-                    <h3 class="font-head font-bold text-hub-chumbo group-hover:text-hub-cobre transition-colors text-base uppercase tracking-wide leading-tight">
-                      {b.title}
-                    </h3>
-                    {/* Ícone de categoria especial */}
-                    {b.type === 'saude' && (
-                      <span class="text-base leading-none shrink-0" title="Saúde & Bem-Estar">🩺</span>
-                    )}
-                    {b.type === 'esporte' && (
-                      <span class="text-base leading-none shrink-0" title="Esporte & Lazer">🏋️</span>
-                    )}
-                    {/* Verified checkmark */}
-                    <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                      <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.491 4.491 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-                    </svg>
-                  </div>
-                  <p class="font-body text-sm text-hub-chumbo/60 mt-1 leading-snug line-clamp-2">{b.tagline}</p>
-                  {/* Badge de localização — cor varia por tipo — TODO: WP: taxonomy term 'empreendimento' */}
-                  {b.type === 'saude' ? (
-                    <span class="inline-flex items-center gap-1 mt-2 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
-                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
-                      </svg>
-                      {empreendimento}
-                    </span>
-                  ) : b.type === 'esporte' ? (
-                    <span class="inline-flex items-center gap-1 mt-2 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 shrink-0">
-                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
-                      </svg>
-                      {b.location ?? empreendimento}
-                    </span>
-                  ) : (
-                    <span class="inline-block mt-2 bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded">
-                      {empreendimento}
-                    </span>
-                  )}
-                </div>
-
-                {/* Card footer */}
-                <div class="card-footer flex items-center justify-between px-4 py-3 mt-auto">
-                  <span class="flex items-center gap-1.5 border border-hub-gelo rounded-full px-2.5 py-1 text-xs font-body text-hub-chumbo/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3 h-3 text-red-400 shrink-0">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    {b.category.split(' ')[0]}
-                  </span>
-                  <div class="flex items-center gap-2">
-                    <button onclick="event.preventDefault();event.stopPropagation();openQuickView(this.closest('.biz-card'))" class="p-2 rounded-full text-hub-chumbo/40 hover:bg-hub-gelo hover:text-hub-pavao transition-colors" aria-label="Quick view">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
-                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                      </svg>
-                    </button>
-                    <button onclick="event.preventDefault();event.stopPropagation()" class="p-2 rounded-full text-hub-chumbo/40 hover:bg-hub-pavao hover:text-white transition-colors" aria-label="Favoritar">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
+        <div id="listings-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4 lg:py-6 lg:pr-8">
+          {allBusinesses.map(b => (
+            <div
+              class="biz-card"
+              data-type={b.type}
+              data-category={b.category.toLowerCase()}
+              data-title={b.title.toLowerCase()}
+              data-rating={b.rating ?? 0}
+              data-urgencia={b.atendeUrgencia ?? ''}
+              data-empreendimento={bizEmpreendimento[b.slug]}
+              data-cozinha={getCozinhaKey(b)}
+              data-subcat={getSubcatKey(b)}
+            >
+              <BusinessCard business={b} />
+            </div>
+          ))}
         </div>
 
         <div id="no-results" class="px-6 py-16 text-center" style="display:none">
@@ -603,6 +508,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       </div>
 
     </div>
+    </div>
   </main>
 
   <Footer />
@@ -617,6 +523,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       gastronomia:              ['Restaurantes', 'Cafeterias', 'Delivery', 'Eventos & Buffet', 'Bares & Drinks'],
       saude:                    ['Odontologia', 'Dermatologia', 'Psicologia', 'Fisioterapia', 'Nutrição', 'Clínica Geral'],
       esporte:                  ['Musculação / Academias', 'Beach Tennis / Areia', 'Crossfit / Funcional', 'Yoga & Pilates', 'Artes Marciais', 'Natação'],
+      beleza:                   ['Salão de Beleza', 'Spa & Bem-Estar', 'Nail Art', 'Estética', 'Sobrancelhas'],
     };
     var typeColors = {
       digital:                '#B87333',
@@ -624,7 +531,7 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       'servicos-tecnicos':    '#374151',
     };
 
-    var state = { query: '', type: 'all', subcategory: '', minRating: 0, urgencia: '', cozinha: '', empreendimentos: [], view: 'grid' };
+    var state = { query: '', type: 'all', subcategory: '', urgencia: '', cozinha: '', empreendimentos: [], view: 'grid' };
 
     var searchInput     = document.getElementById('search-input');
     var listingsCont    = document.getElementById('listings-container');
@@ -636,13 +543,13 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     var subcatList      = document.getElementById('subcat-list');
     var urgenciaSection = document.getElementById('urgencia-section');
     var cozinhaSection  = document.getElementById('cozinha-section');
+    var belezaSection   = document.getElementById('beleza-section');
 
     /* ── filtros ────────────────────────────────────────────────── */
     function applyFilters() {
       var q          = state.query.toLowerCase();
       var t          = state.type;
       var sub        = state.subcategory.toLowerCase();
-      var minRating  = state.minRating;
       var urg        = state.urgencia;
       var empFilter  = state.empreendimentos; // array de strings selecionadas
       var visible    = 0;
@@ -652,14 +559,12 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
         var ccat = card.dataset.category       || '';
         var ctit = card.dataset.title          || '';
         var csub = card.dataset.subcat         || '';
-        var crat = parseFloat(card.dataset.rating || '0');
         var curg = card.dataset.urgencia       || '';
         var cemp = card.dataset.empreendimento || '';
         var ccoz  = card.dataset.cozinha || '';
         var show = (t === 'all' || ct === t) &&
                    (!sub        || csub === sub) &&
                    (!q          || ctit.includes(q) || ccat.includes(q)) &&
-                   (!minRating  || crat >= minRating) &&
                    (!urg        || curg === urg) &&
                    (!state.cozinha || ccoz === state.cozinha) &&
                    (empFilter.length === 0 || empFilter.indexOf(cemp) !== -1);
@@ -711,24 +616,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       });
     }
 
-    /* ── rating ─────────────────────────────────────────────────── */
-    function setRating(minRating) {
-      state.minRating = minRating;
-      document.querySelectorAll('.rating-btn').forEach(function (btn) {
-        var val = parseFloat(btn.dataset.rating || '0');
-        var active = val === minRating;
-        var isQualquer = val === 0;
-        btn.className = 'rating-btn text-center px-2 py-2 rounded-lg border font-body text-base transition-colors leading-tight ' +
-          (isQualquer ? 'col-span-2 ' : 'col-span-1 ') +
-          (active ? 'bg-hub-pavao text-white border-hub-pavao' : 'border-hub-gelo text-hub-chumbo/70 hover:border-hub-cobre hover:text-hub-pavao');
-      });
-      applyFilters();
-    }
-
-    document.querySelectorAll('.rating-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () { setRating(parseFloat(btn.dataset.rating || '0')); });
-    });
-
     /* ── urgência ───────────────────────────────────────────────── */
     function setUrgencia(val) {
       state.urgencia = val;
@@ -775,19 +662,21 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
       renderSubcatList(newType);
       if (urgenciaSection) urgenciaSection.classList.toggle('filter-visible', newType === 'servicos-tecnicos');
       if (cozinhaSection)  cozinhaSection.classList.toggle('filter-visible', newType === 'gastronomia');
+      if (belezaSection)   belezaSection.classList.toggle('filter-visible', newType === 'beleza');
 
       setUrgencia('');
       setCozinha('');
       applyFilters();
     }
 
-    /* ── top icon bar ───────────────────────────────────────────── */
+    /* ── carousel de categorias ─────────────────────────────────── */
     function updateIconBar(newType) {
       document.querySelectorAll('.type-icon-btn').forEach(function (btn) {
-        var active = btn.dataset.typeIcon === newType;
-        btn.className = 'type-icon-btn flex items-center gap-3 px-5 py-2.5 rounded-full border shrink-0 transition-all duration-200 ' +
-          (active ? 'bg-hub-pavao border-hub-pavao text-white' : 'bg-white border-hub-gelo text-hub-chumbo/60 hover:border-hub-pavao hover:text-hub-pavao');
+        btn.classList.toggle('is-active', btn.dataset.typeIcon === newType);
       });
+      // Rola até o card ativo
+      var activeBtn = document.querySelector('.type-icon-btn.is-active');
+      if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     }
 
     document.querySelectorAll('.type-icon-btn').forEach(function (btn) {
@@ -887,15 +776,15 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     if (clearFiltersBtn) {
       clearFiltersBtn.addEventListener('click', function () {
         state.query = ''; state.type = 'all'; state.subcategory = '';
-        state.minRating = 0; state.urgencia = ''; state.cozinha = ''; state.empreendimentos = [];
+        state.urgencia = ''; state.cozinha = ''; state.empreendimentos = [];
         if (searchInput) searchInput.value = '';
         if (mobileSearchInput) mobileSearchInput.value = '';
         document.querySelectorAll('.empreendimento-cb').forEach(function (cb) { cb.checked = false; });
         if (urgenciaSection) urgenciaSection.classList.remove('filter-visible');
         if (cozinhaSection)  cozinhaSection.classList.remove('filter-visible');
+        if (belezaSection)   belezaSection.classList.remove('filter-visible');
         updateIconBar('all');
         renderSubcatList('all');
-        setRating(0);
         setUrgencia('');
         setCozinha('');
         applyFilters();
@@ -905,158 +794,34 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
     /* ── init ───────────────────────────────────────────────────── */
     updateIconBar('all');
     renderSubcatList('all');
-    setRating(0);
     setUrgencia('');
     applyFilters();
 
-    /* ── quickview ──────────────────────────────────────────────── */
-    window.openQuickView = function (card) {
-      if (!card) return;
-      var d = card.dataset;
-      document.getElementById('qv-cover').src = d.cover || '';
-      document.getElementById('qv-cover').alt = d.title || '';
-      document.getElementById('qv-title').textContent = d.title || '';
-      document.getElementById('qv-description').textContent = d.description || '';
-      document.getElementById('qv-category').textContent = d.catLabel || '';
-
-      var locRow = document.getElementById('qv-location-row');
-      var locEl  = document.getElementById('qv-location');
-      if (d.location) { locEl.textContent = d.location; locRow.style.display = 'flex'; }
-      else { locRow.style.display = 'none'; }
-
-      var logoImg  = document.getElementById('qv-logo');
-      var logoInit = document.getElementById('qv-logo-initial');
-      if (d.logo) {
-        logoImg.src = d.logo; logoImg.style.display = ''; logoInit.style.display = 'none';
-      } else {
-        logoImg.style.display = 'none';
-        logoInit.textContent = (d.title || 'X').charAt(0).toUpperCase();
-        logoInit.style.display = '';
-      }
-
-      document.getElementById('qv-badge-urgencia').style.display = d.urgencia === 'sim-24h' ? 'flex' : 'none';
-      document.getElementById('qv-badge-price').style.display    = d.faixa ? '' : 'none';
-
-      var rating  = parseFloat(d.rating || '0');
-      var starsEl = document.getElementById('qv-badge-stars');
-      var scoreEl = document.getElementById('qv-badge-score');
-      if (rating > 0) {
-        starsEl.textContent = '★'.repeat(Math.round(rating)) + '☆'.repeat(5 - Math.round(rating));
-        starsEl.style.display = ''; scoreEl.textContent = rating.toFixed(1); scoreEl.style.display = '';
-      } else {
-        starsEl.style.display = 'none'; scoreEl.style.display = 'none';
-      }
-
-      document.getElementById('qv-cta').href = card.getAttribute('href') || '#';
-      document.getElementById('qv-overlay').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    };
-
-    function closeQuickView() {
-      document.getElementById('qv-overlay').style.display = 'none';
-      document.body.style.overflow = '';
-    }
-
-    document.getElementById('qv-close-btn').addEventListener('click', closeQuickView);
-    document.getElementById('qv-overlay').addEventListener('click', function (e) {
-      if (e.target === this) closeQuickView();
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeQuickView(); });
-
   })();
   </script>
-
-  <!-- ── QuickView Lightbox ─────────────────────────────────────── -->
-  <div id="qv-overlay" class="fixed inset-0 z-50 items-center justify-center p-4" style="display:none;background:rgba(0,0,0,0.65)">
-    <div id="qv-modal" class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" style="max-height:90vh;overflow-y:auto">
-
-      <!-- Cover -->
-      <div class="relative h-56 shrink-0">
-        <img id="qv-cover" src="" alt="" class="w-full h-full object-cover" />
-        <div class="absolute top-0 left-0 right-0 flex items-center gap-1 p-3">
-          <span id="qv-badge-urgencia" class="items-center justify-center w-7 h-7 rounded bg-amber-500 text-white text-sm" style="display:none">⚡</span>
-          <span id="qv-badge-price" class="bg-black/65 text-white text-[11px] font-body px-2 py-1 rounded" style="display:none">$$</span>
-          <span id="qv-badge-stars" class="bg-black/65 text-amber-400 text-[11px] font-body px-2 py-1 rounded tracking-tight"></span>
-          <span id="qv-badge-score" class="bg-black/65 text-white text-[11px] font-body font-semibold px-2 py-1 rounded" style="display:none"></span>
-        </div>
-        <button id="qv-close-btn" class="absolute top-3 right-3 bg-white/90 hover:bg-white rounded-full p-1.5 text-hub-chumbo transition-colors shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-4 h-4">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-        </button>
-        <!-- Logo overlapping -->
-        <div class="absolute -bottom-6 left-5 w-14 h-14 rounded-full border-2 border-white shadow-md bg-hub-pavao flex items-center justify-center overflow-hidden z-10">
-          <img id="qv-logo" src="" alt="" class="w-full h-full object-cover" style="display:none" />
-          <span id="qv-logo-initial" class="text-white font-head font-bold text-xl" style="display:none"></span>
-        </div>
-      </div>
-
-      <!-- Header -->
-      <div class="pt-9 px-5 pb-4 border-b border-hub-gelo">
-        <div class="flex items-center gap-1.5 flex-wrap">
-          <h2 id="qv-title" class="font-head font-bold text-hub-chumbo text-lg uppercase tracking-wide leading-tight"></h2>
-          <svg class="w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-            <path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.491 4.491 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
-          </svg>
-        </div>
-        <div id="qv-location-row" class="items-center gap-1.5 mt-1.5 text-hub-chumbo/60 text-sm font-body" style="display:none">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0 text-hub-cobre">
-            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
-          </svg>
-          <span id="qv-location"></span>
-        </div>
-      </div>
-
-      <!-- Body -->
-      <div class="px-5 py-5 space-y-5">
-        <div>
-          <h3 class="flex items-center gap-2 font-head font-bold text-hub-chumbo text-xs uppercase tracking-widest mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-hub-cobre">
-              <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-            Descrição
-          </h3>
-          <p id="qv-description" class="font-body text-sm text-hub-chumbo/70 leading-relaxed"></p>
-        </div>
-        <div>
-          <h3 class="flex items-center gap-2 font-head font-bold text-hub-chumbo text-xs uppercase tracking-widest mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4 text-hub-cobre">
-              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-            </svg>
-            Categorias
-          </h3>
-          <div class="flex items-center gap-3">
-            <span class="w-9 h-9 rounded-full bg-red-500 flex items-center justify-center text-white shrink-0">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-4 h-4">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </span>
-            <span id="qv-category" class="font-body text-hub-chumbo text-sm font-medium"></span>
-          </div>
-        </div>
-        <a id="qv-cta" href="#" class="flex items-center justify-center gap-2 w-full bg-hub-pavao text-white font-head font-semibold uppercase tracking-wide text-sm py-3 rounded-xl hover:bg-hub-pavao-profundo transition-colors">
-          Ver Perfil Completo
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
 </Layout>
 
 <style>
-  /* Sidebar sticky — ocupa altura disponível abaixo do header + icon bar */
+  /* ── Category Carousel ──────────────────────────────────────── */
+  .type-overlay { opacity: 0.68; }
+  .type-icon-btn.is-active .type-overlay { opacity: 0.28; }
+  .type-icon-btn:not(.is-active):hover .type-overlay { opacity: 0.45; }
+  .type-icon-btn:not(.is-active):hover img { transform: scale(1.08); transition: transform 0.5s ease; }
+  .type-icon-btn.is-active {
+    box-shadow: 0 0 0 2.5px #B87333, 0 0 0 5px rgba(184,115,51,0.25);
+  }
+
+  /* Sidebar sticky — ocupa altura disponível abaixo do header + carousel */
   @media (min-width: 1024px) {
     #sidebar {
       position: sticky;
-      top: 136px; /* header ~64px + icon bar ~72px */
-      height: calc(100vh - 136px);
+      top: 176px; /* header ~64px + carousel ~112px */
+      height: calc(100vh - 176px);
       overflow: hidden;
       display: flex;
       flex-direction: column;
       transform: none !important;
-      width: 280px;
+      width: 292px;
       max-width: none;
       z-index: auto;
     }
@@ -1064,9 +829,6 @@ const bizEmpreendimento: Record<string, string> = Object.fromEntries(
 
   /* View lista: colapsa para coluna única */
   #listings-container.is-list-view { grid-template-columns: 1fr !important; }
-  #listings-container.is-list-view .biz-card { flex-direction: row; }
-  #listings-container.is-list-view .card-cover { width: 160px; min-width: 160px; height: auto; min-height: 130px; }
-  #listings-container.is-list-view .card-footer { display: none; }
 
   /* Filtros condicionais — animação suave de reveal */
   .filter-collapsible {

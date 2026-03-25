@@ -1,0 +1,243 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout
+  title="Fale Conosco — HUBMETROPOLITANO"
+  description="Entre em contato com o HubMetropolitano. Tire dúvidas, faça sugestões ou saiba como anunciar no maior diretório da Barra da Tijuca."
+>
+  <Header />
+
+  <main>
+
+    <!-- Hero -->
+    <section class="text-hub-gelo py-14 relative overflow-hidden bg-hub-pavao-profundo">
+      <img
+        src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1920&auto=format&fit=crop"
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-full object-cover object-center opacity-35"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-hub-pavao-profundo/90 via-hub-pavao-profundo/60 to-hub-pavao-profundo/30"></div>
+      <div class="container mx-auto px-4 lg:px-8 relative z-10">
+        <h5 class="text-hub-cobre mb-3">Estamos aqui para ajudar</h5>
+        <h1 class="mb-4 max-w-xl text-hub-gelo">Fale Conosco</h1>
+        <p class="font-body text-hub-gelo/70 text-base max-w-lg">
+          Dúvidas, sugestões, parcerias ou imprensa — responda em até 1 dia útil.
+        </p>
+      </div>
+    </section>
+
+    <!-- Formulário + Informações -->
+    <section class="py-16 bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-8 items-start">
+
+          <!-- ── Formulário ──────────────────────────────────────── -->
+          <div class="lg:col-span-7">
+            <div class="bg-white rounded-2xl shadow-sm p-8">
+              <h3 class="mb-1">Envie sua Mensagem</h3>
+              <p class="font-body text-hub-chumbo/50 text-sm mb-7">Preencha o formulário e entraremos em contato.</p>
+
+              <form class="flex flex-col gap-5">
+
+                <div class="grid sm:grid-cols-2 gap-5">
+                  <!-- Nome -->
+                  <div>
+                    <label for="nome" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                      Nome completo
+                    </label>
+                    <input
+                      id="nome"
+                      type="text"
+                      placeholder="Seu nome"
+                      class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+                    />
+                  </div>
+
+                  <!-- E-mail -->
+                  <div>
+                    <label for="email" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                      E-mail
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40"
+                    />
+                  </div>
+                </div>
+
+                <!-- Assunto -->
+                <div>
+                  <label for="assunto" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                    Assunto
+                  </label>
+                  <select
+                    id="assunto"
+                    class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40 appearance-none cursor-pointer"
+                  >
+                    <option value="" disabled selected>Selecione um assunto</option>
+                    <option value="duvida">Dúvida Geral</option>
+                    <option value="anunciar">Quero Anunciar no Hub</option>
+                    <option value="sugestao">Sugestão</option>
+                    <option value="reclamacao">Reclamação</option>
+                    <option value="imprensa">Imprensa & Parceria</option>
+                  </select>
+                </div>
+
+                <!-- Mensagem -->
+                <div>
+                  <label for="mensagem" class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50 mb-1.5 block">
+                    Mensagem
+                  </label>
+                  <textarea
+                    id="mensagem"
+                    rows="5"
+                    placeholder="Descreva sua mensagem..."
+                    class="w-full border border-hub-gelo rounded-xl px-4 py-3 font-body text-hub-chumbo placeholder-hub-chumbo/30 focus:ring-2 focus:ring-hub-cobre/30 focus:border-hub-cobre outline-none transition bg-hub-gelo/40 resize-none"
+                  ></textarea>
+                </div>
+
+                <!-- Botão -->
+                <div class="flex items-center gap-4 flex-wrap">
+                  <button
+                    type="submit"
+                    class="inline-flex items-center gap-2 bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-3.5 rounded-xl hover:bg-hub-cobre-luminoso transition-colors shadow-sm"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+                    </svg>
+                    Enviar Mensagem
+                  </button>
+                  <p class="font-body text-hub-chumbo/40 text-xs">Respondemos em até 1 dia útil</p>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+          <!-- ── Informações + Mapa ──────────────────────────────── -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+
+            <!-- Contato -->
+            <div class="bg-white rounded-2xl shadow-sm p-8">
+              <h3 class="mb-6">Informações</h3>
+
+              <ul class="flex flex-col gap-5">
+
+                <!-- E-mail -->
+                <li class="flex items-start gap-4">
+                  <div class="shrink-0 w-10 h-10 rounded-xl bg-hub-pavao-soft flex items-center justify-center mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-hub-pavao">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/40 mb-0.5">E-mail</p>
+                    <a href="mailto:contato@hubmetropolitano.com.br" class="font-body text-hub-chumbo hover:text-hub-cobre transition-colors">
+                      contato@hubmetropolitano.com.br
+                    </a>
+                  </div>
+                </li>
+
+                <!-- WhatsApp -->
+                <li class="flex items-start gap-4">
+                  <div class="shrink-0 w-10 h-10 rounded-xl bg-hub-pavao-soft flex items-center justify-center mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-hub-pavao">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/40 mb-0.5">WhatsApp</p>
+                    <a href="https://wa.me/5521999999999" target="_blank" rel="noopener" class="font-body text-hub-chumbo hover:text-hub-cobre transition-colors">
+                      (21) 99999-9999
+                    </a>
+                  </div>
+                </li>
+
+                <!-- Endereço -->
+                <li class="flex items-start gap-4">
+                  <div class="shrink-0 w-10 h-10 rounded-xl bg-hub-pavao-soft flex items-center justify-center mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-hub-pavao">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/40 mb-0.5">Endereço</p>
+                    <p class="font-body text-hub-chumbo">Barra da Tijuca<br/>Rio de Janeiro – RJ</p>
+                  </div>
+                </li>
+
+                <!-- Horário -->
+                <li class="flex items-start gap-4">
+                  <div class="shrink-0 w-10 h-10 rounded-xl bg-hub-pavao-soft flex items-center justify-center mt-0.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-hub-pavao">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/40 mb-0.5">Horário de Atendimento</p>
+                    <p class="font-body text-hub-chumbo">Segunda a Sexta<br/>das 9h às 18h</p>
+                  </div>
+                </li>
+
+              </ul>
+            </div>
+
+            <!-- Mapa -->
+            <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+              <iframe
+                src="https://maps.google.com/maps?q=Barra+da+Tijuca+Rio+de+Janeiro&output=embed"
+                width="100%"
+                height="280"
+                style="border:0;"
+                allowfullscreen
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Localização — Barra da Tijuca, Rio de Janeiro"
+              ></iframe>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção Anunciantes -->
+    <section class="bg-hub-pavao py-20">
+      <div class="container mx-auto px-4 lg:px-8 text-center">
+        <h5 class="text-hub-cobre mb-3">Para Empresas</h5>
+        <h2 class="text-hub-gelo mb-5 max-w-2xl mx-auto">Anuncie no Hub Metropolitano</h2>
+        <p class="font-body text-hub-gelo/70 text-base max-w-xl mx-auto mb-10 leading-relaxed">
+          Conecte sua empresa a milhares de moradores e visitantes exigentes da Barra da Tijuca. Visibilidade premium, perfil verificado e destaque no maior diretório da região.
+        </p>
+        <div class="flex items-center justify-center gap-4 flex-wrap">
+          <a
+            href="/anuncie"
+            class="inline-flex items-center gap-2 bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-xl hover:bg-hub-cobre-luminoso transition-colors shadow-md"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+            Quero Anunciar
+          </a>
+          <a
+            href="/anuncie#planos"
+            class="inline-flex items-center gap-2 border border-hub-gelo/30 text-hub-gelo font-head font-semibold uppercase tracking-wider text-sm px-8 py-4 rounded-xl hover:bg-white/10 transition-colors"
+          >
+            Ver Planos
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>

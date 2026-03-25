@@ -9,7 +9,7 @@ export interface ServiceItem {
 
 export interface Business {
   slug: string;
-  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia' | 'saude' | 'esporte';
+  type: 'digital' | 'servicos-profissionais' | 'servicos-tecnicos' | 'gastronomia' | 'saude' | 'esporte' | 'beleza';
   title: string;
   tagline: string;
   description: string;
@@ -30,10 +30,34 @@ export interface Business {
   prazoAtendimento?: string;
   disponibilidade?: string;
   garantia?: string;
+  // LT4 — Gastronomia
+  tipoCozinha?: string;
+  faixaPreco?: '$' | '$$' | '$$$' | '$$$$';
+  cardapioUrl?: string;
+  horarios?: { dias: string; horario: string }[];
+  aceitaReservas?: boolean;
+  reservasUrl?: string;
+  delivery?: boolean;
+  deliveryUrl?: string;
+  ambiente?: string[];
+  estacionamento?: boolean;
+  // LT5 — Saúde
+  especialidades?: string[];
+  planosAceitos?: string[];
+  tipoAtendimento?: 'presencial' | 'online' | 'ambos';
+  corpoClinico?: { nome: string; especialidade: string; foto?: string }[];
+  // LT6 — Beleza
+  agendamentoUrl?: string;
+  profissionaisBeleza?: { nome: string; especialidade: string }[];
+  // LT7 — Esporte
+  modalidades?: string[];
+  infraestrutura?: string[];
   // Mapa & Rating
   lat?: number;
   lng?: number;
   rating?: number;
+  // Agendamento direto
+  whatsapp?: string;
 }
 
 // ─── Mock Data — LT1: Agências & Serviços Digitais ───────────────────────────
@@ -515,6 +539,18 @@ export const mockBusinessesGastro: Business[] = [
     location: 'Barra da Tijuca · Rio de Janeiro',
     lat: -23.000, lng: -43.363, rating: 4.8,
     category: 'Restaurantes & Grills',
+    tipoCozinha: 'Churrasco & Carnes Nobres',
+    faixaPreco: '$$$',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '12h–15h · 19h–23h' },
+      { dias: 'Sáb–Dom', horario: '12h–23h' },
+    ],
+    aceitaReservas: true,
+    reservasUrl: '#',
+    delivery: true,
+    deliveryUrl: '#',
+    ambiente: ['Sofisticado', 'Executivo', 'Romântico'],
+    estacionamento: true,
     services: [
       {
         icon: '🥩',
@@ -560,6 +596,17 @@ export const mockBusinessesGastro: Business[] = [
     location: 'Barra da Tijuca · Rio de Janeiro',
     lat: -22.997, lng: -43.361, rating: 4.9,
     category: 'Cafeterias & Padarias',
+    tipoCozinha: 'Café & Brunch',
+    faixaPreco: '$$',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '07h–20h' },
+      { dias: 'Sáb–Dom', horario: '08h–18h' },
+    ],
+    aceitaReservas: false,
+    delivery: true,
+    deliveryUrl: '#',
+    ambiente: ['Aconchegante', 'Cowork-friendly', 'Descontraído'],
+    estacionamento: false,
     services: [
       {
         icon: '☕',
@@ -605,6 +652,19 @@ export const mockBusinessesGastro: Business[] = [
     location: 'Barra da Tijuca · Rio de Janeiro',
     lat: -23.003, lng: -43.367, rating: 4.6,
     category: 'Culinária Brasileira',
+    tipoCozinha: 'Brasileira Contemporânea',
+    faixaPreco: '$$',
+    cardapioUrl: '#',
+    horarios: [
+      { dias: 'Ter–Sex', horario: '12h–15h · 19h–22h30' },
+      { dias: 'Sáb', horario: '12h–23h' },
+      { dias: 'Dom', horario: '12h–17h' },
+    ],
+    aceitaReservas: true,
+    reservasUrl: '#',
+    delivery: false,
+    ambiente: ['Intimista', 'Autoral', 'Familiar'],
+    estacionamento: true,
     services: [
       {
         icon: '🍽️',
@@ -656,6 +716,18 @@ export const mockBusinessesSaude: Business[] = [
     category: 'Odontologia & Estética Dental',
     faixaHonorarios: 'R$200 – R$8.000',
     clientesAtendidos: 'Mais de 3.000 pacientes atendidos',
+    especialidades: ['Implantodontia', 'Estética Dental', 'Ortodontia', 'Periodontia', 'Clínico Geral'],
+    planosAceitos: ['Particular', 'Amil Dental', 'OdontoPrev', 'SulAmérica Odonto', 'Bradesco Dental'],
+    tipoAtendimento: 'presencial',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '08h–20h' },
+      { dias: 'Sáb', horario: '09h–14h' },
+    ],
+    corpoClinico: [
+      { nome: 'Dra. Fernanda Costa', especialidade: 'Implantodontia & Estética' },
+      { nome: 'Dr. Rafael Mendes', especialidade: 'Ortodontia' },
+      { nome: 'Dra. Juliana Pires', especialidade: 'Periodontia' },
+    ],
     services: [
       { icon: '🦷', name: 'Implante Dentário',    description: 'Implantes de titânio com carga imediata e protocolo all-on-4.',         price: 'A partir de R$2.800' },
       { icon: '✨', name: 'Clareamento Dental',   description: 'Clareamento a laser com resultado em sessão única.',                    price: 'R$800' },
@@ -677,6 +749,17 @@ export const mockBusinessesSaude: Business[] = [
     category: 'Dermatologia & Medicina Estética',
     faixaHonorarios: 'R$350 – R$4.000',
     clientesAtendidos: 'Mais de 5.000 consultas realizadas',
+    especialidades: ['Dermatologia Clínica', 'Dermatologia Cirúrgica', 'Medicina Estética', 'Laser'],
+    planosAceitos: ['Particular', 'Bradesco Saúde', 'SulAmérica', 'Amil', 'Unimed'],
+    tipoAtendimento: 'presencial',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '09h–19h' },
+      { dias: 'Sáb', horario: '09h–13h' },
+    ],
+    corpoClinico: [
+      { nome: 'Dra. Camila Neves', especialidade: 'Dermatologia Clínica & Cirúrgica' },
+      { nome: 'Dr. Thiago Lemos', especialidade: 'Medicina Estética & Laser' },
+    ],
     services: [
       { icon: '🔬', name: 'Consulta Dermatológica', description: 'Avaliação completa da pele, diagnóstico e prescrição de tratamento.',   price: 'R$380' },
       { icon: '✨', name: 'Laser & Fototerapia',    description: 'Tratamentos a laser para manchas, acne, rejuvenescimento e depilação.',  price: 'A partir de R$450' },
@@ -698,6 +781,18 @@ export const mockBusinessesSaude: Business[] = [
     category: 'Psicologia & Saúde Mental',
     faixaHonorarios: 'R$180 – R$450/sessão',
     clientesAtendidos: 'Mais de 200 pacientes em acompanhamento',
+    especialidades: ['Psicoterapia', 'Psiquiatria', 'Terapia de Casal', 'Psicologia Infantil', 'Organizacional'],
+    planosAceitos: ['Particular', 'Bradesco Saúde', 'SulAmérica', 'Amil'],
+    tipoAtendimento: 'ambos',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '08h–21h' },
+      { dias: 'Sáb', horario: '09h–15h' },
+    ],
+    corpoClinico: [
+      { nome: 'Dra. Ana Beatriz Silva', especialidade: 'Psicologia Clínica & Terapia de Casal' },
+      { nome: 'Dr. Rodrigo Faria', especialidade: 'Psiquiatria' },
+      { nome: 'Dra. Mariana Santos', especialidade: 'Psicologia Infantil & Adolescente' },
+    ],
     services: [
       { icon: '🧠', name: 'Psicoterapia Individual', description: 'Atendimento para adultos e adolescentes com diferentes abordagens terapêuticas.', price: 'R$220/sessão' },
       { icon: '👫', name: 'Terapia de Casal',         description: 'Trabalho focado na comunicação, conflitos e fortalecimento do relacionamento.',   price: 'R$280/sessão' },
@@ -722,6 +817,13 @@ export const mockBusinessesEsporte: Business[] = [
     location: 'Shopping Metropolitano · Barra da Tijuca',
     lat: -22.999, lng: -43.363, rating: 4.8,
     category: 'Academia & Musculação',
+    modalidades: ['Musculação', 'Aeróbico', 'Spinning', 'CrossFit', 'Zumba', 'Body Pump', 'Pilates', 'Funcional'],
+    infraestrutura: ['3.000m² de área', 'Vestiários completos', 'Sauna seca', 'Banho de contraste', 'Estacionamento', 'Lanchonete'],
+    horarios: [
+      { dias: 'Seg–Sex', horario: '05h30–23h' },
+      { dias: 'Sáb', horario: '07h–20h' },
+      { dias: 'Dom & Feriados', horario: '08h–14h' },
+    ],
     services: [
       { icon: '🏋️', name: 'Musculação',         description: 'Área com mais de 200 equipamentos Life Fitness e Technogym para todos os níveis.', price: 'A partir de R$120/mês' },
       { icon: '🏃', name: 'Aulas Coletivas',    description: 'Mais de 40 modalidades semanais: spinning, body pump, zumba, pilates e mais.', price: 'Incluso no plano' },
@@ -741,6 +843,12 @@ export const mockBusinessesEsporte: Business[] = [
     location: 'Av. Abelardo Bueno · Barra da Tijuca',
     lat: -22.997, lng: -43.357, rating: 4.9,
     category: 'Beach Tennis & Areia',
+    modalidades: ['Beach Tennis', 'Beach Vôlei', 'Futevôlei'],
+    infraestrutura: ['8 quadras de areia', 'Iluminação LED noturna', 'Vestiários', 'Loja especializada', 'Estacionamento', 'Área de descanso'],
+    horarios: [
+      { dias: 'Seg–Sex', horario: '06h–22h' },
+      { dias: 'Sáb–Dom', horario: '07h–22h' },
+    ],
     services: [
       { icon: '🎾', name: 'Aulas de Beach Tennis', description: 'Aulas coletivas e individuais para todos os níveis, com professores federados.', price: 'A partir de R$90/aula' },
       { icon: '🏟️', name: 'Aluguel de Quadra',    description: '8 quadras com areia grossa importada e iluminação LED noturna.', price: 'R$80/hora' },
@@ -760,6 +868,12 @@ export const mockBusinessesEsporte: Business[] = [
     location: 'Cidade Jardim · Barra da Tijuca',
     lat: -23.002, lng: -43.370, rating: 4.7,
     category: 'Yoga & Pilates',
+    modalidades: ['Pilates no Aparelho', 'Pilates Clínico', 'Yoga', 'Meditação', 'TRX'],
+    infraestrutura: ['Aparelhos Balanced Body', 'Sala de Yoga', 'Turmas de até 4 alunos', 'Estacionamento'],
+    horarios: [
+      { dias: 'Seg–Sex', horario: '06h30–21h' },
+      { dias: 'Sáb', horario: '08h–16h' },
+    ],
     services: [
       { icon: '🤸', name: 'Pilates no Aparelho',  description: 'Aulas semi-privadas em grupos de até 4 alunos com Reformer Balanced Body.', price: 'A partir de R$130/aula' },
       { icon: '🧘', name: 'Yoga',                description: 'Hatha, Vinyasa e Yin Yoga com instrutoras certificadas pela Yoga Alliance.', price: 'A partir de R$70/aula' },
@@ -770,8 +884,168 @@ export const mockBusinessesEsporte: Business[] = [
   },
 ];
 
+// ─── Mock Data — LT8: Beleza & Estética ──────────────────────────────────────
+
+export const mockBusinessesBeleza: Business[] = [
+  {
+    slug: 'espaco-beauty-barra',
+    type: 'beleza',
+    title: 'Espaço Beauty Barra',
+    tagline: 'Salão de beleza premium com atendimento personalizado na Barra da Tijuca',
+    description:
+      'Salão de beleza completo com equipe especializada em coloração, cortes modernos, tratamentos capilares e estética. Ambiente sofisticado e acolhedor, com produtos das melhores marcas profissionais do mercado. Atendemos tanto clientes que buscam o dia a dia quanto produções especiais para eventos.',
+    cover: 'https://images.unsplash.com/photo-1560066984-138daaa0942b?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -22.998, lng: -43.362, rating: 4.8,
+    category: 'Salão de Beleza',
+    horarios: [
+      { dias: 'Ter–Sex', horario: '09h–20h' },
+      { dias: 'Sáb', horario: '09h–18h' },
+    ],
+    agendamentoUrl: '#',
+    whatsapp: '5521999990001',
+    profissionaisBeleza: [
+      { nome: 'Gabriela Fonseca', especialidade: 'Coloração & Mechas' },
+      { nome: 'Lucas Andrade', especialidade: 'Corte Masculino & Feminino' },
+      { nome: 'Priscila Torres', especialidade: 'Tratamentos Capilares' },
+    ],
+    services: [
+      { icon: '✂️', name: 'Corte Feminino', description: 'Corte personalizado com lavagem, secagem e finalização.', price: 'A partir de R$120' },
+      { icon: '🎨', name: 'Coloração & Mechas', description: 'Coloração completa, babylights, balayage e ombré hair.', price: 'A partir de R$250' },
+      { icon: '💆', name: 'Tratamentos Capilares', description: 'Botox capilar, cronograma, hidratação profunda e reconstrução.', price: 'A partir de R$150' },
+      { icon: '💅', name: 'Manicure & Pedicure', description: 'Esmaltação tradicional, em gel, fibra e nail art.', price: 'A partir de R$60' },
+      { icon: '✨', name: 'Maquiagem', description: 'Maquiagem social, para eventos e noivas com produtos premium.', price: 'A partir de R$180' },
+    ],
+  },
+  {
+    slug: 'spa-sereno-barra',
+    type: 'beleza',
+    title: 'Spa Sereno',
+    tagline: 'Spa e estética corporal com rituais de relaxamento e bem-estar',
+    description:
+      'Espaço de bem-estar especializado em tratamentos corporais e faciais de alta performance. Combinamos técnicas orientais e ocidentais para oferecer uma experiência completa de relaxamento e rejuvenescimento. Ambiente zen, atendimento exclusivo e produtos importados selecionados.',
+    cover: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -22.996, lng: -43.365, rating: 4.9,
+    category: 'Spa & Bem-Estar',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '10h–21h' },
+      { dias: 'Sáb', horario: '09h–18h' },
+    ],
+    agendamentoUrl: '#',
+    whatsapp: '5521999990002',
+    profissionaisBeleza: [
+      { nome: 'Andréa Villela', especialidade: 'Esteticista & Terapeuta Holística' },
+      { nome: 'Felipe Moreira', especialidade: 'Massoterapia & Drenagem' },
+    ],
+    services: [
+      { icon: '🌿', name: 'Massagem Relaxante', description: 'Massagem com óleos essenciais e técnicas de relaxamento profundo.', price: 'A partir de R$180' },
+      { icon: '💆', name: 'Drenagem Linfática', description: 'Drenagem manual para redução de inchaço e melhora da circulação.', price: 'A partir de R$160' },
+      { icon: '✨', name: 'Limpeza de Pele', description: 'Limpeza profunda com extração, esfoliação e máscara personalizada.', price: 'A partir de R$200' },
+      { icon: '🔥', name: 'Pedras Quentes', description: 'Massagem com pedras vulcânicas para alívio de tensões musculares.', price: 'R$280' },
+      { icon: '🌺', name: 'Ritual Completo', description: 'Experiência de 3 horas com esfoliação, banho e massagem.', price: 'R$480' },
+    ],
+  },
+  {
+    slug: 'studio-nails-barra',
+    type: 'beleza',
+    title: 'Studio Nails & Co.',
+    tagline: 'Nail art, alongamentos e estética das mãos e pés com técnica e criatividade',
+    description:
+      'Estúdio especializado em nail art, alongamento de unhas em fibra e gel, e tratamentos para as mãos e pés. Ambiente moderno e higienizado, com materiais descartáveis e as melhores marcas de esmalte do mercado. Referência em nail art na Barra da Tijuca.',
+    cover: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=1600&auto=format&fit=crop',
+    location: 'Barra da Tijuca · Rio de Janeiro',
+    lat: -23.001, lng: -43.360, rating: 4.7,
+    category: 'Nail Art & Estética',
+    horarios: [
+      { dias: 'Ter–Sáb', horario: '09h–19h' },
+    ],
+    agendamentoUrl: '#',
+    whatsapp: '5521999990003',
+    profissionaisBeleza: [
+      { nome: 'Camila Rocha', especialidade: 'Nail Art & Fibra de Vidro' },
+      { nome: 'Ingrid Souza', especialidade: 'Gel & Acrigel' },
+    ],
+    services: [
+      { icon: '💅', name: 'Manicure & Pedicure', description: 'Esmaltação tradicional, francesa e decorada.', price: 'A partir de R$50' },
+      { icon: '✨', name: 'Esmaltação em Gel', description: 'Duração de até 3 semanas sem lascar.', price: 'A partir de R$90' },
+      { icon: '🌟', name: 'Nail Art', description: 'Designs exclusivos, stamps, encapsulados e press-on personalizados.', price: 'A partir de R$120' },
+      { icon: '🔨', name: 'Alongamento em Fibra', description: 'Alongamento natural e resistente com fibra de vidro.', price: 'A partir de R$200' },
+      { icon: '💎', name: 'Banho de Parafina', description: 'Tratamento hidratante intensivo para mãos e pés.', price: 'R$60' },
+    ],
+  },
+  {
+    slug: 'studio-premium-union-square',
+    type: 'beleza',
+    title: 'Studio Premium',
+    tagline: 'Salão de cabelo e manicure premium no coração do Union Square',
+    description:
+      'Studio especializado em transformações capilares e cuidados completos das mãos e pés. Equipe de coloristas certificados internacionalmente, ambiente climatizado e produtos europeus de alta performance. Reconhecido como referência em coloração e técnicas avançadas de cabelo no Centro Metropolitano.',
+    cover: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=1600&auto=format&fit=crop',
+    location: 'Union Square · Barra da Tijuca',
+    lat: -22.997, lng: -43.361, rating: 4.9,
+    category: 'Salão de Beleza',
+    horarios: [
+      { dias: 'Ter–Sex', horario: '09h–20h' },
+      { dias: 'Sáb', horario: '09h–18h' },
+    ],
+    agendamentoUrl: '#',
+    whatsapp: '5521999990004',
+    profissionaisBeleza: [
+      { nome: 'Renata Oliveira', especialidade: 'Coloração Avançada & Balayage' },
+      { nome: 'Thiago Lima', especialidade: 'Corte & Finalização' },
+      { nome: 'Juliana Matos', especialidade: 'Manicure & Nail Art' },
+    ],
+    services: [
+      { icon: '✂️', name: 'Corte & Styling', description: 'Corte personalizado + lavagem, hidratação e finalização.', price: 'A partir de R$150' },
+      { icon: '🎨', name: 'Balayage & Mechas', description: 'Coloração natural e moderna com técnicas internacionais.', price: 'A partir de R$350' },
+      { icon: '💅', name: 'Manicure Premium', description: 'Manicure completa com esmaltação em gel e nail art inclusa.', price: 'A partir de R$80' },
+      { icon: '💆', name: 'Tratamento Capilar', description: 'Cronograma capilar personalizado conforme diagnóstico dos fios.', price: 'A partir de R$200' },
+      { icon: '✨', name: 'Dia da Noiva', description: 'Produção completa: cabelo, maquiagem e unhas para grandes ocasiões.', price: 'Sob consulta' },
+    ],
+  },
+  {
+    slug: 'barbearia-hub-metropolitan',
+    type: 'beleza',
+    title: 'Barbearia Hub',
+    tagline: 'Barbearia moderna com corte masculino, barba e experiência premium no Metropolitan',
+    description:
+      'Barbearia de alto padrão especializada no universo masculino. Cortes modernos e clássicos, tratamentos de barba com navalha, relaxamento, hidratação e produtos de primeira linha. Ambiente masculino sofisticado com TV, bebidas e atendimento por hora marcada. O lugar certo para o homem moderno da Barra da Tijuca.',
+    cover: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1600&auto=format&fit=crop',
+    location: 'Metropolitan · Barra da Tijuca',
+    lat: -22.999, lng: -43.363, rating: 4.8,
+    category: 'Barbearia',
+    horarios: [
+      { dias: 'Seg–Sex', horario: '09h–21h' },
+      { dias: 'Sáb', horario: '09h–19h' },
+      { dias: 'Dom', horario: '10h–16h' },
+    ],
+    agendamentoUrl: '#',
+    whatsapp: '5521999990005',
+    profissionaisBeleza: [
+      { nome: 'Rafael Nunes', especialidade: 'Corte & Barba Clássica' },
+      { nome: 'Diego Carvalho', especialidade: 'Fade & Designs' },
+    ],
+    services: [
+      { icon: '✂️', name: 'Corte Masculino', description: 'Corte clássico ou moderno com máquina e tesoura, lavagem inclusa.', price: 'A partir de R$70' },
+      { icon: '🪒', name: 'Barba Completa', description: 'Acabamento de barba com navalha, toalha quente e balm hidratante.', price: 'A partir de R$55' },
+      { icon: '⚡', name: 'Corte + Barba', description: 'Combo completo com desconto especial.', price: 'A partir de R$110' },
+      { icon: '💆', name: 'Relaxamento Capilar', description: 'Tratamento antifrizz e alisamento leve para cabelos masculinos.', price: 'A partir de R$120' },
+      { icon: '🌿', name: 'Hidratação & Finalização', description: 'Máscara hidratante profissional com secagem e styling.', price: 'A partir de R$80' },
+    ],
+  },
+];
+
 export function getBusiness(slug: string): Business | undefined {
-  return [...mockBusinesses, ...mockBusinessesB2B, ...mockBusinessesTec, ...mockBusinessesGastro, ...mockBusinessesSaude, ...mockBusinessesEsporte].find((b) => b.slug === slug);
+  return [
+    ...mockBusinesses,
+    ...mockBusinessesB2B,
+    ...mockBusinessesTec,
+    ...mockBusinessesGastro,
+    ...mockBusinessesSaude,
+    ...mockBusinessesEsporte,
+    ...mockBusinessesBeleza,
+  ].find((b) => b.slug === slug);
 }
 
 // ─── BusinessCardProps — Template Interface para o Componente Astro de Card ───
