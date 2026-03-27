@@ -1,0 +1,736 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const { slug } = Astro.params;
+const supabase  = Astro.locals.supabase;
+
+// ── Fetch business ────────────────────────────────────────────────────────
+const { data: biz, error: fetchError } = await supabase
+  .from('businesses')
+  .select('*, categories(name, slug), locations(name)')
+  .eq('slug', slug)
+  .eq('is_active', true)
+  .single();
+
+if (!biz || fetchError) return Astro.redirect('/');
+
+// ── Ratings ───────────────────────────────────────────────────────────────
+let avgRating = 0, totalReviews = 0;
+try {
+  const { data: r } = await supabase
+    .from('business_ratings')
+    .select('avg_rating, total_reviews')
+    .eq('business_id', biz.id)
+    .single();
+  if (r) { avgRating = Math.round(parseFloat(r.avg_rating) * 10) / 10; totalReviews = r.total_reviews || 0; }
+} catch {}
+
+// ── Parse features_json ───────────────────────────────────────────────────
+const fj             = (biz.features_json as any) ?? {};
+const tags: string[] = fj.tags        ?? [];
+const servicos       = fj.servicos     ?? [];
+const horarios       = fj.horarios     ?? {};
+const equipe         = fj.equipe       ?? [];
+const listaExtra     = fj.lista_extra  ?? null;
+const tipoServico    = fj.tipo_servico ?? '';
+const faixaPreco     = fj.faixa_preco  ?? '';
+const areasAtend     = fj.areas_atendimento ?? '';
+const tempoResp      = fj.tempo_resposta    ?? '';
+const garantia       = fj.garantia    ?? '';
+const registroId     = fj.registro_id ?? '';
+const clientes       = fj.clientes    ?? '';
+
+const categoryName   = (biz.categories as any)?.name ?? '';
+const locationName   = (biz.locations  as any)?.name ?? '';
+
+// ── Open/Closed status (Brasília timezone, server-side) ───────────────────
+type Status = { open: boolean; badge: string; detail: string } | null;
+function getStatus(): Status {
+  if (!Object.keys(horarios).length) return null;
+  const now  = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+  const day  = now.getDay();
+  const time = now.getHours() + now.getMinutes() / 60;
+
+  let sched: string | undefined;
+  if      (day === 0) sched = horarios.domingo;
+  else if (day === 6) sched = horarios.sabado;
+  else                sched = horarios.seg_sex;
+
+  if (!sched || sched.toLowerCase() === 'fechado')
+    return { open: false, badge: 'Fechado', detail: 'Fechado hoje' };
+
+  const m = sched.match(/(\d{1,2})h?\s*(?:–|-|às)\s*(\d{1,2})h?/i);
+  if (!m) return { open: true, badge: 'Aberto', detail: sched };
+
+  const [, oh, ch] = m;
+  const openH = parseInt(oh), closeH = parseInt(ch);
+  if (time >= openH && time < closeH)
+    return { open: true,  badge: 'Aberto agora',  detail: `Fecha às ${ch}h` };
+  return   { open: false, badge: 'Fechado agora', detail: time < openH ? `Abre às ${oh}h` : `Abre amanhã` };
+}
+const status = getStatus();
+
+// ── CTA links ─────────────────────────────────────────────────────────────
+const waNum  = (biz.whatsapp || biz.phone || '').replace(/\D/g, '');
+const waUrl  = waNum ? `https://wa.me/55${waNum}?text=${encodeURIComponent(`Olá! Vi o perfil de *${biz.title}* no HubMetropolitano e gostaria de mais informações.`)}` : null;
+const mapsUrl   = biz.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(biz.address)}` : null;
+const websiteUrl = biz.website ? (biz.website.startsWith('http') ? biz.website : `https://${biz.website}`) : null;
+
+// ── Gallery ───────────────────────────────────────────────────────────────
+const gallery: string[] = [
+  ...(biz.cover_url ? [biz.cover_url] : []),
+  ...(Array.isArray(biz.images) ? biz.images.filter(Boolean) : []),
+];
+
+// ── Hours map ─────────────────────────────────────────────────────────────
+const hourRows = [
+  { label: 'Seg – Sex', value: horarios.seg_sex, key: 'seg_sex' },
+  { label: 'Sábado',    value: horarios.sabado,  key: 'sabado'  },
+  { label: 'Domingo',   value: horarios.domingo, key: 'domingo' },
+].filter(h => h.value);
+
+// ── Tag → SVG path map ────────────────────────────────────────────────────
+const TAG_ICONS: Record<string, string> = {
+  'Aceita reservas':         'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5',
+  'Delivery disponível':     'M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12',
+  'Atendimento domiciliar':  'm2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25',
+  'Agendamento online':      'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+  'Estacionamento':          'M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12',
+  'Wi-Fi gratuito':          'M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 0 1 1.06 0Z',
+  'Acessibilidade':          'M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z',
+  'Pet friendly':            'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z',
+  'Sofisticado':             'M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z',
+  'Executivo':               'M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z',
+  'Romântico':               'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z',
+  'Familiar':                'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z',
+  'Casual':                  'M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z',
+  'Aceita cartão':           'M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z',
+  'Aceita PIX':              'm3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z',
+  'Parcelamento disponível': 'M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+};
+
+const hasInfoExtra = areasAtend || tempoResp || garantia || registroId || clientes;
+const pageTitle    = `${biz.title}${categoryName ? ` — ${categoryName}` : ''} · HUBMETROPOLITANO`;
+---
+
+<Layout title={pageTitle} description={biz.description ?? biz.slogan ?? pageTitle}>
+  <Fragment slot="head">
+    {biz.cover_url && <meta property="og:image" content={biz.cover_url} />}
+    <meta property="og:title"       content={biz.title} />
+    <meta property="og:description" content={biz.slogan ?? biz.description ?? ''} />
+    <meta property="og:type"        content="business.business" />
+  </Fragment>
+
+  <Header />
+
+  <main>
+
+    <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+    <div class="relative bg-hub-pavao-profundo overflow-hidden"
+         style={gallery.length >= 2 ? '' : 'min-height: 56vh;'}>
+
+      {gallery.length >= 2 ? (
+        /* Airbnb-style gallery grid */
+        <div class="grid grid-cols-2 lg:grid-cols-[2fr_1fr] gap-1 h-[60vh] min-h-80 max-h-[520px]">
+          {/* Large main image */}
+          <div class="relative overflow-hidden">
+            <img
+              src={gallery[0]}
+              alt={biz.title}
+              class="w-full h-full object-cover"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/70 via-transparent to-transparent" />
+          </div>
+          {/* Secondary images */}
+          <div class={`grid gap-1 ${gallery.length >= 4 ? 'grid-rows-2' : 'grid-rows-1'}`}>
+            {gallery.slice(1, gallery.length >= 4 ? 3 : 2).map((img, i) => (
+              <div class="relative overflow-hidden">
+                <img
+                  src={img}
+                  alt={`${biz.title} — foto ${i + 2}`}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              </div>
+            ))}
+          </div>
+          {/* 3rd row: 2 more images (desktop only) */}
+          {gallery.length >= 4 && (
+            <div class="hidden lg:grid col-span-2 grid-cols-2 gap-1 max-h-40">
+              {gallery.slice(3, 5).map((img, i) => (
+                <div class="relative overflow-hidden">
+                  <img
+                    src={img}
+                    alt={`${biz.title} — foto ${i + 4}`}
+                    class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {gallery.length > 5 && (
+            <button
+              class="absolute bottom-4 right-4 z-10 bg-white/90 backdrop-blur-sm text-hub-chumbo text-xs font-head font-semibold uppercase tracking-wider px-4 py-2 rounded-full shadow hover:bg-white transition-colors"
+              onclick="document.getElementById('gallery-modal')?.showModal()"
+            >
+              + {gallery.length - 5} fotos
+            </button>
+          )}
+          {/* Gradient overlay for title area on mobile */}
+          <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-hub-pavao-profundo via-hub-pavao-profundo/50 to-transparent pointer-events-none lg:hidden" />
+        </div>
+      ) : (
+        /* Single cover — full-bleed hero */
+        gallery.length === 1 ? (
+          <div class="absolute inset-0">
+            <img
+              src={gallery[0]}
+              alt={biz.title}
+              class="w-full h-full object-cover opacity-40"
+              fetchpriority="high"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+        ) : null
+      )}
+
+      {/* Gradient overlay (sempre) */}
+      <div class="absolute inset-0 bg-gradient-to-t from-hub-pavao-profundo/95 via-hub-pavao-profundo/40 to-transparent pointer-events-none" />
+
+      {/* Back link */}
+      <div class="absolute top-6 left-0 right-0 z-10">
+        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+          <a
+            href={categoryName ? `/${(biz.categories as any)?.slug ?? ''}` : '/'}
+            class="inline-flex items-center gap-1.5 font-body text-sm text-white/50 hover:text-white transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+            </svg>
+            {categoryName || 'Início'}
+          </a>
+        </div>
+      </div>
+
+      {/* Business identity — bottom of hero */}
+      <div class="relative z-10 container mx-auto px-4 lg:px-8 lg:max-w-6xl pb-10 pt-24"
+           style={gallery.length <= 1 ? 'padding-top: 14rem;' : ''}>
+        <div class="flex items-end gap-5">
+
+          {/* Logo */}
+          {biz.logo_url ? (
+            <img
+              src={biz.logo_url}
+              alt={`Logo ${biz.title}`}
+              class="w-20 h-20 rounded-2xl border-2 border-white/20 object-cover bg-white shadow-xl shrink-0"
+              loading="lazy"
+            />
+          ) : (
+            <div class="w-20 h-20 rounded-2xl border-2 border-white/20 bg-hub-pavao flex items-center justify-center shadow-xl shrink-0">
+              <span class="text-white font-head font-bold text-2xl">{biz.title.charAt(0)}</span>
+            </div>
+          )}
+
+          {/* Name + badges */}
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-2.5">
+              {categoryName && (
+                <span class="bg-hub-cobre text-white font-head font-semibold uppercase tracking-wider text-xs px-3 py-1 rounded-full">
+                  {categoryName}
+                </span>
+              )}
+              {tipoServico && (
+                <span class="bg-white/15 text-white font-body text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+                  {tipoServico}
+                </span>
+              )}
+              {status && (
+                <span class={`font-body text-xs font-semibold px-3 py-1 rounded-full ${status.open ? 'bg-emerald-500/90 text-white' : 'bg-red-500/80 text-white'}`}>
+                  {status.badge}
+                </span>
+              )}
+            </div>
+            <h1 class="text-white mb-1.5 normal-case tracking-normal leading-tight"
+                style="font-family: var(--font-head); font-size: clamp(1.75rem, 4vw, 2.75rem); font-weight: 800;">
+              {biz.title}
+            </h1>
+            {biz.slogan && (
+              <p class="font-body text-white/60 text-base leading-snug">{biz.slogan}</p>
+            )}
+            <div class="flex flex-wrap items-center gap-3 mt-2.5">
+              {locationName && (
+                <span class="inline-flex items-center gap-1 text-white/40 text-xs font-body">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0">
+                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                  </svg>
+                  {locationName}
+                </span>
+              )}
+              {faixaPreco && (
+                <span class="inline-flex items-center gap-1 text-white/40 text-xs font-body">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 shrink-0">
+                    <path d="M10.75 10.818v2.614A3.13 3.13 0 0 0 11.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 0 0-1.138-.432ZM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.578a2.614 2.614 0 0 0-.921.403c-.482.315-.612.648-.612.875 0 .144.075.342.612.764Z" />
+                    <path fill-rule="evenodd" d="M9.99 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16ZM10 4a.75.75 0 0 1 .75.75v.518a3.7 3.7 0 0 1 1.763.62c.496.328.813.783.813 1.112a.75.75 0 1 1-1.5 0c0-.13-.09-.362-.54-.657a2.214 2.214 0 0 0-.536-.27v2.059l.026.006c.6.152 1.323.404 1.86.777.567.392.9.97.9 1.655 0 .686-.333 1.264-.9 1.656-.537.373-1.26.625-1.86.777v.518a.75.75 0 0 1-1.5 0v-.573a3.956 3.956 0 0 1-1.685-.687c-.517-.38-.81-.877-.81-1.19a.75.75 0 0 1 1.5 0c0 .1.14.33.559.622.203.143.455.25.726.323V9.571l-.027-.006c-.6-.152-1.323-.404-1.86-.777C7.333 8.396 7 7.818 7 7.132c0-.686.333-1.264.9-1.656.537-.373 1.26-.625 1.86-.777V4.75A.75.75 0 0 1 10 4Z" clip-rule="evenodd" />
+                  </svg>
+                  {faixaPreco}
+                </span>
+              )}
+              {totalReviews > 0 && (
+                <span class="inline-flex items-center gap-1 text-white/40 text-xs font-body">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 text-yellow-400 shrink-0">
+                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd" />
+                  </svg>
+                  {avgRating} ({totalReviews} {totalReviews === 1 ? 'avaliação' : 'avaliações'})
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── STATS BAR ─────────────────────────────────────────────────────── -->
+    {(registroId || clientes || areasAtend || tempoResp) && (
+      <div class="bg-white border-b border-hub-gelo">
+        <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+          <div class="flex flex-wrap divide-x divide-hub-gelo">
+            {registroId && (
+              <div class="flex items-center gap-3 py-4 pr-6 lg:pr-8">
+                <div class="w-8 h-8 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path fill-rule="evenodd" d="M16.403 12.652a3 3 0 0 0 0-5.304 3 3 0 0 0-3.75-3.751 3 3 0 0 0-5.305 0 3 3 0 0 0-3.751 3.75 3 3 0 0 0 0 5.305 3 3 0 0 0 3.75 3.751 3 3 0 0 0 5.305 0 3 3 0 0 0 3.751-3.75Zm-2.546-4.46a.75.75 0 0 0-1.214-.883l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-[10px] text-hub-chumbo/40 uppercase tracking-wider">Registro</p>
+                  <p class="font-head font-bold text-hub-pavao text-xs uppercase tracking-wide">{registroId}</p>
+                </div>
+              </div>
+            )}
+            {clientes && (
+              <div class="flex items-center gap-3 py-4 px-6 lg:px-8">
+                <div class="w-8 h-8 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path d="M7 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM14.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM14.5 16h-.106c.07-.297.088-.611.048-.933a7.47 7.47 0 0 0-1.588-3.755 4.502 4.502 0 0 1 5.874 2.636.818.818 0 0 1-.36.98A7.465 7.465 0 0 1 14.5 16Z" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-[10px] text-hub-chumbo/40 uppercase tracking-wider">Clientes</p>
+                  <p class="font-body text-hub-chumbo/80 text-xs">{clientes}</p>
+                </div>
+              </div>
+            )}
+            {areasAtend && (
+              <div class="flex items-center gap-3 py-4 px-6 lg:px-8">
+                <div class="w-8 h-8 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 1 0 3 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 0 0 2.273 1.765 11.842 11.842 0 0 0 .976.544l.062.029.018.008.006.003ZM10 11.25a2.25 2.25 0 1 0 0-4.5 2.25 2.25 0 0 0 0 4.5Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-[10px] text-hub-chumbo/40 uppercase tracking-wider">Áreas atendidas</p>
+                  <p class="font-body text-hub-chumbo/80 text-xs">{areasAtend}</p>
+                </div>
+              </div>
+            )}
+            {tempoResp && (
+              <div class="flex items-center gap-3 py-4 px-6 lg:px-8">
+                <div class="w-8 h-8 rounded-lg bg-hub-pavao-soft flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 text-hub-pavao">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-body text-[10px] text-hub-chumbo/40 uppercase tracking-wider">Resposta</p>
+                  <p class="font-body text-hub-chumbo/80 text-xs">{tempoResp}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )}
+
+    <!-- ── MAIN CONTENT + SIDEBAR ────────────────────────────────────────── -->
+    <div class="bg-hub-gelo">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl py-10 lg:py-14">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+
+          <!-- ── LEFT: CONTENT COLUMN ──────────────────────────────────── -->
+          <div class="lg:col-span-2 flex flex-col gap-8">
+
+            <!-- Sobre / Descrição -->
+            {biz.description && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-3">Sobre</h5>
+                <h2 class="text-hub-pavao mb-5 normal-case tracking-normal"
+                    style="font-size: clamp(1.2rem, 2.5vw, 1.6rem); font-weight: 700; font-family: var(--font-head);">
+                  {biz.title}
+                </h2>
+                <p class="font-body text-hub-chumbo/75 text-base leading-relaxed">{biz.description}</p>
+              </section>
+            )}
+
+            <!-- Serviços / Cardápio -->
+            {servicos.length > 0 && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-3">Serviços</h5>
+                <h3 class="text-hub-pavao mb-6 normal-case tracking-normal"
+                    style="font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 700; font-family: var(--font-head);">
+                  O que oferecemos
+                </h3>
+                <div class="flex flex-col divide-y divide-hub-gelo">
+                  {servicos.map((s: { titulo: string; descricao?: string; preco?: string }) => (
+                    <div class="flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0">
+                      <div class="flex-1 min-w-0">
+                        <p class="font-head font-bold text-hub-chumbo uppercase tracking-wide text-sm">{s.titulo}</p>
+                        {s.descricao && (
+                          <p class="font-body text-hub-chumbo/50 text-sm mt-0.5 leading-snug">{s.descricao}</p>
+                        )}
+                      </div>
+                      {s.preco && (
+                        <span class="font-head font-bold text-hub-cobre text-sm uppercase tracking-wide shrink-0">{s.preco}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <!-- Horários de Funcionamento -->
+            {hourRows.length > 0 && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <div class="flex items-center justify-between mb-5">
+                  <div>
+                    <h5 class="text-hub-cobre mb-1">Horários</h5>
+                    <h3 class="text-hub-pavao normal-case tracking-normal"
+                        style="font-size: 1.2rem; font-weight: 700; font-family: var(--font-head);">
+                      Funcionamento
+                    </h3>
+                  </div>
+                  {status && (
+                    <div class="text-right">
+                      <span class={`inline-block font-head font-bold uppercase tracking-wide text-xs px-3 py-1.5 rounded-full ${status.open ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}`}>
+                        {status.badge}
+                      </span>
+                      <p class="font-body text-hub-chumbo/40 text-xs mt-1">{status.detail}</p>
+                    </div>
+                  )}
+                </div>
+                <div class="flex flex-col gap-3">
+                  {hourRows.map(h => (
+                    <div class="flex items-center justify-between py-2.5 border-b border-hub-gelo last:border-0">
+                      <span class="font-head font-semibold uppercase tracking-wide text-xs text-hub-chumbo/50">{h.label}</span>
+                      <span class={`font-body text-sm ${h.value?.toLowerCase() === 'fechado' ? 'text-red-400' : 'text-hub-chumbo'}`}>
+                        {h.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <!-- Equipe -->
+            {equipe.length > 0 && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-3">Equipe</h5>
+                <h3 class="text-hub-pavao mb-6 normal-case tracking-normal"
+                    style="font-size: 1.2rem; font-weight: 700; font-family: var(--font-head);">
+                  Nossos profissionais
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {equipe.map((m: { nome: string; especialidade?: string }) => (
+                    <div class="flex items-center gap-3 p-4 rounded-xl bg-hub-gelo/50 border border-hub-gelo">
+                      <div class="w-10 h-10 rounded-full bg-hub-pavao flex items-center justify-center shrink-0">
+                        <span class="text-white font-head font-bold text-base">{m.nome.charAt(0)}</span>
+                      </div>
+                      <div>
+                        <p class="font-head font-bold text-hub-chumbo uppercase tracking-wide text-sm">{m.nome}</p>
+                        {m.especialidade && (
+                          <p class="font-body text-hub-chumbo/50 text-xs mt-0.5">{m.especialidade}</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <!-- Lista Personalizada -->
+            {listaExtra && listaExtra.itens?.length > 0 && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-3">{listaExtra.label || 'Especialidades'}</h5>
+                <div class="flex flex-wrap gap-2">
+                  {listaExtra.itens.map((item: string) => (
+                    <span class="inline-flex items-center gap-1.5 bg-hub-gelo text-hub-chumbo/70 font-body text-sm px-3.5 py-1.5 rounded-full border border-hub-gelo">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 text-hub-cobre shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                      </svg>
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <!-- Informações Adicionais -->
+            {garantia && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-5">Informações</h5>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {garantia && (
+                    <div class="flex items-start gap-3 p-4 rounded-xl bg-hub-pavao-soft">
+                      <div class="w-8 h-8 rounded-lg bg-hub-pavao/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-hub-pavao">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p class="font-body text-[10px] text-hub-pavao/60 uppercase tracking-wider">Garantia</p>
+                        <p class="font-body text-hub-chumbo/80 text-sm mt-0.5">{garantia}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            <!-- Comodidades / Tags -->
+            {tags.length > 0 && (
+              <section class="bg-white rounded-2xl p-6 lg:p-8 shadow-sm">
+                <h5 class="text-hub-cobre mb-3">Comodidades</h5>
+                <h3 class="text-hub-pavao mb-6 normal-case tracking-normal"
+                    style="font-size: 1.2rem; font-weight: 700; font-family: var(--font-head);">
+                  O que este negócio oferece
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                  {tags.map((tag: string) => (
+                    <div class="flex items-center gap-3">
+                      {TAG_ICONS[tag] ? (
+                        <div class="w-8 h-8 rounded-lg bg-hub-gelo flex items-center justify-center shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 text-hub-pavao">
+                            <path stroke-linecap="round" stroke-linejoin="round" d={TAG_ICONS[tag]} />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div class="w-8 h-8 rounded-lg bg-hub-gelo flex items-center justify-center shrink-0">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-hub-pavao">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                          </svg>
+                        </div>
+                      )}
+                      <span class="font-body text-hub-chumbo/70 text-sm">{tag}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+          </div>
+
+          <!-- ── RIGHT: SIDEBAR STICKY ──────────────────────────────────── -->
+          <aside class="lg:col-span-1">
+            <div class="sticky top-24 flex flex-col gap-4">
+
+              <!-- CTA Card principal -->
+              <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                <!-- Status banner -->
+                {status && (
+                  <div class={`px-5 py-3 flex items-center justify-between ${status.open ? 'bg-emerald-50' : 'bg-red-50'}`}>
+                    <div class="flex items-center gap-2">
+                      <span class={`w-2 h-2 rounded-full animate-pulse ${status.open ? 'bg-emerald-500' : 'bg-red-500'}`}></span>
+                      <span class={`font-head font-bold uppercase tracking-wide text-xs ${status.open ? 'text-emerald-700' : 'text-red-600'}`}>
+                        {status.badge}
+                      </span>
+                    </div>
+                    <span class={`font-body text-xs ${status.open ? 'text-emerald-600/70' : 'text-red-500/70'}`}>
+                      {status.detail}
+                    </span>
+                  </div>
+                )}
+
+                <div class="p-5 flex flex-col gap-3">
+                  {/* WhatsApp — principal CTA */}
+                  {waUrl && (
+                    <a
+                      href={waUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-head font-bold uppercase tracking-wider text-sm px-5 py-4 rounded-xl transition-all active:scale-[.98] shadow-sm"
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 shrink-0">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                      </svg>
+                      Chamar no WhatsApp
+                    </a>
+                  )}
+
+                  {/* Telefone */}
+                  {biz.phone && (
+                    <a
+                      href={`tel:${biz.phone.replace(/\D/g, '')}`}
+                      class="flex items-center gap-3 bg-hub-gelo hover:bg-hub-pavao-soft text-hub-chumbo font-head font-semibold uppercase tracking-wide text-sm px-5 py-3.5 rounded-xl transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-hub-pavao shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 6.75Z" />
+                      </svg>
+                      {biz.phone}
+                    </a>
+                  )}
+
+                  {/* Website */}
+                  {websiteUrl && (
+                    <a
+                      href={websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center gap-3 bg-hub-gelo hover:bg-hub-pavao-soft text-hub-chumbo font-head font-semibold uppercase tracking-wide text-sm px-5 py-3.5 rounded-xl transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 text-hub-pavao shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253" />
+                      </svg>
+                      Visitar site
+                    </a>
+                  )}
+
+                  {/* Google Maps */}
+                  {mapsUrl && (
+                    <a
+                      href={mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center gap-3 border border-hub-cobre/30 hover:bg-hub-cobre/5 text-hub-cobre font-head font-semibold uppercase tracking-wide text-sm px-5 py-3.5 rounded-xl transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 shrink-0">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                      </svg>
+                      Como chegar
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <!-- Contato / Endereço -->
+              {(biz.address || biz.email || locationName) && (
+                <div class="bg-white rounded-2xl shadow-sm p-5 flex flex-col gap-4">
+                  <p class="font-head font-bold uppercase tracking-widest text-xs text-hub-chumbo/30">Contato</p>
+
+                  {biz.address && (
+                    <div class="flex items-start gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-hub-gelo flex items-center justify-center shrink-0 mt-0.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-hub-pavao">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                        </svg>
+                      </div>
+                      <p class="font-body text-hub-chumbo/70 text-sm leading-snug">{biz.address}</p>
+                    </div>
+                  )}
+
+                  {biz.email && (
+                    <a href={`mailto:${biz.email}`} class="flex items-center gap-3 group">
+                      <div class="w-7 h-7 rounded-lg bg-hub-gelo flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-hub-pavao">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                        </svg>
+                      </div>
+                      <span class="font-body text-hub-chumbo/70 text-sm group-hover:text-hub-cobre transition-colors truncate">{biz.email}</span>
+                    </a>
+                  )}
+
+                  {locationName && (
+                    <div class="flex items-center gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-hub-gelo flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-hub-pavao">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                        </svg>
+                      </div>
+                      <p class="font-body text-hub-chumbo/70 text-sm">{locationName}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <!-- Horários compacto (sidebar) -->
+              {hourRows.length > 0 && (
+                <div class="bg-white rounded-2xl shadow-sm p-5">
+                  <p class="font-head font-bold uppercase tracking-widest text-xs text-hub-chumbo/30 mb-3">Horários</p>
+                  <div class="flex flex-col gap-2">
+                    {hourRows.map(h => (
+                      <div class="flex items-center justify-between">
+                        <span class="font-body text-hub-chumbo/50 text-xs">{h.label}</span>
+                        <span class={`font-body text-xs font-semibold ${h.value?.toLowerCase() === 'fechado' ? 'text-red-400' : 'text-hub-chumbo'}`}>
+                          {h.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </aside>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CTA BANNER ─────────────────────────────────────────────────────── -->
+    <section class="bg-hub-pavao py-14">
+      <div class="container mx-auto px-4 lg:px-8 lg:max-w-6xl">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div>
+            <h5 class="text-hub-cobre mb-2">Entre em contato</h5>
+            <h2 class="text-white normal-case tracking-normal"
+                style="font-size: clamp(1.25rem, 2.5vw, 1.75rem); font-weight: 700; font-family: var(--font-head);">
+              Fale com {biz.title}
+            </h2>
+            {biz.slogan && (
+              <p class="font-body text-white/50 text-sm mt-1">{biz.slogan}</p>
+            )}
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+            {waUrl && (
+              <a
+                href={waUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1ebe5d] text-white font-head font-semibold uppercase tracking-wider text-sm px-7 py-4 rounded-full transition-colors active:scale-[.98]"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4 shrink-0">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                WhatsApp
+              </a>
+            )}
+            {mapsUrl && (
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-head font-semibold uppercase tracking-wider text-sm px-7 py-4 rounded-full transition-colors border border-white/20"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                Como chegar
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer />
+</Layout>
